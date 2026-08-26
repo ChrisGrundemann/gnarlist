@@ -97,6 +97,7 @@ Naming these now so future sessions don't quietly scope-creep or, conversely, fe
 - **Live database / write backend.** See §2.1 and §2.3 — planned upgrade path, not built until there's an actual feature that needs it.
 - **User accounts, submissions, comments.** See §2.3.
 - **Automated/unattended scraping that writes directly to the dataset.** See §5.3 — any collector tooling should propose changes for review, not auto-commit.
+- **Expanding scope beyond ultramarathons to all Colorado trail races.** Not a v1 goal, but flagged as a real possible future direction, not a hard boundary — the dataset currently includes borderline-sub-ultra events (30K, 32mi) that run alongside true ultras, which was a deliberate inclusive choice made with this possible expansion in mind. If pursued, this would be a significant scope change (naming, schema, data volume) and deserves its own planning pass, not a quiet scope-creep into one session.
 
 ---
 
@@ -104,7 +105,7 @@ Naming these now so future sessions don't quietly scope-creep or, conversely, fe
 
 Each phase becomes one or more Claude Code prompts, built and reviewed iteratively.
 
-1. **Data foundation** — convert the verified spreadsheet into the real schema (§4): add coordinates, normalize distance fields, generate slugs, encode status/marquee/region. Mostly a data-decisions step, human-directed with Claude Code executing.
+1. **Data foundation** — convert the verified spreadsheet into the real schema (§4): add coordinates, normalize distance fields, generate slugs, encode status/marquee/region. Mostly a data-decisions step, human-directed with Claude Code executing. **Status: complete.** `SCHEMA.md` approved, `data/races.json` built (75 records: 71 active, 2 returning, 1 discontinued, 1 unverified), validated clean (no duplicate slugs, no missing required fields, no missing coordinates, marquee list matches the approved 14).
 2. **Project scaffold** — repo init, framework choice (§3), Cloudflare Pages deploy pipeline, a live "hello world" placeholder page. Proves the plumbing before building features on it.
 3. **List/table view + core filters** — format, distance, region, month. The simplest useful version of the site; validates the data layer end-to-end.
 4. **Calendar view** — interactive, filterable, click-through to event detail. Generalizes the static poster.
