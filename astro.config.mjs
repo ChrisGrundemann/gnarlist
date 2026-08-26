@@ -8,9 +8,8 @@ export default defineConfig({
   // which is exactly what Cloudflare Pages serves.
   output: 'static',
 
-  // TODO (Phase 2 follow-up): set `site` to the canonical URL once the
-  // Cloudflare Pages project exists (e.g. 'https://gnarlist.pages.dev', later
-  // 'https://gnarlist.co'). Needed for absolute URLs, sitemap, and canonical
-  // tags — not needed for the placeholder page to build or deploy.
-  // site: 'https://gnarlist.co',
+  // Deployed URL. Needed for absolute URLs, sitemap, and canonical tags.
+  // Update to 'https://gnarlist.co' when the canonical domain is connected
+  // (deferred — see ARCHITECTURE.md §2.4).
+  site: 'https://gnarlist.cgrundemann.workers.dev',
 });

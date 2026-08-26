@@ -20,7 +20,7 @@ the phased build plan, and what's deliberately out of scope. Read it before maki
 | | |
 |---|---|
 | Framework | [Astro](https://astro.build) — static output, no SSR adapter |
-| Hosting | Cloudflare Pages, auto-deploy on push to `main` |
+| Hosting | Cloudflare (Workers static assets), auto-deploy on push to `main` |
 | Data | Static JSON in the repo (`data/races.json`), read at build time |
 | Map (Phase 5) | Leaflet + free OSM-derived tiles |
 
