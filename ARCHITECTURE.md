@@ -44,7 +44,7 @@ These were deliberated explicitly and shouldn't be silently re-opened by a futur
 
 - **Code + data:** GitHub (public repo).
 - **Hosting/deploy:** Cloudflare Pages, connected to the GitHub repo for automatic deploys on push/merge to main.
-- **Domain:** custom domain to be sourced separately (owner-provided); Cloudflare Pages' free subdomain is the fallback until then.
+- **Domain:** **gnarlist.co** is canonical for now — "GnarList," `.co` read as "Colorado," matching the site's current CO-only scope. Also registered: `gnarlist.run`, `gnarlist.racing`, `thegnarlist.com` — set these up as redirects to the canonical domain (Cloudflare handles multi-domain redirects natively; wire this up during Phase 2 project scaffold, not urgent now). `thegnarlist.com` is reserved as the likely future canonical domain if/when the project expands beyond Colorado — that's a deliberate rename to revisit later, not a decision to make now.
 
 ---
 
@@ -117,7 +117,8 @@ Each phase becomes one or more Claude Code prompts, built and reviewed iterative
 
 ## 8. Open items / revisit later
 
-- Domain name (owner sourcing separately).
 - Final framework choice (Prompt #1).
 - Exact schema field names/types (Prompt #1).
+- Redirect setup for `gnarlist.run` / `gnarlist.racing` / `thegnarlist.com` → `gnarlist.co` (Phase 2, project scaffold).
 - Whether/when to build the Phase 7 data-maintenance tooling and Phase 8 stretch items — revisit once the core site (Phases 1–6) is live and real usage patterns exist.
+- Sanity-check "GnarList" naming against Gnar Runners (a race organizer already in the dataset) before public launch — low-confidence concern, probably fine, worth a glance rather than a deep dive.
