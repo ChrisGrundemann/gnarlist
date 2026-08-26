@@ -10,6 +10,8 @@ A public, free website that visualizes active Colorado ultramarathons — filter
 
 **Audience:** Colorado ultrarunners planning a season, race-curious trail runners browsing options, and (secondarily) race directors checking how their event is represented.
 
+**Working convention across sessions:** Claude Code should commit locally as it works, but should not push to the remote. The user reviews and pushes manually once a session's work is complete. State this explicitly in every prompt handed to Claude Code — don't rely on it being remembered from a prior session.
+
 ---
 
 ## 2. Core architectural decisions
@@ -43,17 +45,16 @@ These were deliberated explicitly and shouldn't be silently re-opened by a futur
 ### 2.4 Hosting & repo
 
 - **Code + data:** GitHub (public repo).
-- **Hosting/deploy:** Cloudflare Pages, connected to the GitHub repo for automatic deploys on push/merge to main.
-- **Domain:** **gnarlist.co** is canonical for now — "GnarList," `.co` read as "Colorado," matching the site's current CO-only scope. Also registered: `gnarlist.run`, `gnarlist.racing`, `thegnarlist.com` — set these up as redirects to the canonical domain (Cloudflare handles multi-domain redirects natively; wire this up during Phase 2 project scaffold, not urgent now). `thegnarlist.com` is reserved as the likely future canonical domain if/when the project expands beyond Colorado — that's a deliberate rename to revisit later, not a decision to make now.
+- **Hosting/deploy:** Cloudflare Pages, connected to the GitHub repo for automatic deploys on push/merge to main. **Note for future sessions:** the git-push-triggers-deploy behavior specifically requires authorizing the Cloudflare GitHub App through the Cloudflare dashboard (OAuth, dashboard-only) — this is true regardless of whether `wrangler` CLI is installed/authenticated locally. `wrangler pages project create` makes a direct-upload project, which does not auto-deploy on push. Don't re-investigate wrangler as a way to automate this connection; it's a one-time manual dashboard step, confirmed against Cloudflare's docs during Phase 2.
+- **Domain:** **gnarlist.co** is canonical for now — "GnarList," `.co` read as "Colorado," matching the site's current CO-only scope. Also registered: `gnarlist.run`, `gnarlist.racing`, `thegnarlist.com` — set these up as redirects to the canonical domain once there's something live worth pointing them at (Cloudflare handles multi-domain redirects natively). **Explicitly deferred out of Phase 2** — connecting any real domain (canonical or redirects) requires registrar-level DNS action tied to the user's accounts, which is outside what a Claude Code session can do; revisit once the initial Cloudflare Pages deploy is live. `thegnarlist.com` is reserved as the likely future canonical domain if/when the project expands beyond Colorado — that's a deliberate rename to revisit later, not a decision to make now.
 
 ---
 
-## 3. Tech stack (framework choice deferred to Prompt #1)
+## 3. Tech stack
 
-Deliberately not locked in here — this is exactly the kind of decision to let Claude Code make within stated constraints, per the working style for this project. Constraints for that decision:
-- Must produce a **static site** deployable to Cloudflare Pages (static export, not a Node server).
-- Must support component-based UI (for calendar, map, filter panel, event detail views).
-- Reasonable, well-documented options: Astro, Next.js (static export), SvelteKit (static adapter). Claude Code should pick one and state why in Prompt #1's output, not silently default.
+**Decided: Astro**, chosen and scaffolded during Phase 2. Reasoning: static export is Astro's native mode rather than a constrained bolt-on mode of a server-first framework (the case for both Next.js static export and SvelteKit's static adapter); its islands architecture fits this project's actual shape well — Phases 4–5 need genuinely interactive pieces (calendar, Leaflet map) sitting inside an otherwise mostly-static site, and Astro ships JS only to the components that need it rather than a full framework runtime to every page. Verified: the Phase 2 placeholder page builds to zero shipped JavaScript.
+
+Node version pinned via `.nvmrc` (Node 22, required by Astro 7) to avoid a build-image mismatch on Cloudflare Pages.
 
 ---
 
@@ -106,7 +107,7 @@ Naming these now so future sessions don't quietly scope-creep or, conversely, fe
 Each phase becomes one or more Claude Code prompts, built and reviewed iteratively.
 
 1. **Data foundation** — convert the verified spreadsheet into the real schema (§4): add coordinates, normalize distance fields, generate slugs, encode status/marquee/region. Mostly a data-decisions step, human-directed with Claude Code executing. **Status: complete.** `SCHEMA.md` approved, `data/races.json` built (75 records: 71 active, 2 returning, 1 discontinued, 1 unverified), validated clean (no duplicate slugs, no missing required fields, no missing coordinates, marquee list matches the approved 14).
-2. **Project scaffold** — repo init, framework choice (§3), Cloudflare Pages deploy pipeline, a live "hello world" placeholder page. Proves the plumbing before building features on it.
+2. **Project scaffold** — repo init, framework choice (§3), Cloudflare Pages deploy pipeline, a live "hello world" placeholder page. Proves the plumbing before building features on it. **Status: mostly complete.** Astro scaffolded, `.gitignore` and `.nvmrc` in place, README and a license file added (license choice itself still unresolved — see §8), placeholder page builds from `data/races.json` at build time with zero shipped JS. **Remaining:** user completes the manual Cloudflare dashboard connection (steps provided by Claude Code), confirms the live `.pages.dev` URL renders correctly, sets `site` in `astro.config.mjs` once that URL exists (needed for sitemaps/canonical tags — currently a commented-out TODO).
 3. **List/table view + core filters** — format, distance, region, month. The simplest useful version of the site; validates the data layer end-to-end.
 4. **Calendar view** — interactive, filterable, click-through to event detail. Generalizes the static poster.
 5. **Map view** — interactive Leaflet map (§2.2), filterable, real zoom-based clustering instead of manual insets.
@@ -118,8 +119,7 @@ Each phase becomes one or more Claude Code prompts, built and reviewed iterative
 
 ## 8. Open items / revisit later
 
-- Final framework choice (Prompt #1).
-- Exact schema field names/types (Prompt #1).
-- Redirect setup for `gnarlist.run` / `gnarlist.racing` / `thegnarlist.com` → `gnarlist.co` (Phase 2, project scaffold).
+- **Licensing — unresolved, needs a real decision.** Two separate questions: (1) code license (currently has an MIT file added during Phase 2 scaffold, but the user is reconsidering — may prefer no license file at all, i.e. default all-rights-reserved, over permissive open-source); (2) data license for `races.json` separately (CC BY / CC0 / none). These don't have to match each other. Note: facts (race names, dates, locations, distances) aren't copyrightable regardless of license choice — only the specific compilation and original writing (notes/descriptions) are protectable. Not legal advice; consult a lawyer if this ever matters commercially. **Action:** resolve and update this repo's license file(s) accordingly before public launch.
+- Redirect setup for `gnarlist.run` / `gnarlist.racing` / `thegnarlist.com` → `gnarlist.co` — see §2.4, deferred until there's a live deploy worth pointing a domain at.
 - Whether/when to build the Phase 7 data-maintenance tooling and Phase 8 stretch items — revisit once the core site (Phases 1–6) is live and real usage patterns exist.
 - Sanity-check "GnarList" naming against Gnar Runners (a race organizer already in the dataset) before public launch — low-confidence concern, probably fine, worth a glance rather than a deep dive.
