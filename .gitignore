@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+desktop.ini
+
+# Editor files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Python (scripts/)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Note: Colorado_Ultramarathons.xlsx is deliberately tracked as the
+# provenance source for data/races.json. Do not add *.xlsx here.
