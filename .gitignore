@@ -1,6 +1,10 @@
 # Dependencies
 node_modules/
 
+# Astro build output & generated types
+dist/
+.astro/
+
 # Environment / secrets
 .env
 .env.*

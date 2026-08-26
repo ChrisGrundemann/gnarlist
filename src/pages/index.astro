@@ -1,0 +1,226 @@
+---
+// Phase 2 placeholder page.
+//
+// This deliberately does more than "hello world": it imports data/races.json
+// at BUILD time and derives every number below from it. Nothing here is
+// hardcoded. If the static-JSON-as-data-source approach (ARCHITECTURE.md §2.1)
+// were broken — bad path, malformed JSON, fields not surviving the build —
+// this page would fail to build rather than deploy a lie.
+import races from '../../data/races.json';
+
+const total = races.length;
+const active = races.filter((r) => r.status === 'active').length;
+const marquee = races.filter((r) => r.marquee).length;
+
+// Count by an arbitrary key — proves nested objects survive the build too.
+const countBy = (fn: (r: (typeof races)[number]) => string) => {
+  const counts = new Map<string, number>();
+  for (const r of races) counts.set(fn(r), (counts.get(fn(r)) ?? 0) + 1);
+  return [...counts].sort((a, b) => b[1] - a[1]);
+};
+
+const byStatus = countBy((r) => r.status);
+const byFormat = countBy((r) => r.format);
+const byRegion = countBy((r) => r.location.region);
+
+// Deepest reach into the schema: nested coordinates + normalized numeric
+// distances. These are the fields the map and filter phases depend on.
+const withCoords = races.filter(
+  (r) => typeof r.coordinates?.lat === 'number' && typeof r.coordinates?.lng === 'number'
+).length;
+const longest = races.reduce((a, b) =>
+  (b.longest_ultra_miles ?? 0) > (a.longest_ultra_miles ?? 0) ? b : a
+);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta
+      name="description"
+      content={`GnarList — a free map and calendar of ${active} active Colorado ultramarathons.`}
+    />
+    <title>GnarList — Colorado Ultramarathons</title>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">Phase 2 · scaffold &amp; deploy pipeline</p>
+      <h1>GnarList</h1>
+      <p class="lede">
+        Tracking <strong>{active}</strong> active Colorado ultramarathons.
+      </p>
+
+      <p class="note">
+        Placeholder page. Every number below is read from <code>data/races.json</code> at build
+        time — this page exists to prove the data pipeline, not to be the site. Real list, calendar,
+        map, and filter views land in Phases 3–6.
+      </p>
+
+      <section>
+        <h2>Dataset</h2>
+        <ul class="stats">
+          <li><strong>{total}</strong> events total</li>
+          <li><strong>{withCoords}</strong> with map coordinates</li>
+          <li><strong>{marquee}</strong> marquee events</li>
+          <li>
+            Longest: <strong>{longest.longest_ultra_miles} mi</strong> — {longest.name}
+          </li>
+        </ul>
+      </section>
+
+      <div class="grid">
+        <section>
+          <h2>Status</h2>
+          <ul>
+            {byStatus.map(([k, n]) => <li><span>{k}</span><b>{n}</b></li>)}
+          </ul>
+        </section>
+
+        <section>
+          <h2>Format</h2>
+          <ul>
+            {byFormat.map(([k, n]) => <li><span>{k}</span><b>{n}</b></li>)}
+          </ul>
+        </section>
+
+        <section>
+          <h2>Region</h2>
+          <ul>
+            {byRegion.map(([k, n]) => <li><span>{k}</span><b>{n}</b></li>)}
+          </ul>
+        </section>
+      </div>
+
+      <footer>
+        <p>
+          Built with Astro · static export on Cloudflare Pages ·
+          <a href="https://github.com/ChrisGrundemann/gnarlist">source on GitHub</a>
+        </p>
+      </footer>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fbfaf8;
+    --fg: #1c1a17;
+    --muted: #6b665e;
+    --rule: #e2ded6;
+    --accent: #9c4a1a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16150f;
+      --fg: #ecebe6;
+      --muted: #9a958a;
+      --rule: #2e2c25;
+      --accent: #e08a4c;
+    }
+  }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font:
+      16px/1.55 ui-sans-serif,
+      system-ui,
+      -apple-system,
+      Segoe UI,
+      Helvetica,
+      Arial,
+      sans-serif;
+  }
+  main {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 3rem;
+  }
+  .eyebrow {
+    margin: 0 0 0.5rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(2.5rem, 9vw, 4rem);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .lede {
+    margin: 0.85rem 0 0;
+    font-size: 1.25rem;
+    color: var(--fg);
+  }
+  .lede strong {
+    color: var(--accent);
+  }
+  .note {
+    margin: 1.25rem 0 0;
+    padding: 0.9rem 1rem;
+    border-left: 3px solid var(--rule);
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.85em;
+  }
+  h2 {
+    margin: 2.25rem 0 0.6rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 0.4rem;
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 0.925rem;
+  }
+  .stats li {
+    justify-content: flex-start;
+  }
+  .stats strong {
+    color: var(--accent);
+    margin-right: 0.4rem;
+  }
+  li b {
+    font-variant-numeric: tabular-nums;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 0 2rem;
+  }
+  footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  a {
+    color: inherit;
+  }
+</style>
