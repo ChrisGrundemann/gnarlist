@@ -1,0 +1,3556 @@
+[
+  {
+    "slug": "hardrock-100",
+    "name": "Hardrock Hundred Mile Endurance Run",
+    "organizer": "Hardrock Hundred Mile Endurance Run (nonprofit), directed by Dale Garland",
+    "organizer_confirmed": true,
+    "source": [
+      "hardrock100.com"
+    ],
+    "coordinates": {
+      "lat": 37.8115,
+      "lng": -107.6644,
+      "precision": "town",
+      "derived_from": "Silverton, Colorado"
+    },
+    "location": {
+      "town": "Silverton",
+      "county": [
+        "San Juan"
+      ],
+      "region": "san-juans"
+    },
+    "ultra_distances": [
+      {
+        "label": "102.5 mi",
+        "miles": 102.5
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 102.5,
+    "distance_category": "100m",
+    "format": "standard",
+    "date_start": null,
+    "date_end": null,
+    "date_confirmed": false,
+    "date_display": "Early July (typical; exact date shifts — course direction alternates yearly)",
+    "date_approx_month": 7,
+    "date_approx_year": 2026,
+    "year_started": 1992,
+    "year_started_confirmed": true,
+    "status": "active",
+    "marquee": true,
+    "notes": "San Juan Mountains loop; ~33,000 ft climb; avg elevation 11,186 ft; summits Handies Peak (14,048 ft — highest point in any race in this dataset). One of the hardest ultras in the world to enter: lottery + trail-work requirement. Part of the Grand Slam of Ultrarunning."
+  },
+  {
+    "slug": "leadville-trail-100",
+    "name": "Leadville Trail 100 Run",
+    "organizer": "Life Time / Leadville Race Series",
+    "organizer_confirmed": true,
+    "source": [
+      "leadvilleraceseries.com"
+    ],
+    "coordinates": {
+      "lat": 39.2508,
+      "lng": -106.2925,
+      "precision": "town",
+      "derived_from": "Leadville, Colorado"
+    },
+    "location": {
+      "town": "Leadville",
+      "county": [
+        "Lake"
+      ],
+      "region": "san-juans"
+    },
+    "ultra_distances": [
+      {
+        "label": "100 mi",
+        "miles": 100
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 100,
+    "distance_category": "100m",
+    "format": "standard",
+    "date_start": "2026-08-15",
+    "date_end": "2026-08-16",
+    "date_confirmed": false,
+    "date_display": "Aug 15–16, 2026 (confirm exact date)",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": 1983,
+    "year_started_confirmed": true,
+    "status": "active",
+    "marquee": true,
+    "notes": "aka 'Race Across the Sky'. Out-and-back on Colorado Trail & dirt roads; climbs Hope Pass (12,532 ft); ~15,744 ft total climb. Western States/Grand Slam qualifier; 30-hr cutoff."
+  },
+  {
+    "slug": "leadville-silver-rush-50",
+    "name": "Leadville Silver Rush 50",
+    "organizer": "Life Time / Leadville Race Series",
+    "organizer_confirmed": true,
+    "source": [
+      "leadvilleraceseries.com"
+    ],
+    "coordinates": {
+      "lat": 39.2508,
+      "lng": -106.2925,
+      "precision": "town",
+      "derived_from": "Leadville, Colorado"
+    },
+    "location": {
+      "town": "Leadville",
+      "county": [
+        "Lake"
+      ],
+      "region": "san-juans"
+    },
+    "ultra_distances": [
+      {
+        "label": "50 mi",
+        "miles": 50
+      }
+    ],
+    "companion_distances": [
+      "Marathon"
+    ],
+    "longest_ultra_miles": 50,
+    "distance_category": "50m",
+    "format": "standard",
+    "date_start": null,
+    "date_end": null,
+    "date_confirmed": false,
+    "date_display": "Typically early–mid July (returning — see status)",
+    "date_approx_month": 7,
+    "date_approx_year": 2027,
+    "year_started": 1994,
+    "year_started_confirmed": true,
+    "status": "returning",
+    "marquee": false,
+    "notes": "High-altitude mining-road course above 10,000 ft. 2026 run cancelled due to Willow Fire (per The Colorado Sun, July 9, 2026). Expected to return; this entry represents a typical year."
+  },
+  {
+    "slug": "san-juan-solstice-50",
+    "name": "San Juan Solstice 50",
+    "organizer": "Lake City Community (grassroots nonprofit)",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.0305,
+      "lng": -107.317,
+      "precision": "town",
+      "derived_from": "Lake City, Colorado"
+    },
+    "location": {
+      "town": "Lake City",
+      "county": [
+        "Hinsdale"
+      ],
+      "region": "san-juans"
+    },
+    "ultra_distances": [
+      {
+        "label": "50 mi",
+        "miles": 50
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 50,
+    "distance_category": "50m",
+    "format": "standard",
+    "date_start": "2026-06-20",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "June 20, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": 1995,
+    "year_started_confirmed": true,
+    "status": "active",
+    "marquee": true,
+    "notes": "San Juan Mountains; ~12,000 ft climb along the Continental Divide. Lottery entry (300 runners); Western States qualifier; benefits Lake City EMS."
+  },
+  {
+    "slug": "ouray-100",
+    "name": "Ouray 100 Mile Endurance Run",
+    "organizer": "Ouray Ultras LLC",
+    "organizer_confirmed": true,
+    "source": [
+      "ouray100.com"
+    ],
+    "coordinates": {
+      "lat": 38.146,
+      "lng": -107.7415,
+      "precision": "town",
+      "derived_from": "Ouray, Colorado"
+    },
+    "location": {
+      "town": "Ouray",
+      "county": [
+        "Ouray"
+      ],
+      "region": "san-juans"
+    },
+    "ultra_distances": [
+      {
+        "label": "100 mi",
+        "miles": 100
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 100,
+    "distance_category": "100m",
+    "format": "standard",
+    "date_start": null,
+    "date_end": null,
+    "date_confirmed": false,
+    "date_display": "Typically mid-July (returning — see status)",
+    "date_approx_month": 7,
+    "date_approx_year": 2027,
+    "year_started": 2014,
+    "year_started_confirmed": true,
+    "status": "returning",
+    "marquee": true,
+    "notes": "San Juan Mountains; ~41,862 ft gain; historic mining routes. 2026 edition cancelled ~2 weeks before race day due to Gold Mountain wildfire. Expected to return; this entry represents a typical year."
+  },
+  {
+    "slug": "ouray-50",
+    "name": "Ouray 50 Mile Endurance Run",
+    "organizer": "Ouray Ultras LLC",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.146,
+      "lng": -107.7415,
+      "precision": "town",
+      "derived_from": "Ouray, Colorado"
+    },
+    "location": {
+      "town": "Ouray",
+      "county": [
+        "Ouray"
+      ],
+      "region": "san-juans"
+    },
+    "ultra_distances": [
+      {
+        "label": "50 mi",
+        "miles": 50
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 50,
+    "distance_category": "50m",
+    "format": "standard",
+    "date_start": null,
+    "date_end": null,
+    "date_confirmed": false,
+    "date_display": "September 2026 (dates vary ~Sept 12–14 across sources)",
+    "date_approx_month": 9,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "San Juan Mountains. Sister event to the Ouray 100; no longer a UTMB qualifier (stopped 2022)."
+  },
+  {
+    "slug": "sneffles-round",
+    "name": "The Sneffles Round (\"Sneffelupagus\")",
+    "organizer": "Sky Pilots (club)",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.146,
+      "lng": -107.7415,
+      "precision": "town",
+      "derived_from": "Ouray, Colorado"
+    },
+    "location": {
+      "town": "Ouray",
+      "county": [
+        "Ouray"
+      ],
+      "region": "san-juans"
+    },
+    "ultra_distances": [
+      {
+        "label": "~75 mi",
+        "miles": 75,
+        "miles_approximate": true
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 75,
+    "distance_category": "100k",
+    "format": "standard",
+    "date_start": "2026-09-05",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Sept 5, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": true,
+    "notes": "~43,000 ft climb; ~34 peaks including 14er Mt. Sneffels; ~70% off-trail; self-navigated. Free entry; applicants vetted for mountaineering/routefinding skill; ~35-runner cap; 100-hr limit."
+  },
+  {
+    "slug": "san-juan-softie-100",
+    "name": "San Juan Softie 100",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 37.2769,
+      "lng": -107.8766,
+      "precision": "town",
+      "derived_from": "Durango, Colorado"
+    },
+    "location": {
+      "town": "Durango",
+      "county": [
+        "La Plata"
+      ],
+      "region": "san-juans"
+    },
+    "ultra_distances": [
+      {
+        "label": "100 mi",
+        "miles": 100
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 100,
+    "distance_category": "100m",
+    "format": "standard",
+    "date_start": null,
+    "date_end": null,
+    "date_confirmed": false,
+    "date_display": "~Aug 14, 2026 (approximate)",
+    "date_approx_month": 8,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "San Juan Mountains region; less technical variant of the area's high-mountain 100-milers. Featured on the curated UltraSignup Colorado list."
+  },
+  {
+    "slug": "telluride-mountain-run",
+    "name": "Telluride Mountain Run",
+    "organizer": "Highline Running Adventures (Jared Vilhauer)",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 37.9375,
+      "lng": -107.8123,
+      "precision": "town",
+      "derived_from": "Telluride, Colorado"
+    },
+    "location": {
+      "town": "Telluride",
+      "county": [
+        "San Miguel"
+      ],
+      "region": "san-juans"
+    },
+    "ultra_distances": [
+      {
+        "label": "100K",
+        "miles": 62.1
+      },
+      {
+        "label": "40 mi",
+        "miles": 40
+      }
+    ],
+    "companion_distances": [
+      "Hill Climb & shorter options historically offered"
+    ],
+    "longest_ultra_miles": 62.1,
+    "distance_category": "100k",
+    "format": "standard",
+    "date_start": "2026-08-22",
+    "date_end": "2026-08-23",
+    "date_confirmed": true,
+    "date_display": "Aug 22–23, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": 2013,
+    "year_started_confirmed": true,
+    "status": "active",
+    "marquee": true,
+    "notes": "High San Juans above Telluride; above 13,000 ft; Mile-and-a-Half-of-Sky ridge; Telluride Peak (13,509 ft). Founded by Dakota Jones as a 38-miler. Exact 2026 distance lineup should be confirmed with organizer."
+  },
+  {
+    "slug": "box-canyon-trail-races",
+    "name": "Box Canyon Trail Races",
+    "organizer": "Confluence Events",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 37.9375,
+      "lng": -107.8123,
+      "precision": "town",
+      "derived_from": "Telluride, Colorado"
+    },
+    "location": {
+      "town": "Telluride",
+      "county": [
+        "San Miguel"
+      ],
+      "region": "san-juans"
+    },
+    "ultra_distances": [
+      {
+        "label": "30K",
+        "miles": 18.6
+      }
+    ],
+    "companion_distances": [
+      "10 mi"
+    ],
+    "longest_ultra_miles": 18.6,
+    "distance_category": "sub-50k",
+    "format": "standard",
+    "date_start": "2026-07-25",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "July 25, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Climbs from town past Bridal Veil Falls to ~13,000 ft. Ultra-adjacent event (30K is below the standard 50K threshold); grouped with Telluride-area ultra race weekends."
+  },
+  {
+    "slug": "creede-50-100",
+    "name": "Creede 50/100",
+    "organizer": "Tempest Adventures LLC",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 37.8483,
+      "lng": -106.9255,
+      "precision": "town",
+      "derived_from": "Creede, Colorado"
+    },
+    "location": {
+      "town": "Creede",
+      "county": [
+        "Mineral"
+      ],
+      "region": "san-juans"
+    },
+    "ultra_distances": [
+      {
+        "label": "100 mi",
+        "miles": 100
+      },
+      {
+        "label": "50 mi",
+        "miles": 50
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 100,
+    "distance_category": "100m",
+    "format": "standard",
+    "date_start": "2026-07-25",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "July 25, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "San Juans; climbs above 12,000 ft; 20,000+ ft gain; Continental Divide singletrack; start/finish Basham Park. 100-runner cap; USFS permitted; self-reliant ethos. Not the same event as Creede Mountain Run (different organizer, different history)."
+  },
+  {
+    "slug": "creede-mountain-run",
+    "name": "Creede Mountain Run",
+    "organizer": "Creede & Mineral County Chamber of Commerce",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 37.8483,
+      "lng": -106.9255,
+      "precision": "town",
+      "derived_from": "Creede, Colorado"
+    },
+    "location": {
+      "town": "Creede",
+      "county": [
+        "Mineral"
+      ],
+      "region": "san-juans"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "22 mi",
+      "12 mi",
+      "2 mi fun run"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-09-05",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Sept 5, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": 1987,
+    "year_started_confirmed": true,
+    "status": "active",
+    "marquee": false,
+    "notes": "Community race; distinct from the Tempest Adventures Creede 50/100 (different organizer, different history)."
+  },
+  {
+    "slug": "silverton-alpine-50k",
+    "name": "Silverton Alpine Marathon & 50K",
+    "organizer": "Aravaipa Running",
+    "organizer_confirmed": true,
+    "source": [
+      "aravaiparunning.com"
+    ],
+    "coordinates": {
+      "lat": 37.8115,
+      "lng": -107.6644,
+      "precision": "town",
+      "derived_from": "Silverton, Colorado"
+    },
+    "location": {
+      "town": "Silverton",
+      "county": [
+        "San Juan"
+      ],
+      "region": "san-juans"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "Marathon",
+      "8 mi"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-07-18",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "July 18, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Alpine Loop; high point 12,930 ft at California Pass."
+  },
+  {
+    "slug": "pikes-peak-ultra",
+    "name": "Pikes Peak Ultra",
+    "organizer": "Mad Moose Events (founded by Justin Ricks)",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.834,
+      "lng": -104.8253,
+      "precision": "town",
+      "derived_from": "Colorado Springs, Colorado"
+    },
+    "location": {
+      "town": "Colorado Springs",
+      "county": [
+        "El Paso"
+      ],
+      "region": "front-range-cs"
+    },
+    "ultra_distances": [
+      {
+        "label": "50 mi",
+        "miles": 50
+      },
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "30K",
+      "20K"
+    ],
+    "longest_ultra_miles": 50,
+    "distance_category": "50m",
+    "format": "standard",
+    "date_start": "2026-07-25",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "July 25, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": 2015,
+    "year_started_confirmed": true,
+    "status": "active",
+    "marquee": false,
+    "notes": "Foothills/mountain terrain beneath Pikes Peak; longer courses summit Mt. Rosa. Considered a more approachable Front Range ultra."
+  },
+  {
+    "slug": "valkyrie-trail-race",
+    "name": "Valkyrie Trail Race",
+    "organizer": "Mad Moose Events",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.834,
+      "lng": -104.8253,
+      "precision": "town",
+      "derived_from": "Colorado Springs, Colorado"
+    },
+    "location": {
+      "town": "Colorado Springs",
+      "county": [
+        "El Paso"
+      ],
+      "region": "front-range-cs"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "Marathon",
+      "30K",
+      "Half",
+      "8 mi",
+      "4 mi"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-05-09",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "May 9, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Cheyenne Mountain State Park. Women-centered trail event."
+  },
+  {
+    "slug": "ram-party-trail-runs",
+    "name": "Ram Party Trail Runs",
+    "organizer": "Aravaipa Running",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.834,
+      "lng": -104.8253,
+      "precision": "town",
+      "derived_from": "Colorado Springs, Colorado"
+    },
+    "location": {
+      "town": "Colorado Springs",
+      "county": [
+        "El Paso"
+      ],
+      "region": "front-range-cs"
+    },
+    "ultra_distances": [
+      {
+        "label": "55 mi",
+        "miles": 55
+      },
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "60K",
+      "24K",
+      "15K"
+    ],
+    "longest_ultra_miles": 55,
+    "distance_category": "50m",
+    "format": "standard",
+    "date_start": "2026-05-16",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "May 16, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Rampart Reservoir / Buffalo Lodge Bicycle Resort; high point 9,500 ft. Weekend festival format."
+  },
+  {
+    "slug": "falcon-50",
+    "name": "Falcon 50",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.834,
+      "lng": -104.8253,
+      "precision": "town",
+      "derived_from": "Colorado Springs, Colorado"
+    },
+    "location": {
+      "town": "Colorado Springs",
+      "county": [
+        "El Paso"
+      ],
+      "region": "front-range-cs"
+    },
+    "ultra_distances": [
+      {
+        "label": "50 mi",
+        "miles": 50
+      },
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 50,
+    "distance_category": "50m",
+    "format": "standard",
+    "date_start": "2026-04-25",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "April 25, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Front Range foothills. Featured on the UltraSignup Colorado list."
+  },
+  {
+    "slug": "cheyenne-mountain-trail-races",
+    "name": "Cheyenne Mountain Trail Races",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.834,
+      "lng": -104.8253,
+      "precision": "town",
+      "derived_from": "Colorado Springs, Colorado"
+    },
+    "location": {
+      "town": "Colorado Springs",
+      "county": [
+        "El Paso"
+      ],
+      "region": "front-range-cs"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "25K",
+      "10K"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-04-25",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "April 25, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Cheyenne Mountain State Park. Distances confirmed: 50K / 25K / 10K."
+  },
+  {
+    "slug": "take-5-in-the-garden",
+    "name": "Take 5 in the Garden",
+    "organizer": "Mad Moose Events",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.834,
+      "lng": -104.8253,
+      "precision": "town",
+      "derived_from": "Colorado Springs, Colorado"
+    },
+    "location": {
+      "town": "Colorado Springs",
+      "county": [
+        "El Paso"
+      ],
+      "region": "front-range-cs"
+    },
+    "ultra_distances": [
+      {
+        "label": "Timed (duration TBD — verify with organizer)"
+      }
+    ],
+    "companion_distances": [
+      "Road + trail short options"
+    ],
+    "longest_ultra_miles": null,
+    "distance_category": "timed",
+    "format": "timed",
+    "date_start": "2026-05-02",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "May 2, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Garden of the Gods area. Timed ultra-format event; specific duration not listed in source — confirm with organizer."
+  },
+  {
+    "slug": "ring-the-springs",
+    "name": "Ring the Springs",
+    "organizer": "Mad Moose Events",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.834,
+      "lng": -104.8253,
+      "precision": "town",
+      "derived_from": "Colorado Springs, Colorado"
+    },
+    "location": {
+      "town": "Colorado Springs",
+      "county": [
+        "El Paso"
+      ],
+      "region": "front-range-cs"
+    },
+    "ultra_distances": [
+      {
+        "label": "100K",
+        "miles": 62.1
+      },
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "35K"
+    ],
+    "longest_ultra_miles": 62.1,
+    "distance_category": "100k",
+    "format": "standard",
+    "date_start": "2026-06-20",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "June 20, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Ring the Peak trail system."
+  },
+  {
+    "slug": "bobcat-trail-race",
+    "name": "Bobcat Trail Race",
+    "organizer": "Mad Moose Events",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.834,
+      "lng": -104.8253,
+      "precision": "town",
+      "derived_from": "Colorado Springs, Colorado"
+    },
+    "location": {
+      "town": "Colorado Springs",
+      "county": [
+        "El Paso"
+      ],
+      "region": "front-range-cs"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "25K",
+      "10K",
+      "5K"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-10-17",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Oct 17, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Palmer Park sandstone/mesa terrain."
+  },
+  {
+    "slug": "rattler-trail-race",
+    "name": "Rattler Trail Race",
+    "organizer": "Mad Moose Events",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.834,
+      "lng": -104.8253,
+      "precision": "town",
+      "derived_from": "Colorado Springs, Colorado"
+    },
+    "location": {
+      "town": "Colorado Springs",
+      "county": [
+        "El Paso"
+      ],
+      "region": "front-range-cs"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "25K",
+      "10K"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2027-04-17",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "April 17, 2027",
+    "date_approx_month": null,
+    "date_approx_year": 2027,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Palmer Park."
+  },
+  {
+    "slug": "colorado-cold-rush-ultra",
+    "name": "Colorado Cold Rush Ultra",
+    "organizer": "Revenant Running",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.834,
+      "lng": -104.8253,
+      "precision": "town",
+      "derived_from": "Colorado Springs, Colorado"
+    },
+    "location": {
+      "town": "Colorado Springs",
+      "county": [
+        "El Paso"
+      ],
+      "region": "front-range-cs"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "Half",
+      "10K"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-11-21",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Nov 21, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Bear Creek Regional Park, High Drive, Gold Camp Road; ~9,000 ft. Winter conditions likely (snow/ice)."
+  },
+  {
+    "slug": "stories-ultra",
+    "name": "Stories Ultra",
+    "organizer": "Human Potential Running Series",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.834,
+      "lng": -104.8253,
+      "precision": "town",
+      "derived_from": "Colorado Springs, Colorado"
+    },
+    "location": {
+      "town": "Colorado Springs",
+      "county": [
+        "El Paso"
+      ],
+      "region": "front-range-cs"
+    },
+    "ultra_distances": [
+      {
+        "label": "30-hr",
+        "hours": 30
+      },
+      {
+        "label": "15-hr",
+        "hours": 15
+      },
+      {
+        "label": "6-hr",
+        "hours": 6
+      }
+    ],
+    "companion_distances": [
+      "Half",
+      "10K"
+    ],
+    "longest_ultra_miles": null,
+    "distance_category": "timed",
+    "format": "timed",
+    "date_start": "2027-02-06",
+    "date_end": "2027-02-07",
+    "date_confirmed": true,
+    "date_display": "Feb 6–7, 2027",
+    "date_approx_month": null,
+    "date_approx_year": 2027,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "No podium/age-group awards, per HPRS format."
+  },
+  {
+    "slug": "above-the-clouds-ultra",
+    "name": "Above the Clouds Ultra",
+    "organizer": "Revenant Running",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.9938,
+      "lng": -105.057,
+      "precision": "town",
+      "derived_from": "Woodland Park, Colorado"
+    },
+    "location": {
+      "town": "Woodland Park",
+      "county": [
+        "Teller"
+      ],
+      "region": "front-range-cs"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "10K"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-10-03",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Oct 3, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Starts/finishes at Woodland Park Middle School. ~4,137 ft gain on the 50K; ascends Lovell Gulch to Rampart Range Road, circles Rampart Reservoir; Pikes Peak views."
+  },
+  {
+    "slug": "great-divide-ultra",
+    "name": "The Great Divide Ultra",
+    "organizer": "Revenant Running",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.9419,
+      "lng": -105.1572,
+      "precision": "town",
+      "derived_from": "Divide, Colorado"
+    },
+    "location": {
+      "town": "Divide",
+      "county": [
+        "Teller"
+      ],
+      "region": "front-range-cs"
+    },
+    "ultra_distances": [
+      {
+        "label": "100 mi",
+        "miles": 100
+      },
+      {
+        "label": "100K",
+        "miles": 62.1
+      },
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "25K"
+    ],
+    "longest_ultra_miles": 100,
+    "distance_category": "100m",
+    "format": "standard",
+    "date_start": "2026-06-06",
+    "date_end": "2026-06-07",
+    "date_confirmed": true,
+    "date_display": "June 6–7, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": true,
+    "notes": "Mueller State Park; rolling single/doubletrack; 9,000+ ft elevation. First 100-miler on the CO calendar each year; non-technical; features a night 'Dark Divide' run. Three start-time variants per distance."
+  },
+  {
+    "slug": "24-hours-of-palmer-lake",
+    "name": "24 Hours of Palmer Lake",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 39.1222,
+      "lng": -104.9172,
+      "precision": "town",
+      "derived_from": "Palmer Lake, Colorado"
+    },
+    "location": {
+      "town": "Palmer Lake",
+      "county": [
+        "El Paso"
+      ],
+      "region": "front-range-cs"
+    },
+    "ultra_distances": [
+      {
+        "label": "24-hr",
+        "hours": 24
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": null,
+    "distance_category": "timed",
+    "format": "timed",
+    "date_start": "2026-09-26",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Sept 26, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "0.82-mi loop at 7,240 ft."
+  },
+  {
+    "slug": "greenland-trail-races",
+    "name": "Greenland Trail Races",
+    "organizer": "Colorado Runner Events",
+    "organizer_confirmed": true,
+    "source": [
+      "runguides.com"
+    ],
+    "coordinates": {
+      "lat": 39.2288,
+      "lng": -104.8845,
+      "precision": "town",
+      "derived_from": "Larkspur, Colorado"
+    },
+    "location": {
+      "town": "Larkspur",
+      "county": [
+        "Douglas"
+      ],
+      "region": "front-range-cs"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "25K",
+      "8 mi",
+      "4 mi"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-05-02",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "May 2, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Greenland Open Space (near Larkspur). 2026 RRCA National 50K Championship; billed as 'Colorado's fastest 50K'."
+  },
+  {
+    "slug": "bear-chase",
+    "name": "The Bear Chase",
+    "organizer": "Aravaipa Running",
+    "organizer_confirmed": true,
+    "source": [
+      "aravaiparunning.com"
+    ],
+    "coordinates": {
+      "lat": 39.7086,
+      "lng": -105.0847,
+      "precision": "town",
+      "derived_from": "Lakewood, Colorado"
+    },
+    "location": {
+      "town": "Lakewood",
+      "county": [
+        "Jefferson"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "100K",
+        "miles": 62.1
+      },
+      {
+        "label": "50 mi",
+        "miles": 50
+      },
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "Half",
+      "10K",
+      "5K"
+    ],
+    "longest_ultra_miles": 62.1,
+    "distance_category": "100k",
+    "format": "standard",
+    "date_start": "2026-10-03",
+    "date_end": "2026-10-04",
+    "date_confirmed": true,
+    "date_display": "Oct 3–4, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": 2010,
+    "year_started_confirmed": true,
+    "status": "active",
+    "marquee": true,
+    "notes": "Bear Creek Lake Park, Lakewood. 100K added 2013; beginner-friendly; benefits Lakewood open space."
+  },
+  {
+    "slug": "chase-the-moon",
+    "name": "Chase the Moon 12 Hour Endurance Run",
+    "organizer": "Aravaipa Running (formerly HAL Sports)",
+    "organizer_confirmed": true,
+    "source": [
+      "runningintheusa.com"
+    ],
+    "coordinates": {
+      "lat": 39.5386,
+      "lng": -104.9726,
+      "precision": "town",
+      "derived_from": "Highlands Ranch, Colorado"
+    },
+    "location": {
+      "town": "Highlands Ranch",
+      "county": [
+        "Douglas"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "12-hr",
+        "hours": 12
+      },
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "6-hr",
+      "3-hr",
+      "Relays"
+    ],
+    "longest_ultra_miles": null,
+    "distance_category": "timed",
+    "format": "timed",
+    "date_start": "2026-06-27",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "June 27, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Overnight 7 PM–7 AM run under the full moon. Offers a standard 50K option alongside the timed formats."
+  },
+  {
+    "slug": "barr-lake-trail-race",
+    "name": "Barr Lake Trail Race",
+    "organizer": "Aravaipa Running",
+    "organizer_confirmed": true,
+    "source": [
+      "aravaiparunning.com"
+    ],
+    "coordinates": {
+      "lat": 39.9837,
+      "lng": -104.8111,
+      "precision": "town",
+      "derived_from": "Brighton, Colorado"
+    },
+    "location": {
+      "town": "Brighton",
+      "county": [
+        "Adams"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "30K",
+      "Half",
+      "15K",
+      "5K"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-06-13",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "June 13, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": 2020,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Flat and fast course around Barr Lake State Park."
+  },
+  {
+    "slug": "rock-hawk-trail-races",
+    "name": "Rock Hawk Trail Races",
+    "organizer": "Aravaipa Running",
+    "organizer_confirmed": true,
+    "source": [
+      "aravaiparunning.com"
+    ],
+    "coordinates": {
+      "lat": 39.3723,
+      "lng": -104.8587,
+      "precision": "town",
+      "derived_from": "Castle Rock, Colorado"
+    },
+    "location": {
+      "town": "Castle Rock",
+      "county": [
+        "Douglas"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "25K",
+      "10K",
+      "5K"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-08-29",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Aug 29, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": null
+  },
+  {
+    "slug": "indian-creek-trail-runs",
+    "name": "Indian Creek Trail Runs",
+    "organizer": "Human Potential Running Series",
+    "organizer_confirmed": true,
+    "source": [
+      "humanpotentialrunning.com"
+    ],
+    "coordinates": {
+      "lat": 39.4446,
+      "lng": -105.4812,
+      "precision": "town",
+      "derived_from": "Pine, Colorado"
+    },
+    "location": {
+      "town": "Pine / Sedalia",
+      "county": [
+        "Douglas",
+        "Jefferson"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "50 mi",
+        "miles": 50
+      },
+      {
+        "label": "55K",
+        "miles": 34.2
+      }
+    ],
+    "companion_distances": [
+      "15 mi",
+      "8K"
+    ],
+    "longest_ultra_miles": 50,
+    "distance_category": "50m",
+    "format": "standard",
+    "date_start": "2026-10-17",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Oct 17, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Pike National Forest foothills south of Denver."
+  },
+  {
+    "slug": "north-fork-trail-race",
+    "name": "North Fork Trail Race",
+    "organizer": "Human Potential Running Series",
+    "organizer_confirmed": true,
+    "source": [
+      "humanpotentialrunning.com"
+    ],
+    "coordinates": {
+      "lat": 39.4446,
+      "lng": -105.4812,
+      "precision": "town",
+      "derived_from": "Pine, Colorado"
+    },
+    "location": {
+      "town": "Pine",
+      "county": [
+        "Jefferson"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "50 mi",
+        "miles": 50
+      },
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 50,
+    "distance_category": "50m",
+    "format": "standard",
+    "date_start": null,
+    "date_end": null,
+    "date_confirmed": false,
+    "date_display": "May 2027 (TBD)",
+    "date_approx_month": 5,
+    "date_approx_year": 2027,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "100% soft-surface singletrack; 1996 burn-scar terrain SW of Denver (Buffalo Creek area). Proceeds support the North Fork Volunteer Fire Dept."
+  },
+  {
+    "slug": "sawmill-trail-runs",
+    "name": "Sawmill Trail Runs",
+    "organizer": "Human Potential Running Series",
+    "organizer_confirmed": true,
+    "source": [
+      "humanpotentialrunning.com"
+    ],
+    "coordinates": {
+      "lat": 39.4446,
+      "lng": -105.4812,
+      "precision": "town",
+      "derived_from": "Pine, Colorado"
+    },
+    "location": {
+      "town": "Pine",
+      "county": [
+        "Jefferson",
+        "Park"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "16 mi",
+      "8 mi"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-12-05",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Dec 5, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": 2013,
+    "year_started_confirmed": true,
+    "status": "active",
+    "marquee": false,
+    "notes": "Staunton State Park. Started as an informal 'Fat Ass' event in 2013; became an official race in 2017; moved to Staunton in 2021."
+  },
+  {
+    "slug": "golden-gate-dirty-30",
+    "name": "Golden Gate Dirty 30",
+    "organizer": "Formerly independent RD",
+    "organizer_confirmed": false,
+    "source": [
+      "dirty30.org"
+    ],
+    "coordinates": {
+      "lat": 39.7546,
+      "lng": -105.2206,
+      "precision": "town",
+      "derived_from": "Golden, Colorado"
+    },
+    "location": {
+      "town": "Golden Gate Canyon",
+      "county": [
+        "Jefferson",
+        "Gilpin"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": null,
+    "date_end": null,
+    "date_confirmed": false,
+    "date_display": "N/A (permanently cancelled)",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "discontinued",
+    "marquee": false,
+    "notes": "Golden Gate Canyon State Park. Official site (dirty30.org) states: 'Dirty 30 is permanently Cancelled.'"
+  },
+  {
+    "slug": "quad-rock",
+    "name": "Quad Rock 50/25",
+    "organizer": "Gnar Runners",
+    "organizer_confirmed": true,
+    "source": [
+      "gnarrunners.com"
+    ],
+    "coordinates": {
+      "lat": 40.5872,
+      "lng": -105.077,
+      "precision": "town",
+      "derived_from": "Fort Collins, Colorado"
+    },
+    "location": {
+      "town": "Fort Collins / Bellvue",
+      "county": [
+        "Larimer"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "50 mi",
+        "miles": 50
+      }
+    ],
+    "companion_distances": [
+      "25 mi"
+    ],
+    "longest_ultra_miles": 50,
+    "distance_category": "50m",
+    "format": "standard",
+    "date_start": "2026-05-09",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "May 9, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": true,
+    "notes": "Lory State Park & Horsetooth Mountain Open Space. Anchor race of the 'Gnar Slam'."
+  },
+  {
+    "slug": "never-summer-100k",
+    "name": "Never Summer 100K & 60K",
+    "organizer": "Gnar Runners",
+    "organizer_confirmed": true,
+    "source": [
+      "gnarrunners.com"
+    ],
+    "coordinates": {
+      "lat": 40.5274,
+      "lng": -106.0258,
+      "precision": "town",
+      "derived_from": "Gould, Colorado"
+    },
+    "location": {
+      "town": "Gould",
+      "county": [
+        "Jackson"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "100K",
+        "miles": 62.1
+      },
+      {
+        "label": "60K",
+        "miles": 37.3
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 62.1,
+    "distance_category": "100k",
+    "format": "standard",
+    "date_start": "2026-07-24",
+    "date_end": "2026-07-25",
+    "date_confirmed": true,
+    "date_display": "July 24–25, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": true,
+    "notes": "Never Summer Mountains / Medicine Bow Mountains border; near RMNP; ~14,500 ft gain; high point North Diamond Peak (11,852 ft). Western States qualifier for 100K finishers under 23 hrs; sells out yearly."
+  },
+  {
+    "slug": "colorado-24-hour-run",
+    "name": "Colorado 24 Hour Run",
+    "organizer": "Gnar Runners",
+    "organizer_confirmed": true,
+    "source": [
+      "gnarrunners.com"
+    ],
+    "coordinates": {
+      "lat": 40.5872,
+      "lng": -105.077,
+      "precision": "town",
+      "derived_from": "Fort Collins, Colorado"
+    },
+    "location": {
+      "town": "Fort Collins",
+      "county": [
+        "Larimer"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "24-hr",
+        "hours": 24
+      },
+      {
+        "label": "12-hr",
+        "hours": 12
+      }
+    ],
+    "companion_distances": [
+      "6-hr"
+    ],
+    "longest_ultra_miles": null,
+    "distance_category": "timed",
+    "format": "timed",
+    "date_start": "2026-10-31",
+    "date_end": "2026-11-01",
+    "date_confirmed": true,
+    "date_display": "Oct 31–Nov 1, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Flat one-mile loop."
+  },
+  {
+    "slug": "red-feather-trail-jamboree",
+    "name": "Red Feather Trail Jamboree",
+    "organizer": "Gnar Runners",
+    "organizer_confirmed": true,
+    "source": [
+      "gnarrunners.com"
+    ],
+    "coordinates": {
+      "lat": 40.8077,
+      "lng": -105.5756,
+      "precision": "town",
+      "derived_from": "Red Feather Lakes, Colorado"
+    },
+    "location": {
+      "town": "Red Feather Lakes",
+      "county": [
+        "Larimer"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "50 mi",
+        "miles": 50
+      },
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "Half"
+    ],
+    "longest_ultra_miles": 50,
+    "distance_category": "50m",
+    "format": "standard",
+    "date_start": "2026-09-25",
+    "date_end": "2026-09-27",
+    "date_confirmed": true,
+    "date_display": "Sept 25–27, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": null
+  },
+  {
+    "slug": "weld-your-mettle",
+    "name": "Weld Your Mettle Running Festival",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "runningintheusa.com"
+    ],
+    "coordinates": {
+      "lat": 40.526,
+      "lng": -104.7113,
+      "precision": "town",
+      "derived_from": "Eaton, Colorado"
+    },
+    "location": {
+      "town": "Eaton",
+      "county": [
+        "Weld"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "36-hr",
+        "hours": 36
+      },
+      {
+        "label": "24-hr",
+        "hours": 24
+      },
+      {
+        "label": "12-hr",
+        "hours": 12
+      },
+      {
+        "label": "9-hr",
+        "hours": 9
+      },
+      {
+        "label": "6-hr",
+        "hours": 6
+      },
+      {
+        "label": "3-hr",
+        "hours": 3
+      }
+    ],
+    "companion_distances": [
+      "7K",
+      "Relay options"
+    ],
+    "longest_ultra_miles": null,
+    "distance_category": "timed",
+    "format": "timed",
+    "date_start": "2027-06-05",
+    "date_end": "2027-06-06",
+    "date_confirmed": true,
+    "date_display": "June 5–6, 2027",
+    "date_approx_month": null,
+    "date_approx_year": 2027,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Plains terrain (not mountain). Virtual option available."
+  },
+  {
+    "slug": "noco-urban-ultra",
+    "name": "NoCo Urban Ultra & Relay",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultraracecalendar.com"
+    ],
+    "coordinates": {
+      "lat": 40.4233,
+      "lng": -104.7091,
+      "precision": "town",
+      "derived_from": "Greeley, Colorado"
+    },
+    "location": {
+      "town": "Greeley",
+      "county": [
+        "Weld"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "100 mi",
+        "miles": 100
+      },
+      {
+        "label": "50 mi",
+        "miles": 50
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 100,
+    "distance_category": "100m",
+    "format": "standard",
+    "date_start": "2027-04-11",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "April 11, 2027",
+    "date_approx_month": null,
+    "date_approx_year": 2027,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Urban Greeley course. Solo or relay options for both distances."
+  },
+  {
+    "slug": "rockys-backyard-ultra",
+    "name": "Rocky's Backyard Ultra",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 40.3772,
+      "lng": -105.5232,
+      "precision": "town",
+      "derived_from": "Estes Park, Colorado"
+    },
+    "location": {
+      "town": "Estes Park",
+      "county": [
+        "Larimer"
+      ],
+      "region": "estes-park"
+    },
+    "ultra_distances": [
+      {
+        "label": "Backyard (4.167 mi/loop)",
+        "loop_miles": 4.167
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": null,
+    "distance_category": "backyard",
+    "format": "backyard",
+    "date_start": "2026-10-10",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Oct 10, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Trails bordering Rocky Mountain National Park, at the YMCA of the Rockies; ~500 ft gain per loop. $1,000 cash prize + buckles for 100-mile finishers."
+  },
+  {
+    "slug": "estes-park-backyard-ultra",
+    "name": "Estes Park's Backyard Ultra",
+    "organizer": "Running Wild Events",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 40.3772,
+      "lng": -105.5232,
+      "precision": "town",
+      "derived_from": "Estes Park, Colorado"
+    },
+    "location": {
+      "town": "Estes Park",
+      "county": [
+        "Larimer"
+      ],
+      "region": "estes-park"
+    },
+    "ultra_distances": [
+      {
+        "label": "Backyard (4.252 mi/loop)",
+        "loop_miles": 4.252
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": null,
+    "distance_category": "backyard",
+    "format": "backyard",
+    "date_start": "2026-06-27",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "June 27, 2026 (4 PM start)",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Lake Estes paved loop."
+  },
+  {
+    "slug": "samsons-revenge-trail-race",
+    "name": "Samson's Revenge Trail Race",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "runningintheusa.com"
+    ],
+    "coordinates": {
+      "lat": 40.3772,
+      "lng": -105.5232,
+      "precision": "town",
+      "derived_from": "Estes Park, Colorado"
+    },
+    "location": {
+      "town": "Estes Park",
+      "county": [
+        "Larimer"
+      ],
+      "region": "estes-park"
+    },
+    "ultra_distances": [
+      {
+        "label": "55K",
+        "miles": 34.2
+      }
+    ],
+    "companion_distances": [
+      "27K",
+      "10K"
+    ],
+    "longest_ultra_miles": 34.2,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2027-05-22",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "May 22, 2027",
+    "date_approx_month": null,
+    "date_approx_year": 2027,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Estes Park / RMNP-area foothills."
+  },
+  {
+    "slug": "estes-epic-ultra",
+    "name": "Estes Epic Ultra Run & MTB Race",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultraracecalendar.com"
+    ],
+    "coordinates": {
+      "lat": 40.3772,
+      "lng": -105.5232,
+      "precision": "town",
+      "derived_from": "Estes Park, Colorado"
+    },
+    "location": {
+      "town": "Estes Park",
+      "county": [
+        "Larimer"
+      ],
+      "region": "estes-park"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "15 mi"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-09-26",
+    "date_end": "2026-09-27",
+    "date_confirmed": true,
+    "date_display": "Sept 26–27, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Combined running + MTB weekend event."
+  },
+  {
+    "slug": "run-rabbit-run",
+    "name": "Run Rabbit Run",
+    "organizer": "Independent (founded/directed by Fred Abramowitz & Paul Sachs)",
+    "organizer_confirmed": true,
+    "source": [
+      "runrabbitrun.org"
+    ],
+    "coordinates": {
+      "lat": 40.4848,
+      "lng": -106.8317,
+      "precision": "town",
+      "derived_from": "Steamboat Springs, Colorado"
+    },
+    "location": {
+      "town": "Steamboat Springs",
+      "county": [
+        "Routt"
+      ],
+      "region": "mountains-western-slope"
+    },
+    "ultra_distances": [
+      {
+        "label": "100 mi",
+        "miles": 100
+      },
+      {
+        "label": "50 mi",
+        "miles": 50
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 100,
+    "distance_category": "100m",
+    "format": "standard",
+    "date_start": "2026-09-18",
+    "date_end": "2026-09-19",
+    "date_confirmed": true,
+    "date_display": "Sept 18–19, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": 2007,
+    "year_started_confirmed": true,
+    "status": "active",
+    "marquee": true,
+    "notes": "Routt National Forest; ~22,000 ft gain (100 mi) / ~9,000 ft (50 mi). 'Hares vs. Tortoises' staggered-start format. $100,000+ overall purse, $20,000 to each 100-mile winner — largest payout of any US ultra. ~$600,000 donated to charity."
+  },
+  {
+    "slug": "continental-divide-trail-run",
+    "name": "Continental Divide Trail Run",
+    "organizer": "Steamboat Running Series",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 40.4848,
+      "lng": -106.8317,
+      "precision": "town",
+      "derived_from": "Steamboat Springs, Colorado"
+    },
+    "location": {
+      "town": "Steamboat Springs",
+      "county": [
+        "Routt"
+      ],
+      "region": "mountains-western-slope"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "16 mi",
+      "8K"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-08-29",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Aug 29, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Steamboat Ski Area base; Continental Divide; Mt. Werner area."
+  },
+  {
+    "slug": "crested-butte-ultra",
+    "name": "Crested Butte Ultra",
+    "organizer": "Mad Moose Events",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.8698,
+      "lng": -106.984,
+      "precision": "town",
+      "derived_from": "Crested Butte, Colorado"
+    },
+    "location": {
+      "town": "Crested Butte",
+      "county": [
+        "Gunnison"
+      ],
+      "region": "mountains-western-slope"
+    },
+    "ultra_distances": [
+      {
+        "label": "50 mi",
+        "miles": 50
+      },
+      {
+        "label": "55K",
+        "miles": 34.2
+      }
+    ],
+    "companion_distances": [
+      "35K"
+    ],
+    "longest_ultra_miles": 50,
+    "distance_category": "50m",
+    "format": "standard",
+    "date_start": "2026-09-26",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Sept 26, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Gunnison National Forest singletrack. Fall-foliage timing."
+  },
+  {
+    "slug": "grand-traverse-mountain-run",
+    "name": "The Grand Traverse (Mountain Run)",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultraracecalendar.com"
+    ],
+    "coordinates": {
+      "lat": 38.8698,
+      "lng": -106.984,
+      "precision": "town",
+      "derived_from": "Crested Butte, Colorado"
+    },
+    "location": {
+      "town": "Crested Butte",
+      "county": [
+        "Gunnison"
+      ],
+      "region": "mountains-western-slope"
+    },
+    "ultra_distances": [
+      {
+        "label": "40 mi",
+        "miles": 40
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 40,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-09-05",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Sept 5, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Point-to-point across the Elk Mountains. Companion event to the winter Grand Traverse ski race."
+  },
+  {
+    "slug": "sage-burner-trail-races",
+    "name": "Sage Burner Trail Races",
+    "organizer": "Mad Moose Events (formerly One Love Endurance)",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.6477,
+      "lng": -107.0603,
+      "precision": "town",
+      "derived_from": "Gunnison, Colorado"
+    },
+    "location": {
+      "town": "Gunnison",
+      "county": [
+        "Gunnison"
+      ],
+      "region": "mountains-western-slope"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "28K",
+      "15K"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-10-03",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Oct 3, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": 2008,
+    "year_started_confirmed": true,
+    "status": "active",
+    "marquee": false,
+    "notes": "Hartman Rocks high-desert sagebrush terrain (near Gunnison). A contrast to CO's typical alpine ultras."
+  },
+  {
+    "slug": "grand-mesa-ultras",
+    "name": "Grand Mesa Ultras",
+    "organizer": "Best Slope Events",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 39.1131,
+      "lng": -108.0128,
+      "precision": "town",
+      "derived_from": "Grand Mesa, Colorado"
+    },
+    "location": {
+      "town": "Grand Mesa",
+      "county": [
+        "Mesa",
+        "Delta"
+      ],
+      "region": "mountains-western-slope"
+    },
+    "ultra_distances": [
+      {
+        "label": "50 mi",
+        "miles": 50
+      },
+      {
+        "label": "55K",
+        "miles": 34.2
+      }
+    ],
+    "companion_distances": [
+      "30K"
+    ],
+    "longest_ultra_miles": 50,
+    "distance_category": "50m",
+    "format": "standard",
+    "date_start": null,
+    "date_end": null,
+    "date_confirmed": false,
+    "date_display": "~July 25, 2026 (approximate)",
+    "date_approx_month": 7,
+    "date_approx_year": 2026,
+    "year_started": 2010,
+    "year_started_confirmed": true,
+    "status": "active",
+    "marquee": false,
+    "notes": "World's largest flat-topped mountain; alpine lakes; 10,000+ ft. Cash prizes for top 3 M/F; on-mountain camping."
+  },
+  {
+    "slug": "powderhorn-mountain-ultra",
+    "name": "Powderhorn Mountain Ultra & Vert Challenge",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultraracecalendar.com"
+    ],
+    "coordinates": {
+      "lat": 39.1131,
+      "lng": -108.0128,
+      "precision": "town",
+      "derived_from": "Grand Mesa, Colorado"
+    },
+    "location": {
+      "town": "Mesa",
+      "county": [
+        "Mesa"
+      ],
+      "region": "mountains-western-slope"
+    },
+    "ultra_distances": [
+      {
+        "label": "12-hr",
+        "hours": 12
+      },
+      {
+        "label": "6-hr",
+        "hours": 6
+      }
+    ],
+    "companion_distances": [
+      "Vertical challenge (10K loop, 1,546 ft gain)"
+    ],
+    "longest_ultra_miles": null,
+    "distance_category": "timed",
+    "format": "timed",
+    "date_start": "2026-07-18",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "July 18, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Powderhorn Resort (on the Grand Mesa)."
+  },
+  {
+    "slug": "kessel-run-ultra",
+    "name": "Kessel Run Ultra",
+    "organizer": "Mad Moose Events",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 39.1589,
+      "lng": -108.7336,
+      "precision": "town",
+      "derived_from": "Fruita, Colorado"
+    },
+    "location": {
+      "town": "Fruita",
+      "county": [
+        "Mesa"
+      ],
+      "region": "mountains-western-slope"
+    },
+    "ultra_distances": [
+      {
+        "label": "50 mi",
+        "miles": 50
+      },
+      {
+        "label": "40 mi",
+        "miles": 40
+      },
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "20 mi",
+      "10 mi"
+    ],
+    "longest_ultra_miles": 50,
+    "distance_category": "50m",
+    "format": "standard",
+    "date_start": "2026-11-07",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Nov 7, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Desert terrain near Colorado National Monument; Zippity-Do-Da singletrack. Camping available on-site."
+  },
+  {
+    "slug": "aspen-backcountry",
+    "name": "Aspen Backcountry",
+    "organizer": "Aravaipa Running",
+    "organizer_confirmed": true,
+    "source": [
+      "aravaiparunning.com"
+    ],
+    "coordinates": {
+      "lat": 39.1911,
+      "lng": -106.8236,
+      "precision": "town",
+      "derived_from": "Aspen, Colorado"
+    },
+    "location": {
+      "town": "Aspen",
+      "county": [
+        "Pitkin"
+      ],
+      "region": "mountains-western-slope"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "Marathon",
+      "Half"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-08-01",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Aug 1, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Out-and-back to McNamara Hut; Elk Mountains backcountry singletrack above 10,000 ft. CORSAR card required."
+  },
+  {
+    "slug": "devil-on-the-divide",
+    "name": "Devil on the Divide",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 39.7611,
+      "lng": -105.683,
+      "precision": "town",
+      "derived_from": "Empire, Colorado"
+    },
+    "location": {
+      "town": "Empire / Idaho Springs",
+      "county": [
+        "Clear Creek"
+      ],
+      "region": "mountains-western-slope"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "22K"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-09-12",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Sept 12, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Exceeds 13,000 ft; 6,500+ ft climb; 80% of course above 10,000 ft. Requires prior ultra experience for the 50K."
+  },
+  {
+    "slug": "snow-mountain-ranch-festival",
+    "name": "Snow Mountain Ranch Trail Running Festival",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultraracecalendar.com"
+    ],
+    "coordinates": {
+      "lat": 40.0861,
+      "lng": -105.9395,
+      "precision": "town",
+      "derived_from": "Granby, Colorado"
+    },
+    "location": {
+      "town": "Granby / Grand Lake",
+      "county": [
+        "Grand"
+      ],
+      "region": "mountains-western-slope"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "33K",
+      "Half",
+      "10K",
+      "5K"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-09-12",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Sept 12, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Snow Mountain Ranch YMCA property."
+  },
+  {
+    "slug": "summits-trail-runs",
+    "name": "Summits Trail Runs",
+    "organizer": "Human Potential Running Series",
+    "organizer_confirmed": true,
+    "source": [
+      "humanpotentialrunning.com"
+    ],
+    "coordinates": {
+      "lat": 40.0861,
+      "lng": -105.9395,
+      "precision": "town",
+      "derived_from": "Granby, Colorado"
+    },
+    "location": {
+      "town": "Granby",
+      "county": [
+        "Grand"
+      ],
+      "region": "mountains-western-slope"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      },
+      {
+        "label": "14-hr timed",
+        "hours": 14
+      }
+    ],
+    "companion_distances": [
+      "Marathon",
+      "Half Marathon",
+      "6 mi"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-06-13",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "June 13, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Granby Ranch. Confirmed distances: 50K, Marathon, Half Marathon, 6 mi, plus a 14-hr timed 'Elevation Challenge' option."
+  },
+  {
+    "slug": "race-the-ranch-snowshoe-ultra",
+    "name": "Race The Ranch Snowshoe Ultra",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultraracecalendar.com"
+    ],
+    "coordinates": {
+      "lat": 40.0861,
+      "lng": -105.9395,
+      "precision": "town",
+      "derived_from": "Granby, Colorado"
+    },
+    "location": {
+      "town": "Granby",
+      "county": [
+        "Grand"
+      ],
+      "region": "mountains-western-slope"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "25K",
+      "5K"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-09-27",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Sept 27, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": null
+  },
+  {
+    "slug": "west-line-winder",
+    "name": "West Line Winder",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultraracecalendar.com"
+    ],
+    "coordinates": {
+      "lat": 38.8422,
+      "lng": -106.1311,
+      "precision": "town",
+      "derived_from": "Buena Vista, Colorado"
+    },
+    "location": {
+      "town": "Buena Vista",
+      "county": [
+        "Chaffee"
+      ],
+      "region": "mountains-western-slope"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-09-26",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Sept 26, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "~4,000 ft climb near the Collegiate Peaks."
+  },
+  {
+    "slug": "collegiate-peaks-trail-run",
+    "name": "Collegiate Peaks Trail Run",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultraracecalendar.com"
+    ],
+    "coordinates": {
+      "lat": 38.8422,
+      "lng": -106.1311,
+      "precision": "town",
+      "derived_from": "Buena Vista, Colorado"
+    },
+    "location": {
+      "town": "Buena Vista",
+      "county": [
+        "Chaffee"
+      ],
+      "region": "mountains-western-slope"
+    },
+    "ultra_distances": [
+      {
+        "label": "50 mi",
+        "miles": 50
+      }
+    ],
+    "companion_distances": [
+      "25 mi"
+    ],
+    "longest_ultra_miles": 50,
+    "distance_category": "50m",
+    "format": "standard",
+    "date_start": null,
+    "date_end": null,
+    "date_confirmed": false,
+    "date_display": "May 2027 (TBD)",
+    "date_approx_month": 5,
+    "date_approx_year": 2027,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Long-running local race in the Collegiate Peaks area near Buena Vista. Specific 2027 date unconfirmed."
+  },
+  {
+    "slug": "transrockies-pass-to-pub",
+    "name": "TransRockies Run: Pass to Pub",
+    "organizer": "TransRockies Run (RD Aaron McConnell)",
+    "organizer_confirmed": true,
+    "source": [
+      "transrockiesrun.com"
+    ],
+    "coordinates": {
+      "lat": 39.2508,
+      "lng": -106.2925,
+      "precision": "town",
+      "derived_from": "Leadville, Colorado"
+    },
+    "location": {
+      "town": "Leadville to Red Cliff",
+      "county": [
+        "Lake",
+        "Eagle"
+      ],
+      "region": "mountains-western-slope"
+    },
+    "ultra_distances": [
+      {
+        "label": "Full Pint 51 mi (3-day stage)",
+        "miles": 51,
+        "stages": 3
+      },
+      {
+        "label": "Half Pint 35 mi (3-day stage)",
+        "miles": 35,
+        "stages": 3
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 51,
+    "distance_category": "stage",
+    "format": "stage",
+    "date_start": "2026-07-19",
+    "date_end": "2026-07-21",
+    "date_confirmed": true,
+    "date_display": "July 19–21, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": true,
+    "notes": "3-day stage race from Leadville to Red Cliff; crosses Hope Pass and the Continental Divide. Replaced the discontinued multi-day TransRockies Run format. Capped at 500 runners."
+  },
+  {
+    "slug": "high-lonesome-100",
+    "name": "High Lonesome 100",
+    "organizer": "Freestone Endurance",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.8422,
+      "lng": -106.1311,
+      "precision": "town",
+      "derived_from": "Buena Vista, Colorado"
+    },
+    "location": {
+      "town": "Mount Princeton / Buena Vista area",
+      "county": [
+        "Chaffee"
+      ],
+      "region": "mountains-western-slope"
+    },
+    "ultra_distances": [
+      {
+        "label": "100 mi",
+        "miles": 100
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 100,
+    "distance_category": "100m",
+    "format": "standard",
+    "date_start": null,
+    "date_end": null,
+    "date_confirmed": false,
+    "date_display": "Late July 2026 (approximate)",
+    "date_approx_month": 7,
+    "date_approx_year": 2026,
+    "year_started": 2017,
+    "year_started_confirmed": true,
+    "status": "active",
+    "marquee": true,
+    "notes": "Sawatch Range; Collegiate Peaks region; five alpine passes; 13,150 ft high point. Two-pool lottery; trail-work requirement; Western States qualifier; competitive/elite field."
+  },
+  {
+    "slug": "silverheels-trail-runs",
+    "name": "Silverheels Trail Runs",
+    "organizer": "Human Potential Running Series",
+    "organizer_confirmed": true,
+    "source": [
+      "runsignup.com"
+    ],
+    "coordinates": {
+      "lat": 39.3165,
+      "lng": -105.8928,
+      "precision": "town",
+      "derived_from": "Como, Colorado"
+    },
+    "location": {
+      "town": "Como",
+      "county": [
+        "Park"
+      ],
+      "region": "fairplay-south-park"
+    },
+    "ultra_distances": [
+      {
+        "label": "100 mi",
+        "miles": 100
+      },
+      {
+        "label": "100K",
+        "miles": 62.1
+      },
+      {
+        "label": "50 mi",
+        "miles": 50
+      },
+      {
+        "label": "60K",
+        "miles": 37.3
+      }
+    ],
+    "companion_distances": [
+      "19 mi",
+      "10 mi"
+    ],
+    "longest_ultra_miles": 100,
+    "distance_category": "100m",
+    "format": "standard",
+    "date_start": "2026-07-10",
+    "date_end": "2026-07-11",
+    "date_confirmed": true,
+    "date_display": "July 10–11, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Avg elevation over 10,000 ft. May correspond to what some aggregators list as 'Fairplay 100M/100K' — both refer to this HPRS event in Como/Park County."
+  },
+  {
+    "slug": "sheep-mountain-trail-runs",
+    "name": "Sheep Mountain Trail Runs",
+    "organizer": "Human Potential Running Series",
+    "organizer_confirmed": true,
+    "source": [
+      "runsignup.com"
+    ],
+    "coordinates": {
+      "lat": 39.2252,
+      "lng": -106.002,
+      "precision": "town",
+      "derived_from": "Fairplay, Colorado"
+    },
+    "location": {
+      "town": "Fairplay",
+      "county": [
+        "Park"
+      ],
+      "region": "fairplay-south-park"
+    },
+    "ultra_distances": [
+      {
+        "label": "50 mi",
+        "miles": 50
+      },
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "Half"
+    ],
+    "longest_ultra_miles": 50,
+    "distance_category": "50m",
+    "format": "standard",
+    "date_start": "2026-08-01",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Aug 1, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": 2015,
+    "year_started_confirmed": true,
+    "status": "active",
+    "marquee": false,
+    "notes": "300-runner cap; 50K distance added 2018."
+  },
+  {
+    "slug": "sangre-de-cristo-trail-festival",
+    "name": "Sangre de Cristo Trail Festival",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultraracecalendar.com"
+    ],
+    "coordinates": {
+      "lat": 38.1347,
+      "lng": -105.4658,
+      "precision": "town",
+      "derived_from": "Westcliffe, Colorado"
+    },
+    "location": {
+      "town": "Westcliffe",
+      "county": [
+        "Custer"
+      ],
+      "region": "southern-colorado"
+    },
+    "ultra_distances": [
+      {
+        "label": "200 mi",
+        "miles": 200
+      },
+      {
+        "label": "100 mi",
+        "miles": 100
+      },
+      {
+        "label": "100K",
+        "miles": 62.1
+      },
+      {
+        "label": "50 mi",
+        "miles": 50
+      },
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "Shorter options"
+    ],
+    "longest_ultra_miles": 200,
+    "distance_category": "200m+",
+    "format": "standard",
+    "date_start": "2026-09-26",
+    "date_end": "2026-09-27",
+    "date_confirmed": true,
+    "date_display": "Sept 26–27, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": true,
+    "notes": "Rainbow Trail beneath the Sangre de Cristo peaks. Widest distance range of any CO ultra event: 50K through 200 mi."
+  },
+  {
+    "slug": "wild-wahatoya-runs",
+    "name": "WILD Wahatoya Runs",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultraracecalendar.com"
+    ],
+    "coordinates": {
+      "lat": 37.505,
+      "lng": -105.0078,
+      "precision": "town",
+      "derived_from": "La Veta, Colorado"
+    },
+    "location": {
+      "town": "La Veta",
+      "county": [
+        "Huerfano"
+      ],
+      "region": "southern-colorado"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "Half",
+      "8 mi"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-09-26",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Sept 26, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Views of the Spanish Peaks."
+  },
+  {
+    "slug": "bridge-burner-ultra",
+    "name": "Bridge Burner Ultra",
+    "organizer": "Revenant Running",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.4423,
+      "lng": -105.2349,
+      "precision": "town",
+      "derived_from": "Canon City, Colorado"
+    },
+    "location": {
+      "town": "Canon City",
+      "county": [
+        "Fremont"
+      ],
+      "region": "southern-colorado"
+    },
+    "ultra_distances": [
+      {
+        "label": "35 mi",
+        "miles": 35
+      },
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "35K",
+      "10K"
+    ],
+    "longest_ultra_miles": 35,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-10-24",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Oct 24, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Royal Gorge Mountain Park. The 35-mi loop crosses the Royal Gorge Bridge."
+  },
+  {
+    "slug": "royal-gorge-groove",
+    "name": "Royal Gorge Groove",
+    "organizer": "Revenant Running",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.4423,
+      "lng": -105.2349,
+      "precision": "town",
+      "derived_from": "Canon City, Colorado"
+    },
+    "location": {
+      "town": "Canon City",
+      "county": [
+        "Fremont"
+      ],
+      "region": "southern-colorado"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "30K",
+      "20K",
+      "13K",
+      "5K"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": null,
+    "date_end": null,
+    "date_confirmed": false,
+    "date_display": "April 2027 (approximate)",
+    "date_approx_month": 4,
+    "date_approx_year": 2027,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Royal Gorge area."
+  },
+  {
+    "slug": "beulah-challenge",
+    "name": "Beulah Challenge and OverIt Series",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultraracecalendar.com"
+    ],
+    "coordinates": {
+      "lat": 38.075,
+      "lng": -104.9867,
+      "precision": "town",
+      "derived_from": "Beulah, Colorado"
+    },
+    "location": {
+      "town": "Beulah Valley",
+      "county": [
+        "Pueblo"
+      ],
+      "region": "southern-colorado"
+    },
+    "ultra_distances": [
+      {
+        "label": "32 mi",
+        "miles": 32
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 32,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-09-19",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Sept 19, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Beulah Valley. 32 miles (just above the 50K threshold)."
+  },
+  {
+    "slug": "american-heroes-run",
+    "name": "American Heroes Run",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultraracecalendar.com"
+    ],
+    "coordinates": {
+      "lat": 40.1672,
+      "lng": -105.1019,
+      "precision": "town",
+      "derived_from": "Longmont, Colorado"
+    },
+    "location": {
+      "town": "Longmont",
+      "county": [
+        "Boulder"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "100 mi timed",
+        "miles": 100
+      },
+      {
+        "label": "24-hr",
+        "hours": 24
+      }
+    ],
+    "companion_distances": [
+      "9-hr timed",
+      "6-hr timed"
+    ],
+    "longest_ultra_miles": null,
+    "distance_category": "timed",
+    "format": "timed",
+    "date_start": "2026-09-11",
+    "date_end": "2026-09-12",
+    "date_confirmed": true,
+    "date_display": "Sept 11–12, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "1.05-mi loop. Timed event; '100 mi' option is a goal distance within the timed format, not a fixed-distance race."
+  },
+  {
+    "slug": "raising-the-barr",
+    "name": "Raising the Barr",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultraracecalendar.com"
+    ],
+    "coordinates": {
+      "lat": 39.9837,
+      "lng": -104.8111,
+      "precision": "town",
+      "derived_from": "Brighton, Colorado"
+    },
+    "location": {
+      "town": "Brighton",
+      "county": [
+        "Adams"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "12-hr",
+        "hours": 12
+      },
+      {
+        "label": "6-hr",
+        "hours": 6
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": null,
+    "distance_category": "timed",
+    "format": "timed",
+    "date_start": "2026-09-05",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Sept 5, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Lakeside loop course; solo and relay options."
+  },
+  {
+    "slug": "gmr-backyard-ultra",
+    "name": "GMR Backyard Ultra",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultraracecalendar.com"
+    ],
+    "coordinates": {
+      "lat": 39.7546,
+      "lng": -105.2206,
+      "precision": "town",
+      "derived_from": "Golden, Colorado"
+    },
+    "location": {
+      "town": "Golden",
+      "county": [
+        "Jefferson"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "Backyard (4.2 mi/loop)",
+        "loop_miles": 4.2
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": null,
+    "distance_category": "backyard",
+    "format": "backyard",
+    "date_start": "2026-05-23",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "May 23, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": null
+  },
+  {
+    "slug": "last-mountain-man-standing",
+    "name": "Last Mountain Man Standing",
+    "organizer": "Independent",
+    "organizer_confirmed": false,
+    "source": [
+      "ultraracecalendar.com"
+    ],
+    "coordinates": {
+      "lat": 39.5233,
+      "lng": -105.3055,
+      "precision": "town",
+      "derived_from": "Conifer, Colorado"
+    },
+    "location": {
+      "town": "Conifer",
+      "county": [
+        "Jefferson"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "Backyard (4.1 mi/loop)",
+        "loop_miles": 4.1
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": null,
+    "distance_category": "backyard",
+    "format": "backyard",
+    "date_start": "2026-07-18",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "July 18, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": null
+  },
+  {
+    "slug": "sourdough-snowshoe-race",
+    "name": "Sourdough Snowshoe Race",
+    "organizer": "Trail Trash Adventures",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 39.9614,
+      "lng": -105.5108,
+      "precision": "town",
+      "derived_from": "Nederland, Colorado"
+    },
+    "location": {
+      "town": "Nederland",
+      "county": [
+        "Boulder"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "30K",
+        "miles": 18.6
+      },
+      {
+        "label": "18K",
+        "miles": 11.2
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 18.6,
+    "distance_category": "sub-50k",
+    "format": "standard",
+    "date_start": null,
+    "date_end": null,
+    "date_confirmed": false,
+    "date_display": "Mid-January (typical; 2026 status unverified)",
+    "date_approx_month": 1,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "unverified",
+    "marquee": false,
+    "notes": "Roosevelt National Forest backcountry; ~10,000 ft. Donation-based winter/snowshoe event. Could not be independently confirmed as a currently active event — verify directly with Trail Trash Adventures."
+  }
+]
