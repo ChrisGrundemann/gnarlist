@@ -82,7 +82,7 @@ The existing spreadsheet/poster data needs to become a real schema. At minimum, 
 - Year started (where known)
 - Status (active / cancelled-expected-return / discontinued / unverified) — carried forward from the "Flagged Events" tab work; cancelled-but-returning events (e.g. Ouray 100, Leadville Silver Rush 50) should render normally with a small status note, matching how the posters handled them
 - Marquee flag (★) — carried forward from the poster tiering system
-- Region (for the regional groupings used throughout: San Juans, Front Range/Colorado Springs, Denver Metro, Estes Park, Mountains/Western Slope, Fairplay/South Park, Southern Colorado)
+- Region (for the regional groupings used throughout) — **nine regions, finalized by the geographic audit run between Phases 3 and 4. The settled list, and the reasoning behind it, is the "Region scheme" subsection below; treat that as the reference and don't re-derive it.**
 - Notes/hook fact, source(s)
 
 **Deferred field, not in v1:** elevation profile / total gain data. See §6.
@@ -97,6 +97,42 @@ The existing spreadsheet/poster data needs to become a real schema. At minimum, 
 - One deliberate exception in that derivation: an option whose label contains "timed" does **not** contribute a fixed-distance token. This exists for American Heroes Run, whose `{ label: "100 mi timed", miles: 100 }` is a goal distance inside a 24-hour event, not a 100-miler. Without the guard it would appear under the 100-mile filter, which is exactly the kind of format/category error §5.3 warns about.
 - The **sub-50K toggle is a member of the distance selection**, presented as a switch rather than a chip. With no distance selected, everything shows (sub-50K events included — they're in the dataset deliberately, see §6). Selecting `50K` excludes them; selecting `50K` *and* the toggle shows both. It is labelled "Sub-50K", not "Include sub-50K", because as part of an AND-ed filter set it can narrow results as well as widen them.
 - `distance_category: "200m+"` is normalized to the token `200m` for URLs and data attributes — a literal `+` in a query string decodes as a space and would silently break hand-edited share links.
+
+**Region scheme — finalized by the geographic audit run between Phases 3 and 4.**
+
+The original seven regions were carried straight over from the posters, which grouped by rough visual proximity on a printed map. A verified audit against Wikipedia/USGS/USFS found thirteen events filed under a region that is factually wrong — checkable errors, not judgment calls. The clearest: **Leadville sat under `san-juans`**, a mountain range about 150 road miles away, because the poster's "San Juans / High Country" bucket was doing double duty as a catch-all for anything high. Fixing that required two new regions, giving nine:
+
+| Slug | Chip label | Full label | Covers | Listed / counted |
+|---|---|---|---|---|
+| `san-juans` | San Juans | San Juans | Silverton, Ouray, Telluride, Lake City, Creede, Durango | 11 / 11 |
+| `front-range-cs` | Colo. Springs | Colorado Springs / Pikes Peak | El Paso, Teller, south Douglas | 15 / 15 |
+| `denver-metro` | Denver Metro | Denver Metro & Foothills | Jefferson, Boulder, Gilpin, Clear Creek, Adams, north Douglas | 14 / 12 |
+| `northern-front-range` | N. Front Range | Northern Front Range | Larimer, Weld — Fort Collins, Greeley, Red Feather | 5 / 5 |
+| `estes-park` | Estes Park | Estes Park / RMNP | Estes Park | 4 / 4 |
+| `mountains-western-slope` | Western Slope | Mountains / Western Slope | Routt, Grand, Jackson, Gunnison, Pitkin, Mesa, Delta | 13 / 13 |
+| `central-mountains` | Central Mtns | Central Mountains / Sawatch | Lake, Chaffee — Upper Arkansas valley and the Sawatch | 6 / 6 |
+| `fairplay-south-park` | South Park | Fairplay / South Park | Park (Fairplay, Como) | 2 / 2 |
+| `southern-colorado` | Southern CO | Southern Colorado | Pueblo, Fremont, Huerfano, Custer | 5 / 5 |
+| | | | **Total** | **75 / 73** |
+
+*(Listed = rows rendered. Counted = rows contributing to displayed numbers — see the counting rule below.)*
+
+**The two new regions, and why they had to exist:**
+
+- **`central-mountains`** — Lake and Chaffee counties: Leadville, Buena Vista, the Upper Arkansas valley under the Sawatch. Six events, previously split between `san-juans` (the two Leadville races) and `mountains-western-slope` (the Buena Vista cluster). Neither was defensible: Leadville is not in the San Juans, and the Upper Arkansas is *east* of the Continental Divide, so it isn't the Western Slope either.
+- **`northern-front-range`** — Larimer and Weld counties: Fort Collins, Greeley, Red Feather Lakes, Eaton. Five events previously filed under `denver-metro`. Fort Collins and Greeley have their own metropolitan statistical areas and sit 55–60 miles from Denver; grouping them with Denver was a map-space artifact, not a real geography.
+
+**Two straight reassignments, no new region needed:** Devil on the Divide (Empire / Idaho Springs, Clear Creek Co.) moved from `mountains-western-slope` to `denver-metro` — it's on the I-70 corridor east of the Divide, inside the Denver MSA. Never Summer (Gould, Jackson Co.) moved the other way, from `denver-metro` to `mountains-western-slope` — it's in the North Park basin, ~150 miles from Denver over Cameron Pass.
+
+**Deliberately *not* changed:** Fairplay/South Park stays its own region rather than folding into `central-mountains`, despite being geographically adjacent. South Park is a distinctly recognizable Colorado basin in its own right, and collapsing it would lose something a Colorado runner actually recognizes. Two events is a small region; that's fine.
+
+**Label changes are consequences of the audit, not taste.** `san-juans` dropped its "/ High Country" qualifier because that clause existed to cover Leadville and no longer has anything to cover. `front-range-cs` became "Colorado Springs / Pikes Peak" because a bare "Front Range" is ambiguous once `northern-front-range` exists. `denver-metro` became "Denver Metro & Foothills" because Golden Gate Canyon, Conifer, Pine, Nederland and Empire are mountain communities at 7,500 ft+, and the plain label undersold half the region. **Slugs did not change** — they're URL contract, and existing share links still resolve.
+
+**TransRockies Pass to Pub is filed under `central-mountains` as a deliberate simplification, and Phase 5 must not treat that as solved.** The race starts in Leadville (Lake Co.) and finishes in Red Cliff (Eagle Co.), crossing the Continental Divide at Tennessee Pass mid-race. No single region is fully correct. A filter chip needs one discrete value, so it gets one; a *route* does not fit one value, so the map view should give it real treatment — a route line, or paired start/finish markers — rather than dropping a single pin and calling the question closed. This is the same lossiness `SCHEMA.md` §6.7 flags about its stored coordinate, now also true of its region. It is the only event in the dataset with this property.
+
+**Counting rule (settled here, applies to every view from Phase 4 on):** events with `status: discontinued` or `status: unverified` **do not contribute to any displayed number** — not the overall result count, not a faceted chip count, not a masthead stat. They remain fully visible and browsable in the list, keeping their existing rust/hatched treatment. This is a *counting* rule, not a visibility rule, and the two must not be quietly merged by a later phase: hiding these events would defeat the point of carrying them, which is that the record is complete. `active` and `returning` count normally — a returning race is coming back.
+
+Implemented as `countsTowardTotals` in `src/lib/races.ts` (the single definition), surfaced per row as `data-counted` so the browser script never needs to know the status vocabulary. Two consequences worth knowing before they look like bugs: **Denver Metro shows 12 above 14 rows**, because both non-counting events happen to live there; and a filter combination can legitimately produce **a count of 0 with rows still on screen** (Region → Denver Metro plus the Sub-50K toggle leaves only the unverified Sourdough Snowshoe). The list view handles the second by tracking rows-shown separately from events-counted, so the "nothing matches" copy never appears above a visible row, and by showing a "+n shown, not counted" note in the results bar whenever the two diverge. Phases 4 and 5 need the same split.
 
 ---
 
@@ -145,7 +181,7 @@ Each phase becomes one or more Claude Code prompts, built and reviewed iterative
    - `npm run check` (TypeScript enforcement) isn't wired up — Claude Code declined to add `@astrojs/check` + `typescript` as devDependencies without being asked. Types currently function as documentation, not CI enforcement. Worth adding explicitly if desired.
    - TransRockies Pass to Pub surfaces under Format→Stage but deliberately not Distance→50mi, since its distance lives in a `stages` field rather than `miles`. Confirmed as the right call — a multi-day stage race isn't equivalent to a standalone 50-miler for someone filtering by distance.
 4. **Calendar view** — interactive, filterable, click-through to event detail. Generalizes the static poster.
-5. **Map view** — interactive Leaflet map (§2.2), filterable, real zoom-based clustering instead of manual insets.
+5. **Map view** — interactive Leaflet map (§2.2), filterable, real zoom-based clustering instead of manual insets. **Read §4's region scheme first:** TransRockies Pass to Pub is a genuinely cross-boundary route whose single region value and single coordinate are both deliberate simplifications for the filter/pin, and this view is where that's supposed to get honest treatment.
 6. **Event detail pages + polish** — permalinks, mobile *polish* (baseline usability already lands in Phase 3, per §4.5), basic search.
 7. **Data maintenance workflow** — a semi-automated research-assistant tool that checks known sources per event on a schedule and proposes a PR for human review (§5.4). Deferred until after the site itself is live — no point maintaining a site that doesn't exist yet.
 8. **Stretch phases** — elevation profiles/difficulty scoring (pending new data sourcing, §6); community submissions (pending D1 build-out, §2.3).

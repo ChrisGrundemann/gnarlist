@@ -36,7 +36,7 @@ During this session the file is named `data/races.sample.json` (8 events). Once 
 | `coordinates.derived_from` | `string` | The query string passed to Nominatim, e.g. `"Ouray, Colorado"`. Enables reproducible re-geocoding. |
 | `location.town` | `string` | Primary town or city name. For multi-town events (e.g. a stage race), the start town. |
 | `location.county` | `string[]` | One or more counties. Array because some events span county lines. |
-| `location.region` | `string` (enum) | Region slug — see §5. Carried forward from the poster's regional groupings. |
+| `location.region` | `string` (enum) | Region slug — see §5. Originally carried forward from the poster's regional groupings; revised to nine regions by the geographic audit between Phases 3 and 4 (§6.8, ARCHITECTURE.md §4). |
 
 ### Distances
 
@@ -125,13 +125,17 @@ Rather than hiding uncertain or flagged data, every uncertain field has a compan
 
 ### `location.region`
 
+Nine regions. Revised by the geographic audit run between Phases 3 and 4 — see ARCHITECTURE.md §4 for the full reasoning, which is the reference; this table is the enum.
+
 | Slug | Display label |
 |---|---|
-| `san-juans` | San Juans / High Country |
-| `front-range-cs` | Front Range / Colorado Springs |
-| `denver-metro` | Denver Metro / N. Front Range |
+| `san-juans` | San Juans |
+| `front-range-cs` | Colorado Springs / Pikes Peak |
+| `denver-metro` | Denver Metro & Foothills |
+| `northern-front-range` | Northern Front Range |
 | `estes-park` | Estes Park / RMNP |
 | `mountains-western-slope` | Mountains / Western Slope |
+| `central-mountains` | Central Mountains / Sawatch |
 | `fairplay-south-park` | Fairplay / South Park |
 | `southern-colorado` | Southern Colorado |
 
@@ -202,9 +206,13 @@ About a third of events list "Independent" as organizer, which is accurate but l
 
 TransRockies Pass to Pub runs from Leadville to Red Cliff over 3 days. The stored coordinate is Leadville (start town). A `"stage"` format event with a linear route is the one case where a single point coordinate is genuinely lossy — the map pin will be at the start, not the midpoint or finish. This is acceptable for the MVP but worth noting for the map UI implementation.
 
-### 6.8 Region grouping for San Juans / High Country
+**Now also true of its `location.region`.** The route crosses the Continental Divide at Tennessee Pass into Eagle County; `central-mountains` is the start's region, chosen because a filter chip needs one discrete value. Same lossiness, same fix — see ARCHITECTURE.md §4.
 
-The "San Juans" region label (slug: `san-juans`) as used in the spreadsheet includes Leadville and Lake City, which are geographically high-country but not in the San Juan Mountains proper. This mirrors the poster's groupings. The label could be changed to "San Juans & High Country" or the events could be split — but that's a UI/poster-fidelity tradeoff best decided with the full dataset in view.
+### 6.8 Region grouping for San Juans / High Country — **resolved, split**
+
+*Original note:* the "San Juans" region label (slug: `san-juans`) as used in the spreadsheet included Leadville and Lake City, which are geographically high-country but not in the San Juan Mountains proper. This mirrored the poster's groupings. The label could be changed to "San Juans & High Country" or the events could be split — a UI/poster-fidelity tradeoff best decided with the full dataset in view.
+
+**Resolved with the full dataset in view, by the audit between Phases 3 and 4: split.** The two Leadville races moved to the new `central-mountains` region; `san-juans` dropped the "/ High Country" qualifier that existed to cover them. Lake City stays — Hinsdale County is in the San Juans proper, so it was never the problem. Twelve other events were corrected in the same pass. Full reasoning and the finalized nine-region scheme: ARCHITECTURE.md §4.
 
 ### 6.9 Silver Rush 50 in the sample
 
