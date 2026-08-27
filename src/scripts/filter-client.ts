@@ -23,6 +23,14 @@ const FACETS: Facet[] = ['format', 'dist', 'region', 'month'];
 interface Row {
   el: HTMLElement;
   tokens: RaceTokens;
+  /**
+   * Does this row contribute to displayed numbers? Discontinued and unverified
+   * events don't — see `countsTowardTotals` in ../lib/races.ts. They filter,
+   * sort and render exactly like every other row; they're only excluded from
+   * arithmetic. Emitted as `data-counted` by RaceRow.astro so this script never
+   * has to know the status vocabulary.
+   */
+  counted: boolean;
 }
 
 const list = document.querySelector<HTMLElement>('[data-race-list]');
@@ -38,7 +46,10 @@ function init(list: HTMLElement, panel: HTMLElement) {
       region: el.dataset.region ?? '',
       month: el.dataset.month ?? '',
     },
+    counted: el.dataset.counted === '1',
   }));
+
+  const countedTotal = rows.filter((r) => r.counted).length;
 
   const nodes = [...list.children] as HTMLElement[];
   const inputs = [...panel.querySelectorAll<HTMLInputElement>('input[data-facet]')];
@@ -46,6 +57,8 @@ function init(list: HTMLElement, panel: HTMLElement) {
   const resultCount = panel.querySelector<HTMLElement>('[data-result-count]');
   const resultWord = panel.querySelector<HTMLElement>('[data-result-word]');
   const summary = panel.querySelector<HTMLElement>('[data-filter-summary]');
+  const uncounted = panel.querySelector<HTMLElement>('[data-uncounted]');
+  const uncountedCount = panel.querySelector<HTMLElement>('[data-uncounted-count]');
   const clearBtn = panel.querySelector<HTMLButtonElement>('[data-clear]');
   const copyBtn = panel.querySelector<HTMLButtonElement>('[data-copy-link]');
 
@@ -161,11 +174,21 @@ function init(list: HTMLElement, panel: HTMLElement) {
   }
 
   function apply({ pushUrl }: { pushUrl: boolean }) {
+    // Two different quantities, deliberately not the same variable:
+    // `shown` is how many rows are on screen and drives the empty state;
+    // `visible` is how many of those count and drives every displayed number.
+    // Collapsing them back into one is the bug this split exists to prevent —
+    // Region → Denver Metro + Sub-50K leaves Sourdough (unverified) as the only
+    // row, so shown = 1 and visible = 0, and the "nothing matches" copy would
+    // otherwise appear directly above a visible result.
+    let shown = 0;
     let visible = 0;
     for (const r of rows) {
       const ok = matches(state, r.tokens);
       r.el.hidden = !ok;
-      if (ok) visible++;
+      if (!ok) continue;
+      shown++;
+      if (r.counted) visible++;
     }
 
     // Hide a month heading once nothing under it survives the filter.
@@ -186,12 +209,17 @@ function init(list: HTMLElement, panel: HTMLElement) {
 
     if (resultCount) resultCount.textContent = String(visible);
     if (resultWord) resultWord.textContent = visible === 1 ? 'event' : 'events';
-    if (empty) empty.hidden = visible > 0;
+    if (empty) empty.hidden = shown > 0;
+
+    const extra = shown - visible;
+    if (uncounted) uncounted.hidden = extra === 0;
+    if (uncountedCount) uncountedCount.textContent = String(extra);
 
     const active = countActive(state);
     if (clearBtn) clearBtn.hidden = active === 0;
     if (summary) {
-      summary.textContent = active === 0 ? `All ${rows.length} events` : describe(visible, active);
+      summary.textContent =
+        active === 0 ? `All ${countedTotal} events` : describe(visible, active);
       summary.classList.toggle('is-on', active > 0);
     }
 
@@ -204,7 +232,7 @@ function init(list: HTMLElement, panel: HTMLElement) {
   }
 
   function describe(visible: number, active: number) {
-    const bits: string[] = [`${visible} of ${rows.length}`];
+    const bits: string[] = [`${visible} of ${countedTotal}`];
     if (state.month.size === 1) bits.push(monthLabels.get([...state.month][0]) ?? '');
     bits.push(`${active} filter${active === 1 ? '' : 's'}`);
     return bits.filter(Boolean).join(' · ');
@@ -215,7 +243,7 @@ function init(list: HTMLElement, panel: HTMLElement) {
       const base = relax(facet);
       const tally = new Map<string, number>();
       for (const r of rows) {
-        if (!matches(base, r.tokens)) continue;
+        if (!r.counted || !matches(base, r.tokens)) continue;
         for (const t of new Set(tokensFor(facet, r.tokens))) tally.set(t, (tally.get(t) ?? 0) + 1);
       }
       for (const chip of panel.querySelectorAll<HTMLElement>(`[data-chip^="${facet}:"]`)) {

@@ -12,9 +12,17 @@ const { races } = Astro.props;
 // Initial (unfiltered) counts, rendered server-side so the panel is honest
 // before any JavaScript runs. The client script recomputes them as faceted
 // counts once filters are applied — see src/scripts/filter-client.ts.
+//
+// Only `counted` events contribute (races.ts `countsTowardTotals`): the
+// discontinued and unverified rows are listed and filterable like anything
+// else, they just don't inflate a number that reads as "races you could enter".
+// Both currently sit in Denver Metro, so that chip shows 12 above 14 rows —
+// the "+n not counted" note in the bar below exists to explain exactly that.
+const counting = races.filter((r) => r.counted);
+
 const tally = (pick: (r: RaceView) => string[]) => {
   const n = new Map<string, number>();
-  for (const r of races) for (const t of new Set(pick(r))) n.set(t, (n.get(t) ?? 0) + 1);
+  for (const r of counting) for (const t of new Set(pick(r))) n.set(t, (n.get(t) ?? 0) + 1);
   return n;
 };
 
@@ -39,7 +47,7 @@ const groups: { facet: keyof typeof counts; legend: string; choices: Choice[]; c
   <details class="filters" id="filters" open>
     <summary>
     <span class="sum-label">Filters</span>
-    <span class="sum-state" data-filter-summary>All {races.length} events</span>
+    <span class="sum-state" data-filter-summary>All {counting.length} events</span>
     <span class="sum-caret" aria-hidden="true"></span>
   </summary>
 
@@ -90,8 +98,11 @@ const groups: { facet: keyof typeof counts; legend: string; choices: Choice[]; c
 
   <div class="bar">
     <p class="tally" aria-live="polite">
-      <b data-result-count>{races.length}</b> <span data-result-word>events</span>
-      <span class="of">of {races.length}</span>
+      <b data-result-count>{counting.length}</b> <span data-result-word>events</span>
+      <span class="of">of {counting.length}</span>
+      <span class="uncounted" data-uncounted hidden>
+        &plus;<b data-uncounted-count>0</b> shown, not counted
+      </span>
     </p>
     <div class="acts">
       <button type="button" class="act" data-copy-link>Copy link</button>
@@ -341,6 +352,22 @@ const groups: { facet: keyof typeof counts; legend: string; choices: Choice[]; c
   }
   .of {
     color: var(--fg-mute);
+  }
+  /*
+   * Only appears when the current filter surfaces a discontinued or unverified
+   * row. Without it the bar can honestly read "0 events" while rows are plainly
+   * visible below — filter to Denver Metro + Sub-50K and Sourdough is the only
+   * survivor. Cheaper and more truthful than hiding those rows.
+   */
+  .uncounted {
+    color: var(--rust);
+    text-transform: none;
+    letter-spacing: 0.04em;
+    font-size: 0.76rem;
+  }
+  .uncounted b {
+    color: var(--rust);
+    font-variant-numeric: tabular-nums;
   }
   .acts {
     margin-left: auto;

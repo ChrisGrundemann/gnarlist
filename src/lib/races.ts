@@ -49,6 +49,8 @@ export interface Race {
 
 export interface RaceView extends Race {
   tokens: RaceTokens;
+  /** Does this event contribute to displayed totals? See `countsTowardTotals`. */
+  counted: boolean;
   /** Sortable: month, then day, then year. See `bySeason`. */
   sortKey: [number, number, number, string];
   month: number | null;
@@ -187,12 +189,28 @@ function badges(r: Race) {
   };
 }
 
+/**
+ * Whether an event contributes to any displayed number — the overall result
+ * count, the faceted chip counts, the masthead stats.
+ *
+ * `discontinued` (Golden Gate Dirty 30) and `unverified` (Sourdough Snowshoe)
+ * do not: counting a permanently-cancelled race among "14 events in Denver
+ * Metro" overstates what someone can actually go run. They stay fully visible
+ * and browsable in the list with their existing rust/hatched treatment — this
+ * is a counting rule, not a visibility rule, and the two must not be conflated
+ * by a later phase. `returning` counts normally; it's coming back.
+ */
+export function countsTowardTotals(r: Pick<Race, 'status'>): boolean {
+  return r.status === 'active' || r.status === 'returning';
+}
+
 function toView(r: Race): RaceView {
   const month = monthOf(r);
   const day = r.date_start ? Number(r.date_start.slice(8, 10)) : 0;
   return {
     ...r,
     month,
+    counted: countsTowardTotals(r),
     tokens: {
       formats: formatTokens(r),
       distances: distanceTokens(r),

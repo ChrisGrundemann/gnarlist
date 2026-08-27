@@ -55,12 +55,26 @@ export const DISTANCES: Choice[] = [
  */
 export const SUB_50K = 'sub-50k';
 
+/**
+ * The nine regions, corrected by the geographic audit that preceded Phase 4.
+ * Ordered so each chip sits next to its neighbours on the ground, not
+ * alphabetically. Slugs are URL contract — `front-range-cs` keeps its slug even
+ * though its label changed, so existing share links still resolve.
+ *
+ * Two labels changed as a consequence of the audit rather than as taste:
+ * `san-juans` dropped its "/ High Country" qualifier (that clause existed to
+ * cover Leadville, which is now `central-mountains`), and `front-range-cs`
+ * reads as Colorado Springs / Pikes Peak because a bare "Front Range" is
+ * ambiguous now that `northern-front-range` exists. See ARCHITECTURE.md §4.
+ */
 export const REGIONS: Choice[] = [
-  { value: 'san-juans', label: 'San Juans', full: 'San Juans / High Country' },
-  { value: 'front-range-cs', label: 'Front Range', full: 'Front Range / Colorado Springs' },
-  { value: 'denver-metro', label: 'Denver Metro', full: 'Denver Metro / N. Front Range' },
+  { value: 'san-juans', label: 'San Juans', full: 'San Juans' },
+  { value: 'front-range-cs', label: 'Colo. Springs', full: 'Colorado Springs / Pikes Peak' },
+  { value: 'denver-metro', label: 'Denver Metro', full: 'Denver Metro & Foothills' },
+  { value: 'northern-front-range', label: 'N. Front Range', full: 'Northern Front Range' },
   { value: 'estes-park', label: 'Estes Park', full: 'Estes Park / RMNP' },
   { value: 'mountains-western-slope', label: 'Western Slope', full: 'Mountains / Western Slope' },
+  { value: 'central-mountains', label: 'Central Mtns', full: 'Central Mountains / Sawatch' },
   { value: 'fairplay-south-park', label: 'South Park', full: 'Fairplay / South Park' },
   { value: 'southern-colorado', label: 'Southern CO', full: 'Southern Colorado' },
 ];

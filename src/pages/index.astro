@@ -13,11 +13,17 @@ import { allRaces } from '../lib/races';
 
 const races = allRaces();
 
+// `total` is how many rows the page renders; `counted` is how many of those
+// contribute to a displayed number (races.ts `countsTowardTotals`). They differ
+// by the two events that are listed for the record but aren't races anyone can
+// enter — one discontinued, one unverified. Every headline figure below is the
+// counted one; `total` only ever describes the list itself.
 const total = races.length;
-const running = races.filter((r) => r.status === 'active').length;
-const marquee = races.filter((r) => r.marquee).length;
-const regions = new Set(races.map((r) => r.location.region)).size;
-const longest = races.reduce((a, b) => Math.max(a, b.longest_ultra_miles ?? 0), 0);
+const counting = races.filter((r) => r.counted);
+const counted = counting.length;
+const marquee = counting.filter((r) => r.marquee).length;
+const regions = new Set(counting.map((r) => r.location.region)).size;
+const longest = counting.reduce((a, b) => Math.max(a, b.longest_ultra_miles ?? 0), 0);
 
 // Group into month sections. The one permanently-cancelled event has no month
 // at all; it gets its own trailing section rather than being quietly dropped.
@@ -30,7 +36,7 @@ for (const race of races) {
   sections.at(-1)!.races.push(race);
 }
 
-const description = `A filterable list of ${total} Colorado ultramarathons — by format, distance, region and month.`;
+const description = `A filterable list of ${counted} Colorado ultramarathons — by format, distance, region and month.`;
 ---
 
 <Base title="GnarList — Colorado Ultramarathons" description={description}>
@@ -39,10 +45,13 @@ const description = `A filterable list of ${total} Colorado ultramarathons — b
       <p class="eyebrow">Colorado &middot; Ultramarathon Index</p>
       <h1>GnarList</h1>
       <p class="deck">
-        <strong>{total}</strong> ways to spend a very long day on the high ground.
+        <strong>{counted}</strong> ways to spend a very long day on the high ground.
       </p>
       <p class="stats">
-        <span><b>{running}</b> running</span>
+        <span
+          title={`${total} events are listed in full, including ${total - counted} that don't count toward any total — one discontinued, one unverified.`}
+          ><b>{total}</b> listed</span
+        >
         <span><b>{marquee}</b> marquee</span>
         <span><b>{regions}</b> regions</span>
         <span><b>{longest}</b> miles at the far end</span>
@@ -64,6 +73,7 @@ const description = `A filterable list of ${total} Colorado ultramarathons — b
       <span class="key"><i class="k-bar k-discontinued"></i> Discontinued</span>
       <span class="key"><i class="k-bar k-unverified"></i> Unverified</span>
       <span class="key"><i class="k-tilde">~</i> Date not confirmed</span>
+      <span class="key note">Discontinued and unverified events are listed, but not counted.</span>
     </p>
 
     <div class="cols" aria-hidden="true">
@@ -101,8 +111,8 @@ const description = `A filterable list of ${total} Colorado ultramarathons — b
 
     <footer class="foot">
       <p>
-        {total} events across {REGIONS.length} Colorado regions. Hand-verified, corrections welcome.
-        Calendar and map views are next.
+        {counted} events across {REGIONS.length} Colorado regions, plus {total - counted} listed for
+        the record. Hand-verified, corrections welcome. Calendar and map views are next.
       </p>
       <p>
         Built with Astro on Cloudflare Workers &middot;
@@ -191,6 +201,10 @@ const description = `A filterable list of ${total} Colorado ultramarathons — b
   .k-star {
     color: var(--gold);
     font-style: normal;
+  }
+  .note {
+    color: var(--fg-mute);
+    font-style: italic;
   }
   .k-tilde {
     font-style: normal;
