@@ -1890,6 +1890,7 @@
     "organizer": "Independent",
     "organizer_confirmed": false,
     "source": [
+      "weldyourmettleultra.com",
       "runningintheusa.com"
     ],
     "coordinates": {
@@ -1907,37 +1908,35 @@
     },
     "ultra_distances": [
       {
-        "label": "36-hr",
+        "label": "100 Mile",
+        "miles": 100
+      },
+      {
+        "label": "100K",
+        "miles": 62.1
+      },
+      {
+        "label": "50 Miles",
+        "miles": 50
+      },
+      {
+        "label": "50K",
+        "miles": 31.1
+      },
+      {
+        "label": "36-hr timed",
         "hours": 36
-      },
-      {
-        "label": "24-hr",
-        "hours": 24
-      },
-      {
-        "label": "12-hr",
-        "hours": 12
-      },
-      {
-        "label": "9-hr",
-        "hours": 9
-      },
-      {
-        "label": "6-hr",
-        "hours": 6
-      },
-      {
-        "label": "3-hr",
-        "hours": 3
       }
     ],
     "companion_distances": [
-      "7K",
-      "Relay options"
+      "14 Mile",
+      "Marathon",
+      "7K Ruck",
+      "7K Walk/Run"
     ],
-    "longest_ultra_miles": null,
-    "distance_category": "timed",
-    "format": "timed",
+    "longest_ultra_miles": 100,
+    "distance_category": "100m",
+    "format": "standard",
     "date_start": "2027-06-05",
     "date_end": "2027-06-06",
     "date_confirmed": true,
@@ -1948,7 +1947,7 @@
     "year_started_confirmed": false,
     "status": "active",
     "marquee": false,
-    "notes": "Plains terrain (not mountain). Virtual option available."
+    "notes": "Plains terrain (not mountain). Four standard ultra distances start at 6am; the 14-mile, marathon and 7K events start at 8am. Relay teams of 2–12 runners can enter the 50-mile, 100K and 100-mile distances. Virtual option available."
   },
   {
     "slug": "noco-urban-ultra",
@@ -3277,17 +3276,17 @@
     "longest_ultra_miles": 31.1,
     "distance_category": "50k",
     "format": "standard",
-    "date_start": "2027-04-25",
+    "date_start": "2026-04-25",
     "date_end": null,
     "date_confirmed": true,
-    "date_display": "Apr 25, 2027",
+    "date_display": "Apr 25, 2026",
     "date_approx_month": null,
-    "date_approx_year": 2027,
+    "date_approx_year": 2026,
     "year_started": null,
     "year_started_confirmed": false,
     "status": "active",
     "marquee": false,
-    "notes": "Royal Gorge area. Date and distance line-up confirmed against Aravaipa's own calendar."
+    "notes": "Royal Gorge Ranch & Resort. Date and distance line-up confirmed against Aravaipa's own calendar; their 2027 date is not yet announced."
   },
   {
     "slug": "beulah-challenge",
