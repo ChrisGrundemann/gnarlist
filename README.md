@@ -101,7 +101,6 @@ aggregator's location field is derived data, not sourced data.
 ## License
 
 **No license file, deliberately** — default copyright applies, all rights reserved, for the code and
-for `data/races.json` alike. This is a settled decision rather than an oversight (ARCHITECTURE.md
-§8): the MIT file added during the Phase 2 scaffold was removed on purpose. Note that facts — race
-names, dates, locations, distances — aren't copyrightable regardless of licensing; only the specific
+for `data/races.json` alike. This is an intentional decision rather than an oversight. Note that facts
+(race names, dates, locations, distances) aren't copyrightable regardless of licensing; only the specific
 compilation and the original writing are. Not legal advice.
