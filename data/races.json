@@ -1612,10 +1612,10 @@
       "humanpotentialrunning.com"
     ],
     "coordinates": {
-      "lat": 39.4446,
-      "lng": -105.4812,
-      "precision": "town",
-      "derived_from": "Pine, Colorado"
+      "lat": 39.5084,
+      "lng": -105.416,
+      "precision": "venue",
+      "derived_from": "Staunton State Park, Colorado"
     },
     "location": {
       "town": "Pine",
@@ -4571,11 +4571,11 @@
     "date_display": "Apr 10–11, 2026",
     "date_approx_month": null,
     "date_approx_year": 2026,
-    "year_started": 2020,
-    "year_started_confirmed": true,
+    "year_started": 2021,
+    "year_started_confirmed": false,
     "status": "active",
     "marquee": false,
-    "notes": "Sylvan Dale Guest Ranch — exclusive access to private ranch trails. Cupless event; $5/day ranch fee; cabin and camping lodging on site. Relay variants (2- and 4-person teams) and virtual options exist alongside the solo timed races."
+    "notes": "Sylvan Dale Guest Ranch — exclusive access to private ranch trails. Cupless event; $5/day ranch fee; cabin and camping lodging on site. Relay variants (2- and 4-person teams) and virtual options exist alongside the solo timed races. Start year is unsettled: the organizer's own copy has called 2026 both its \"7th year\" (implying 2020) and its \"6th year running\" (implying 2021). Recorded as 2021 on the more recent registration copy, but left unconfirmed — this is one source disagreeing with itself over time, not two sources in conflict, so neither figure outranks the other on provenance."
   },
   {
     "slug": "running-up-for-air-staunton-rocks",
@@ -4639,7 +4639,7 @@
     "year_started_confirmed": true,
     "status": "active",
     "marquee": false,
-    "notes": "Colorado edition of the national Up For Air Series, run as a fundraiser for Front Range air quality. A 7.1-mile lollipop loop with ~1,500 ft of gain, repeated as many times as the time limit allows, typically over snow and ice. The date is not a fixed calendar slot — it tracks winter inversion season and shifts year to year (2025 ran Feb 14–15), so treat the Feb 6–7 date as specific to this edition. Note: the organizer dates the event to 2017 but also describes 2026 as its \"8th year\", which is one short — their inconsistency, recorded rather than resolved."
+    "notes": "Colorado edition of the national Up For Air Series, run as a fundraiser for Front Range air quality. A 7.1-mile lollipop loop with just over 1,600 ft of gain, repeated as many times as the time limit allows, typically over snow and ice. The date is not a fixed calendar slot — it tracks winter inversion season and shifts year to year (2025 ran Feb 14–15), so treat the Feb 6–7 date as specific to this edition. Note: the organizer dates the event to 2017 but also describes 2026 as its \"8th year\", which is one short — their inconsistency, recorded rather than resolved."
   },
   {
     "slug": "runs-with-scissors-co",

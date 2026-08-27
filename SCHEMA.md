@@ -92,7 +92,14 @@ Dates are the trickiest field class in this dataset. Many events have confirmed 
 
 **What this gives us:** Town/area centroid coordinates — accurate enough to place a pin in the right valley or mountain range, but not the exact trailhead or race venue. This is the honest state of the data: we know these races happen near Ouray, near Steamboat Springs, etc., but we don't have verified venue coordinates from organizer websites (that would require per-event research).
 
-**Schema honesty:** All initially geocoded events have `coordinates.precision: "town"`. The `derived_from` field records the query string, so re-geocoding or manual correction is always reproducible. If/when exact venue coordinates are sourced for specific events (e.g. from a race website's embedded map), `precision` changes to `"venue"` or `"trailhead"` and `derived_from` describes the source.
+**Schema honesty:** All *initially* geocoded events have `coordinates.precision: "town"`. The `derived_from` field records the query string, so re-geocoding or manual correction is always reproducible. If/when exact venue coordinates are sourced for specific events (e.g. from a race website's embedded map), `precision` changes to `"venue"` or `"trailhead"` and `derived_from` describes the source.
+
+**Four records now carry `"venue"`,** all where the town centroid was materially wrong rather than merely imprecise:
+
+- **The Roxborough Ultras** — Littleton's centroid sits ~13 mi away *and in the wrong county* (Arapahoe, against a Douglas County record).
+- **The three Staunton State Park races** — Suffer Better Fall Trail Run, Running Up for Air – Staunton Rocks, and Sawmill Trail Runs — where Pine's centroid is ~7 mi off. All three now share one coordinate, so the map shows one pin per venue rather than three races scattered around a park they all start in.
+
+The pattern to follow: upgrade when the town-level answer is *wrong*, not merely when a better one exists. Nominatim resolving a named park or open space is good enough to qualify as `"venue"`; a guess at a trailhead is not.
 
 **Marquee follow-up:** A handful of Colorado's most prominent 100-milers have well-known, easily verifiable start/finish locations (e.g. Leadville's 6th Street, Ouray's Fellin Park). These would be worth upgrading to `"venue"` precision in a follow-up pass — worth 30 minutes of research for the ~5 events involved.
 
