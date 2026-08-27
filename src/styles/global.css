@@ -48,6 +48,26 @@
   --rust-edge: rgb(201 117 92 / 32%);
 
   /*
+   * Map view (Phase 5). Every colour the map uses is either one of the four
+   * inks above or one of these — nothing is hard-coded in a component, so the
+   * planned design/colour sweep is a values-only edit here rather than a
+   * hunt-and-replace across the codebase.
+   *
+   * `--map-pin` is deliberately a cool grey-blue and NOT teal. On this view the
+   * pin body is the marquee channel (gold or not-gold, §2.5), so the default
+   * pin has to stay in the greyscale family the palette reserves for
+   * everything-that-isn't-marquee — and it has to hold up against basemap
+   * tiles, which is a contrast problem the list and calendar never had.
+   */
+  --map-pin: #92a7b8;
+  --map-pin-ink: #06090c;
+  --map-cued: #ffffff;
+  --map-ground: #0d1117;
+  --map-panel: rgb(11 15 19 / 92%);
+  --map-halo: rgb(146 167 184 / 22%);
+  --map-halo-gold: rgb(242 184 67 / 22%);
+
+  /*
    * Display face. No webfont this phase — a self-hosted condensed face
    * (Oswald / Archivo Narrow) would be the real fix and is noted as Phase 6
    * polish. Until then this stack finds a genuine condensed face on Linux,

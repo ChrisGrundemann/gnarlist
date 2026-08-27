@@ -111,7 +111,12 @@ function isFixedDistance(d: UltraDistance): boolean {
   );
 }
 
-function categoryForMiles(miles: number): string {
+/**
+ * The distance bucket a fixed mileage falls into. Exported because the map view
+ * needs it for the one event whose distance lives in a `stages` field rather
+ * than a `miles` one (TransRockies) — see `sizeTier` in map-data.ts.
+ */
+export function categoryForMiles(miles: number): string {
   if (miles >= 200) return '200m';
   if (miles >= 100) return '100m';
   if (miles >= 62.1) return '100k';

@@ -4,7 +4,7 @@
 // `?region=…&dist=…` on /races/hardrock-100/ would mean a hundred indexable
 // variants of the same page. So the state rides in sessionStorage instead,
 // written by the filter client on every change, and read here to point the
-// "back to the list / calendar" links at the state the visitor left behind.
+// "back to the list / calendar / map" links at the state the visitor left behind.
 //
 // Purely additive: with no stored state, or with storage refused, the links are
 // exactly the plain hrefs already in the HTML.

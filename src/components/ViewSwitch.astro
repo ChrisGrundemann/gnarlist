@@ -1,14 +1,17 @@
 ---
-// The list ↔ calendar switch.
+// The list ↔ calendar ↔ map switch.
 //
 // Filter state must survive the trip (ARCHITECTURE.md §4.5 — the reason Phase 3
-// was built first). Both views are separate pages, so the state travels the only
-// way it can across a navigation: in the query string. These links are rendered
+// was built first). The views are separate pages, so the state travels the only
+// way it can across a navigation: in the query string. With three views there
+// are two inactive links on any page and both carry `data-view-link`;
+// `wireViewLinks` rewrites every one of them, so no third-view branch was
+// needed in the filter client. These links are rendered
 // with a bare href so they work with JavaScript off, and the filter client
 // rewrites the inactive one to carry the live filter state on every change. See
 // `wireViewLinks` in src/scripts/filter-client.ts.
 interface Props {
-  current: 'list' | 'calendar';
+  current: 'list' | 'calendar' | 'map';
 }
 
 const { current } = Astro.props;
@@ -16,6 +19,7 @@ const { current } = Astro.props;
 const views = [
   { id: 'list', href: '/', label: 'List', hint: 'Every event in one seasonal run' },
   { id: 'calendar', href: '/calendar/', label: 'Calendar', hint: 'The year at a glance' },
+  { id: 'map', href: '/map/', label: 'Map', hint: 'Where the season happens' },
 ] as const;
 ---
 

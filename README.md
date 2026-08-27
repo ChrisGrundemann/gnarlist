@@ -7,9 +7,11 @@ It grows out of two hand-researched static posters (a "Colorado Ultra Season" ca
 "Colorado Ultra Map") built from a verified dataset of ~75 events. This site generalizes those two
 fixed views into an interactive, filterable, shareable tool.
 
-**Current status: Phase 3 complete (list view + filters).** All 102 events render as a filterable,
-seasonally-sorted list — by format, distance, region and month — with filter state in the URL so any
-view can be shared or bookmarked. Calendar and map views come in Phases 4–5.
+**Current status: Phases 3–5 built (list, calendar, map).** All 102 events render in three views —
+a seasonally-sorted list, a twelve-month calendar with per-month day timelines, and an interactive
+clustered map — all filterable by format, distance, region and month, with filter state in the URL
+so any view can be shared or bookmarked and carried between views. Every event also has its own
+permalink page at `/races/<slug>/`. Phase 6 is polish and search.
 
 📐 **[ARCHITECTURE.md](./ARCHITECTURE.md) is the source of truth** for architectural decisions,
 the phased build plan, and what's deliberately out of scope. Read it before making changes.
@@ -22,7 +24,7 @@ the phased build plan, and what's deliberately out of scope. Read it before maki
 | Framework | [Astro](https://astro.build) — static output, no SSR adapter |
 | Hosting | Cloudflare (Workers static assets), auto-deploy on push to `main` |
 | Data | Static JSON in the repo (`data/races.json`), read at build time |
-| Map (Phase 5) | Leaflet + free OSM-derived tiles |
+| Map | [Leaflet](https://leafletjs.com) + `leaflet.markercluster`, over free OpenStreetMap tiles darkened in CSS — no API key (ARCHITECTURE.md §2.2) |
 
 ## Layout
 
@@ -33,8 +35,22 @@ Colorado_Ultramarathons.xlsx Hand-verified source spreadsheet (provenance)
 data/races.json              Canonical dataset (102 events) — hand-maintained; see note below
 scripts/generate_races.py    Phase 1 conversion — historical, do NOT re-run (see header)
 scripts/geocode.py           Coordinate lookup helper
-src/pages/                   Astro pages
+src/pages/                   Astro pages — index (list), calendar, map, races/[slug]
+src/lib/                     Build-time data layer: filters, races, timeline, map
+src/scripts/                 Browser islands: filter-client, calendar-timeline, map-client
 ```
+
+## The three views
+
+| Path | What it is |
+|---|---|
+| `/` | Every event in one Jan→Dec run, grouped by month |
+| `/calendar/` | Twelve month boxes, each with a day timeline showing when races actually fall |
+| `/map/` | Clustered Leaflet map plus a region-grouped index; honest about town-level coordinates |
+| `/races/<slug>/` | The full record for one event |
+
+Filters are one engine (`src/lib/filters.ts`) shared by all three, and filter state travels between
+views in the query string.
 
 ## Develop
 

@@ -1,0 +1,226 @@
+---
+// One event row in the index that sits under the map, grouped by region.
+//
+// This row is doing four jobs at once, which is why the map view has a list on
+// it at all and why that list is not a second copy of the list view:
+//
+//   1. It is the no-JavaScript fallback. Leaflet needs JS; a map page that is
+//      blank without it would be the first view in this project to fail that
+//      way. Every event is here, server-rendered, linked.
+//   2. It is the filter substrate. The filter engine works off `[data-race]`
+//      elements (src/scripts/filter-client.ts) — these are those elements, so
+//      the map filters through exactly the same code path as the other two
+//      views rather than a parallel implementation that could drift.
+//   3. It is the accessibility layer. Markers are div icons in an overlay pane
+//      with no useful reading order; the same call the calendar made about its
+//      timeline marks applies here, and the semantics live in the rows.
+//   4. It is the map's index, in the book sense — the thing a marker points at.
+//
+// It stays distinct from the list view by grouping on region rather than month
+// and by leading with the pin glyph instead of a date. The glyph is rendered
+// from the same `pinClass` and the same stylesheet as the real marker, so the
+// row, the legend and the map can't drift apart.
+import { filterAttrs, raceHref, STATUS_NOTE, type RaceView } from '../lib/races';
+import { TIER_PX, pinClass } from '../lib/map';
+import { sizeTier, hasRoute } from '../lib/map-data';
+
+interface Props {
+  race: RaceView;
+}
+
+const { race } = Astro.props;
+const status = race.status === 'active' ? null : STATUS_NOTE[race.status];
+const tier = sizeTier(race);
+const cls = pinClass({
+  tier,
+  marquee: race.marquee,
+  status: race.status,
+  precision: (race.coordinates.precision as 'town' | 'venue' | 'trailhead') || 'town',
+});
+const route = hasRoute(race);
+---
+
+<li
+  {...filterAttrs(race)}
+  data-ev={race.slug}
+  class:list={['pl', race.marquee && 'is-marquee', race.status !== 'active' && `is-${race.status}`]}
+>
+  <span class="glyph" aria-hidden="true">
+    {
+      /* A route event gets the map's route glyph, not a pin — the row and the
+         map have to agree about what this event is drawn as. It is the only
+         event in the dataset with a route (ARCHITECTURE.md §4). */
+      route ? (
+        <i class="rline" />
+      ) : (
+        <span class={cls} style={`--d: ${TIER_PX[tier]}px`} />
+      )
+    }
+  </span>
+  <a class="nm" href={raceHref(race)} title={status ? `${race.name} — ${status.label}` : race.name}>
+    {race.marquee && <span class="star" aria-label="Marquee event">★</span>}{race.name}
+  </a>
+  {route && <span class="rt" title="Drawn as a route, not a pin — this race crosses two counties and the Continental Divide">Route</span>}
+  {status && <span class="pill" title={status.blurb}>{status.label.slice(0, 4)}</span>}
+  <span class="where" title={race.coordinates.derived_from}>{race.location.town}</span>
+</li>
+
+<style>
+  .pl {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0.6rem 0.3rem 0.4rem;
+    border-top: 1px solid var(--line-soft);
+    border-left: 3px solid transparent;
+    line-height: 1.35;
+  }
+  .pl:hover,
+  /* Set by the map script when a marker is hovered or opened — the row is what
+     the marker points at, so it has to be findable once you arrive. */
+  .pl.is-cued {
+    background: var(--ink-850);
+  }
+  .pl.is-cued {
+    outline: 1px solid var(--teal-edge);
+    outline-offset: -1px;
+  }
+
+  /*
+   * The pin glyph, at 70% of its map size. A fixed-width slot so the names line
+   * up regardless of how far the race is — the size difference still reads
+   * within the column, which is the point of putting it here at all.
+   */
+  .glyph {
+    --pin-scale: 0.7;
+    flex: none;
+    width: 1.35rem;
+    display: grid;
+    place-items: center;
+  }
+  .rline {
+    width: 1.15rem;
+    height: 0;
+    border-top: 3px dashed var(--gold);
+  }
+
+  .nm {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--fg);
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* The whole row is the hit area; the name is its one real link. */
+  .nm::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .pl:hover .nm,
+  .pl.is-cued .nm {
+    color: #fff;
+  }
+  .star {
+    color: var(--gold);
+    font-size: 0.85em;
+    margin-right: 0.2em;
+  }
+
+  .where {
+    flex: none;
+    max-width: 9rem;
+    font-size: 0.7rem;
+    color: var(--fg-mute);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .rt,
+  .pill {
+    flex: none;
+    font-family: var(--font-display);
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.02rem 0.24rem;
+    border-radius: 2px;
+    border: 1px solid currentcolor;
+    cursor: help;
+  }
+  .rt {
+    color: var(--gold);
+    background: var(--gold-wash);
+  }
+
+  /* ---- ★ marquee, and the three status treatments: same as every view ---- */
+  .is-marquee {
+    border-left-color: var(--gold-deep);
+    background: linear-gradient(90deg, var(--gold-wash), transparent 92%);
+  }
+  .is-marquee:hover,
+  .is-marquee.is-cued {
+    background: linear-gradient(90deg, var(--gold-wash), transparent 92%), var(--ink-850);
+  }
+  .is-marquee .nm {
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .is-returning {
+    border-left-color: var(--teal-deep);
+  }
+  .is-returning .pill {
+    color: var(--teal);
+    background: var(--teal-wash);
+  }
+
+  .is-discontinued {
+    border-left-color: var(--rust);
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent 0 9px,
+      rgb(201 117 92 / 4%) 9px 18px
+    );
+  }
+  .is-discontinued .pill {
+    color: var(--rust);
+    background: var(--rust-wash);
+  }
+  .is-discontinued .nm {
+    color: var(--fg-mute);
+  }
+
+  .is-unverified {
+    border-left: 3px dashed var(--gold-deep);
+  }
+  .is-unverified .pill {
+    color: var(--gold);
+    background: var(--gold-wash);
+  }
+  .is-unverified .nm {
+    color: var(--fg-dim);
+  }
+
+  @media (max-width: 59.99rem) {
+    .pl {
+      padding-block: 0.45rem;
+    }
+    .nm {
+      font-size: 0.95rem;
+    }
+  }
+  @media (max-width: 30rem) {
+    .where {
+      display: none;
+    }
+  }
+</style>

@@ -103,6 +103,8 @@ The pattern to follow: upgrade when the town-level answer is *wrong*, not merely
 
 **Marquee follow-up:** A handful of Colorado's most prominent 100-milers have well-known, easily verifiable start/finish locations (e.g. Leadville's 6th Street, Ouray's Fellin Park). These would be worth upgrading to `"venue"` precision in a follow-up pass — worth 30 minutes of research for the ~5 events involved.
 
+**Phase 5 note: the map now shows this field rather than just recording it.** Town-level pins are drawn with a soft halo and every popup carries an explicit line — *"Town-level pin — plotted at Leadville, Colorado, not at the start line."* — while `venue` records get a hard centre pip. The map deliberately did **not** upgrade any coordinate; that is this research task, unchanged. Two numbers it made concrete and worth having written down: 98 of 102 records are `town`, and the 102 events sit on only **55 distinct points** — eleven Colorado Springs races share one. That is what makes marker clustering load-bearing rather than decorative, and it is the strongest argument yet for the marquee follow-up above.
+
 **Script:** `scripts/geocode.py` — not an automated write path; operator runs it when adding events, reviews the output, and commits coordinates alongside the event record. Matches the data governance principle of PR-based review for all changes.
 
 ---
@@ -214,6 +216,8 @@ About a third of events list "Independent" as organizer, which is accurate but l
 TransRockies Pass to Pub runs from Leadville to Red Cliff over 3 days. The stored coordinate is Leadville (start town). A `"stage"` format event with a linear route is the one case where a single point coordinate is genuinely lossy — the map pin will be at the start, not the midpoint or finish. This is acceptable for the MVP but worth noting for the map UI implementation.
 
 **Now also true of its `location.region`.** The route crosses the Continental Divide at Tennessee Pass into Eagle County; `central-mountains` is the start's region, chosen because a filter chip needs one discrete value. Same lossiness, same fix — see ARCHITECTURE.md §4.
+
+**Resolved in Phase 5 — in the UI, not in the data.** The map draws this event as a dashed four-point corridor (Leadville → Tennessee Pass → Camp Hale → Red Cliff) with separate start and finish caps, so the route is no longer a point. **Nothing in `races.json` changed and nothing should:** `coordinates` still holds the Leadville start, which is the correct single point for a record that needs one, and the route geometry lives beside the map in `src/lib/map-data.ts` because it is presentation, not data. It is explicitly an *approximate corridor* and is drawn dashed to say so — there is no GPX for this or any other event, and sourcing course tracks remains deferred (ARCHITECTURE.md §6). If a real track is ever sourced, it replaces that geometry; the schema is unaffected either way.
 
 ### 6.8 Region grouping for San Juans / High Country — **resolved, split**
 

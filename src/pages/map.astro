@@ -1,0 +1,562 @@
+---
+// Phase 5 — the map view.
+//
+// Leaflet over free CARTO/OSM tiles (ARCHITECTURE.md §2.2 — no API key, no
+// Mapbox), real marker clustering, and the same filter engine as the other two
+// views. What a marker's size, fill, ring and halo each mean is decided in
+// src/lib/map.ts and drawn by src/styles/map.css; the reasoning is in
+// ARCHITECTURE.md §7 item 5.
+//
+// Three things worth knowing before reading further, because each is a decision
+// rather than a default:
+//
+//   * The list under the map is not a second list view. It is the map's index
+//     — grouped by region rather than by month — and it is simultaneously the
+//     no-JavaScript fallback, the filter substrate and the accessibility layer.
+//     See the header of MapPlaceRow.astro.
+//   * Nothing here touches filter-client.ts. The map opts into the same four
+//     DOM contracts the calendar uses and listens for the `gnarlist:filtered`
+//     signal that file already dispatches. That signal was built in Phase 4
+//     with this view in mind; using it rather than adding a map branch is what
+//     keeps the filter engine layout-agnostic.
+//   * TransRockies is drawn as a route, not a pin. That has been the deferred
+//     answer to its cross-boundary problem since the region audit (§4).
+import FilterBar from '../components/FilterBar.astro';
+import MapPlaceRow from '../components/MapPlaceRow.astro';
+import ViewSwitch from '../components/ViewSwitch.astro';
+import Base from '../layouts/Base.astro';
+import { REGIONS } from '../lib/filters';
+import { TIER_KEYS, TIER_LABEL, TIER_PX } from '../lib/map';
+import { mapPoints, serializePoints } from '../lib/map-data';
+import { allRaces } from '../lib/races';
+import '../styles/map.css';
+
+const races = allRaces();
+const total = races.length;
+const counted = races.filter((r) => r.counted).length;
+
+const points = mapPoints(races);
+
+// Region groups, in the vocabulary's own geographic order rather than
+// alphabetically or by size — the same order the region chips sit in, so the
+// index below the map reads in the same sequence as the filter above it.
+const groups = REGIONS.map((region) => ({
+  ...region,
+  races: races.filter((r) => r.location.region === region.value),
+})).filter((g) => g.races.length > 0);
+
+// Derived, never written out — the rule §4 records for the masthead and the
+// legend. A status with no rows behind it doesn't get a key.
+const present = new Set(races.map((r) => r.status));
+
+// Coordinate precision, counted rather than asserted. The copy under the map
+// quotes these numbers, so they can't go stale the way "one discontinued, one
+// unverified" did.
+const townLevel = races.filter((r) => r.coordinates.precision === 'town').length;
+const venueLevel = total - townLevel;
+
+// The largest pile of coincident points, named. This is the concrete case that
+// makes clustering load-bearing rather than decorative, and quoting it in the
+// copy is more honest than a general claim about imprecision.
+const byPoint = new Map<string, string[]>();
+for (const r of races) {
+  const key = `${r.coordinates.lat},${r.coordinates.lng}`;
+  byPoint.set(key, [...(byPoint.get(key) ?? []), r.coordinates.derived_from]);
+}
+const worst = [...byPoint.values()].sort((a, b) => b.length - a.length)[0];
+const worstPlace = worst[0].replace(/,\s*Colorado$/, '');
+const distinctPoints = byPoint.size;
+
+const description = `An interactive map of ${counted} Colorado ultramarathons — clustered, filterable by format, distance, region and month, and honest about how precisely each race is placed.`;
+---
+
+<Base title="Map — GnarList Colorado Ultramarathons" description={description}>
+  <header class="masthead">
+    <div class="shell">
+      <p class="eyebrow">Colorado &middot; Ultramarathon Index</p>
+      <h1>Where the Season<br />Actually Happens</h1>
+      <p class="deck">
+        {counted} events on {distinctPoints} places. The state is not evenly loaded — it never was.
+      </p>
+    </div>
+  </header>
+
+  <main class="shell">
+    <ViewSwitch current="map" />
+
+    <p class="howto">
+      Tap the map once to take the controls — until then it stays out of the way of the page.
+      Pins cluster until you zoom in, and a cluster of same-town races opens into a fan when you
+      click it. Point at a pin to find its race in the index below the map, or run down the
+      index to light up the map. Filters carry over from the list and calendar views, and back.
+    </p>
+
+    <FilterBar races={races} />
+
+    <div class="mlegend">
+      <div class="lrow">
+        <span class="lhead">Size &mdash; how far you can run</span>
+        {
+          TIER_KEYS.map((t) => (
+            <span class="key">
+              <span class="glyph" aria-hidden="true">
+                <span class:list={['pin', t === 'open' && 'is-open']} style={`--d: ${TIER_PX[t]}px`} />
+              </span>
+              {TIER_LABEL[t]}
+            </span>
+          ))
+        }
+      </div>
+      <div class="lrow">
+        <span class="lhead">Everything else</span>
+        <span class="key">
+          <span class="glyph" aria-hidden="true"><span class="pin is-marquee" style="--d: 14px" /></span>
+          Marquee
+        </span>
+        <span class="key">
+          <span class="glyph" aria-hidden="true"><span class="pin is-town" style="--d: 14px" /></span>
+          Town-level &mdash; somewhere in this town
+        </span>
+        <span class="key">
+          <span class="glyph" aria-hidden="true"><span class="pin is-venue" style="--d: 14px" /></span>
+          Venue-level &mdash; this place
+        </span>
+        {
+          present.has('returning') && (
+            <span class="key">
+              <span class="glyph" aria-hidden="true">
+                <span class="pin is-returning" style="--d: 14px" />
+              </span>
+              Returning
+            </span>
+          )
+        }
+        {
+          present.has('discontinued') && (
+            <span class="key">
+              <span class="glyph" aria-hidden="true">
+                <span class="pin is-discontinued" style="--d: 14px" />
+              </span>
+              Discontinued
+            </span>
+          )
+        }
+        {
+          present.has('unverified') && (
+            <span class="key">
+              <span class="glyph" aria-hidden="true">
+                <span class="pin is-unverified" style="--d: 14px" />
+              </span>
+              Unverified
+            </span>
+          )
+        }
+        <span class="key"><i class="k-route" aria-hidden="true" /> Route, drawn end to end</span>
+      </div>
+    </div>
+
+    <div class="mtools">
+      <button type="button" class="act" data-fit>Fit results</button>
+      <p class="mnote">
+        <b>{townLevel}</b> of {total} pins are town-level &mdash; geocoded from a place name, not a
+        start line. {worst.length} races share a single {worstPlace} point.{' '}
+        {venueLevel} carry a venue-level coordinate and are drawn with a solid centre.
+      </p>
+    </div>
+
+    <div class="map-shell" data-map-shell>
+      <div id="map" data-map></div>
+      {/* Cooperative gesture. Until the map is deliberately engaged it doesn't
+          drag, zoom or take the scroll wheel — so scrolling the page past a
+          68vh map on a phone doesn't get captured by it. One tap hands the
+          gestures over. It's a <button>, so Enter works too. */}
+      <button type="button" class="map-veil" data-map-veil hidden>
+        <span>Tap to explore the map</span>
+      </button>
+      <p class="map-fallback">
+        The map itself needs JavaScript. Every event is indexed below it, grouped by region, with
+        a link to its full record &mdash; nothing on this page is only reachable through the map.
+      </p>
+    </div>
+
+    <noscript>
+      <p class="noscript">
+        Filtering and the map both need JavaScript. All {total} events are listed below regardless.
+      </p>
+    </noscript>
+
+    <h2 class="ihead">The index</h2>
+    <p class="isub">
+      Every event on the map, by region. Hovering a race lights its pin; picking a pin scrolls to
+      its race.
+    </p>
+
+    <div class="index">
+      {
+        groups.map((g) => (
+          <section class="rgroup" data-group aria-label={g.full ?? g.label}>
+            <h3 class="rhead">
+              <span class="rname">{g.full ?? g.label}</span>
+              <span class="rcount">
+                <b data-group-count>{g.races.filter((r) => r.counted).length}</b>
+              </span>
+            </h3>
+            <ul class="rlist">
+              {g.races.map((race) => (
+                <MapPlaceRow race={race} />
+              ))}
+            </ul>
+            <p class="rnone" data-group-empty hidden>
+              No events
+            </p>
+          </section>
+        ))
+      }
+    </div>
+
+    <p class="empty" data-empty hidden>
+      Nothing on the map matches all of that. Loosen a filter &mdash; or switch on
+      <em>Sub&#8209;50K</em> if you're after something shorter.
+    </p>
+
+    <footer class="foot">
+      <p>
+        {counted} events across {groups.length} Colorado regions, plus {total - counted} listed for
+        the record. Positions are as precise as the data honestly is, and no more.
+      </p>
+      <p>
+        {/* Explicit spaces — `compressHTML` eats the whitespace between adjacent
+            elements, which is how the calendar's results bar once rendered as
+            "101 EVENTSOF 101". */}
+        Built with Astro on Cloudflare Workers &middot; map by{' '}
+        <a href="https://leafletjs.com/">Leaflet</a>, tiles by{' '}
+        <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &middot;{' '}
+        <a href="https://github.com/ChrisGrundemann/gnarlist">source on GitHub</a>
+      </p>
+    </footer>
+  </main>
+
+  {/* The map's whole payload, escaped so a race note containing an HTML tag
+      can't close this element early (same rule as the JSON-LD serializer). */}
+  <script type="application/json" id="map-points" set:html={serializePoints(points)} />
+
+  <script>
+    import '../scripts/filter-client';
+    import '../scripts/map-client';
+  </script>
+</Base>
+
+<style>
+  .masthead {
+    padding: clamp(1.75rem, 5vw, 3.25rem) 0 clamp(1.25rem, 3vw, 2rem);
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, transparent, rgb(242 184 67 / 3%)), transparent;
+  }
+  h1 {
+    font-size: clamp(2rem, 6.2vw, 3.6rem);
+    line-height: 0.95;
+    letter-spacing: -0.005em;
+    text-transform: uppercase;
+    margin: 0.35rem 0 0;
+    background: linear-gradient(175deg, #fff 10%, var(--gold) 150%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .deck {
+    margin: 0.8rem 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 2.8vw, 1.25rem);
+    color: var(--fg-dim);
+    max-width: 44ch;
+  }
+
+  main {
+    padding: clamp(1.25rem, 3vw, 2rem) 0 4rem;
+  }
+  .howto {
+    margin: 0 0 1.25rem;
+    max-width: 64ch;
+    font-size: 0.9rem;
+    color: var(--fg-dim);
+  }
+
+  /* ---- legend: the marker language, drawn with the markers' own CSS ---- */
+  .mlegend {
+    margin: 0 0 0.85rem;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--ink-850);
+  }
+  .lrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 1rem;
+    font-size: 0.72rem;
+    color: var(--fg-mute);
+  }
+  .lrow + .lrow {
+    margin-top: 0.55rem;
+    padding-top: 0.55rem;
+    border-top: 1px solid var(--line-soft);
+  }
+  .lhead {
+    font-family: var(--font-display);
+    font-size: 0.64rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    width: 100%;
+  }
+  .key {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  /* A fixed slot so the size steps read as a scale rather than as jitter. */
+  .key .glyph {
+    flex: none;
+    width: 1.7rem;
+    display: grid;
+    place-items: center;
+  }
+  .k-route {
+    width: 1.7rem;
+    height: 0;
+    border-top: 3px dashed var(--gold);
+    display: inline-block;
+  }
+
+  @media (min-width: 60rem) {
+    .lhead {
+      width: auto;
+      min-width: 11rem;
+    }
+  }
+
+  /* ---- the honesty note, and the reset control ---- */
+  .mtools {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+    margin: 0 0 0.7rem;
+  }
+  .act {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    color: var(--fg-dim);
+    font: 500 0.78rem/1 var(--font-display);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.55rem 0.75rem;
+    cursor: pointer;
+    flex: none;
+  }
+  .act:hover {
+    border-color: var(--teal-edge);
+    color: var(--fg);
+  }
+  .mnote {
+    margin: 0;
+    flex: 1 1 22rem;
+    font-size: 0.74rem;
+    line-height: 1.5;
+    color: var(--fg-mute);
+  }
+  .mnote b {
+    color: var(--fg-dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---- the map itself ---- */
+  .map-shell {
+    position: relative;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--map-ground);
+  }
+  #map {
+    height: clamp(24rem, 68vh, 44rem);
+    width: 100%;
+  }
+  /* On a phone 68vh is most of the screen and the index below it stops
+     existing. A shorter map you can scroll past beats a taller one you can't. */
+  @media (max-width: 46rem) {
+    #map {
+      height: clamp(17rem, 52vh, 23rem);
+    }
+  }
+  /*
+   * Before the script runs — and forever, with JavaScript off — the container
+   * collapses and the fallback line stands in its place. An empty 40rem hole
+   * would be a worse answer than a sentence pointing at the index.
+   */
+  .map-shell:not(.is-ready) #map {
+    height: 0;
+  }
+  .map-shell.is-ready .map-fallback {
+    display: none;
+  }
+  .map-fallback {
+    margin: 0;
+    padding: 1rem;
+    font-size: 0.85rem;
+    color: var(--fg-dim);
+  }
+
+  /*
+   * The veil is rendered `hidden` and unhidden by the script, so it never
+   * appears over a map that can't be engaged anyway (JavaScript off).
+   */
+  .map-veil {
+    position: absolute;
+    inset: 0;
+    z-index: 500;
+    display: grid;
+    place-items: center;
+    appearance: none;
+    border: 0;
+    background: rgb(8 11 14 / 30%);
+    cursor: pointer;
+  }
+  .map-veil span {
+    padding: 0.5rem 0.8rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--map-panel);
+    color: var(--fg-dim);
+    font: 600 0.74rem/1 var(--font-display);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .map-veil:hover span,
+  .map-veil:focus-visible span {
+    border-color: var(--teal-edge);
+    color: var(--fg);
+  }
+
+  .noscript {
+    margin: 1rem 0 0;
+    padding: 0.7rem 0.9rem;
+    border-left: 3px solid var(--gold-deep);
+    background: var(--gold-wash);
+    font-size: 0.85rem;
+    color: var(--fg-dim);
+  }
+
+  /* ---- the index under the map ---- */
+  .ihead {
+    margin: 2rem 0 0.15rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .isub {
+    margin: 0 0 1rem;
+    font-size: 0.8rem;
+    color: var(--fg-mute);
+  }
+
+  /*
+   * Region boxes, same shape as the calendar's month boxes and for the same
+   * reason: a group the filter has emptied keeps its slot and says so, rather
+   * than disappearing and leaving the page shorter and less legible on every
+   * chip toggle.
+   */
+  .index {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 1rem;
+  }
+  @media (min-width: 46rem) {
+    .index {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 68rem) {
+    .index {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.1rem;
+    }
+  }
+
+  .rgroup {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: linear-gradient(180deg, var(--ink-850), var(--ink-900) 7rem);
+    overflow: hidden;
+  }
+  .rgroup.is-empty {
+    background: none;
+    opacity: 0.62;
+  }
+  .rhead {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    padding: 0.55rem 0.7rem 0.45rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .rcount {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    color: var(--fg-mute);
+  }
+  .rcount b {
+    color: var(--fg-dim);
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+  }
+  .rlist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .rnone {
+    margin: 0;
+    padding: 0.6rem 0.7rem;
+    font-size: 0.76rem;
+    font-style: italic;
+    color: var(--fg-mute);
+    border-top: 1px solid var(--line-soft);
+  }
+
+  .empty {
+    margin: 0;
+    padding: 2.5rem 1rem;
+    text-align: center;
+    color: var(--fg-dim);
+  }
+  .empty em {
+    color: var(--teal);
+    font-style: normal;
+  }
+
+  .foot {
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+    color: var(--fg-mute);
+    font-size: 0.8rem;
+  }
+  .foot p {
+    margin: 0 0 0.35rem;
+  }
+</style>

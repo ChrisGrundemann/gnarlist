@@ -1,0 +1,461 @@
+/*
+ * The map view's visual language, and the Leaflet theme it sits in.
+ *
+ * Global rather than scoped, and that is not laziness: Leaflet builds its
+ * markers, clusters, popups and controls outside the Astro component tree, so
+ * an Astro-scoped style would never reach them. Keeping the pin rules here also
+ * means the legend, the index rows under the map and the markers themselves all
+ * render from one set of declarations — a legend that can drift from the thing
+ * it explains is worse than no legend.
+ *
+ * ------------------------------------------------------------------
+ * WHAT A PIN ENCODES  (ARCHITECTURE.md §7 item 5 argues each of these)
+ * ------------------------------------------------------------------
+ *   size          how far you can run here.  Ordered data, ordered variable.
+ *   fill          marquee, and nothing else.  Gold or not gold (§2.5).
+ *   outer ring    status.  Absent for `active`, which is 99 of 102 records.
+ *   soft halo     the coordinate is town-level — "somewhere in this town".
+ *   centre pip    the coordinate is venue-level — this specific place.
+ *
+ * Four channels, four different CSS mechanisms (box model, background,
+ * outline, box-shadow/::before), so no two can collide on one marker — a pin
+ * can be a marquee 100-miler that is also returning and also town-level, and
+ * all four facts stay legible at once. The one rule that must survive any
+ * future edit: nothing except a marquee event is ever gold.
+ */
+
+/* ============================================================
+   The pin
+   ============================================================ */
+
+.pin {
+  --d: 12px;
+  --pin-ink: var(--map-pin);
+  /* The halo rides on box-shadow and the status ring on outline, so the two
+     never have to share one property — and neither needs a negative z-index,
+     which behaves differently inside a Leaflet marker (its own stacking
+     context) than inside an index row (not one). */
+  --pin-halo: 0 0 0 0 transparent;
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  width: calc(var(--d) * var(--pin-scale, 1));
+  height: calc(var(--d) * var(--pin-scale, 1));
+  border-radius: 50%;
+  background: var(--pin-ink);
+  border: 1px solid var(--map-pin-ink);
+  box-shadow: var(--pin-halo);
+  transition:
+    background 0.12s ease,
+    transform 0.12s ease;
+}
+
+/* Gold means marquee. This is the only rule in the file that may set gold. */
+.pin.is-marquee {
+  --pin-ink: var(--gold);
+}
+
+/*
+ * No fixed distance — the 22 timed and backyard events, where "how far" is the
+ * question the race asks rather than a fact about it. A hollow ring says that
+ * without borrowing a size step it hasn't earned.
+ */
+.pin.is-open {
+  background: transparent;
+  border: 2px solid var(--pin-ink);
+}
+
+/*
+ * Status, as an outer ring. Carried over verbatim from the list and calendar
+ * (§4/§5): these events stay fully visible and distinctly marked. This is a
+ * counting rule, not a visibility rule, and the map does not get to re-decide
+ * that — there is deliberately no status filter here.
+ */
+.pin.is-returning {
+  outline: 2px solid var(--teal);
+}
+.pin.is-discontinued {
+  outline: 2px solid var(--rust);
+  opacity: 0.72;
+}
+/* Dashed for uncertainty — the same idiom the calendar's "~" gutter uses. */
+.pin.is-unverified {
+  outline: 2px dashed var(--gold-deep);
+}
+
+/*
+ * Coordinate honesty.
+ *
+ * 98 of 102 coordinates are geocoded from a town name, so a pin marks a town,
+ * not a start line — and every race starting in the same town shares literally
+ * one point. The halo is a soft edge for a soft fact: the pin visibly doesn't
+ * end where it appears to. Venue-level records get the opposite treatment, a
+ * hard centre pip, because there the point really is the point.
+ *
+ * Both cues are duplicated in words in the popup. Neither is load-bearing on
+ * its own; what matters is that the imprecision is never silently absent.
+ */
+.pin.is-town {
+  --pin-halo: 0 0 0 4px var(--map-halo);
+}
+.pin.is-marquee.is-town {
+  --pin-halo: 0 0 0 4px var(--map-halo-gold);
+}
+.pin.is-venue::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--map-pin-ink);
+}
+.pin.is-open.is-venue::before {
+  background: var(--pin-ink);
+}
+
+/* Hovered on the map, or cued from its row in the index below it. */
+.pin.is-cued,
+.leaflet-marker-icon:hover .pin {
+  --pin-ink: var(--map-cued);
+  transform: scale(1.15);
+}
+
+/*
+ * A 9px sub-50K pin is an honest size and a hostile tap target. On the map only
+ * — not in the index rows, where the whole row is already the hit area — the
+ * pin grows an invisible overlay. Kept modest so a small pin can't swallow
+ * clicks aimed at the one next to it.
+ */
+.leaflet-marker-icon .pin::after {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+}
+
+/* ============================================================
+   The route — TransRockies, the one event that isn't a point
+   ============================================================ */
+
+/*
+ * Dashed, for the same reason the calendar dashes an unconfirmed date: we know
+ * the shape of this route, not its detail. It is a corridor along the line the
+ * race travels, not a surveyed course. Gold because the event is marquee — a
+ * future non-marquee route would draw in `--map-pin`; the line's dash is what
+ * says "route", not its colour.
+ */
+.rt-line {
+  stroke: var(--gold);
+  stroke-width: 3;
+  stroke-dasharray: 7 5;
+  stroke-linecap: round;
+  fill: none;
+  opacity: 0.9;
+}
+.rt-line.is-cued {
+  stroke: var(--map-cued);
+  stroke-width: 5;
+  opacity: 1;
+}
+
+/* Start and finish caps, so the direction of travel is readable. */
+.rt-cap {
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  font: 700 9px/1 var(--font-display);
+  letter-spacing: 0.04em;
+  color: var(--ink-950);
+  background: var(--gold);
+  border: 1px solid var(--map-pin-ink);
+  box-shadow: 0 0 0 4px var(--map-halo-gold);
+}
+.rt-cap.is-finish {
+  color: var(--gold);
+  background: var(--ink-950);
+  border: 2px solid var(--gold);
+}
+.rt-cap.is-cued {
+  background: var(--map-cued);
+  color: var(--ink-950);
+}
+
+/* The two endpoint labels. Hidden until the route is big enough to read — at
+   statewide zoom Leadville and Red Cliff are about ten pixels apart. */
+.rt-tip.leaflet-tooltip {
+  display: none;
+  padding: 1px 5px;
+  background: var(--map-panel);
+  border: 1px solid var(--gold-edge);
+  border-radius: 2px;
+  color: var(--gold);
+  font: 600 0.6rem/1.5 var(--font-display);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  box-shadow: none;
+  white-space: nowrap;
+}
+.rt-tip.leaflet-tooltip::before {
+  display: none;
+}
+.map-shell.is-close .rt-tip.leaflet-tooltip {
+  display: block;
+}
+
+/* ============================================================
+   Clusters
+   ============================================================ */
+
+/*
+ * The badge shows the COUNTED total, not the marker total (§4's counting rule —
+ * a cluster badge is a displayed number like any other). When a cluster also
+ * holds a discontinued or unverified event it grows a rust "+n", which is the
+ * same wording the results bar uses for the same gap. Hiding those events to
+ * make the arithmetic tidy is the merge that rule exists to prevent.
+ */
+.cl {
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--map-panel);
+  border: 1px solid var(--teal-edge);
+  box-shadow: 0 0 0 4px rgb(70 182 168 / 8%);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+/* A cluster holding at least one marquee event says so, because otherwise
+   zooming out hides every ★ on the map. Still the only meaning gold carries. */
+.cl.has-marquee {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px var(--map-halo-gold);
+}
+.cl .n {
+  font-size: 0.72rem;
+}
+.cl.is-lg .n {
+  font-size: 0.8rem;
+}
+.cl .x {
+  display: block;
+  margin-top: 1px;
+  font-size: 0.5rem;
+  color: var(--rust);
+}
+.marker-cluster:hover .cl,
+/* Cued from an index row whose marker is currently inside this cluster —
+   pointing at the cluster is the honest answer, since the marker isn't drawn. */
+.marker-cluster.is-cued .cl {
+  border-color: var(--map-cued);
+  color: var(--map-cued);
+}
+
+/* ============================================================
+   Leaflet, re-skinned
+   ============================================================ */
+
+.leaflet-container {
+  background: var(--map-ground);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  outline: none;
+}
+.leaflet-container a {
+  color: var(--teal);
+}
+
+/*
+ * The dark basemap, made here rather than bought from a provider.
+ *
+ * The tiles are standard OpenStreetMap — the only genuinely keyless OSM raster
+ * source left after CARTO started stamping "API KEY REQUIRED" over its free
+ * ones (ARCHITECTURE.md §2.2). They arrive light, so they get inverted: the
+ * hue-rotate puts the colours back the right way round after the invert, and
+ * the rest pulls the result onto the same cold near-black ground as every other
+ * page. Roads read as dark grey on near-black, which is what a basemap under
+ * this palette should do — recede.
+ */
+.leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.78) contrast(1.05) saturate(0.42)
+    grayscale(0.3);
+}
+
+.leaflet-bar,
+.leaflet-touch .leaflet-bar {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: none;
+  overflow: hidden;
+}
+.leaflet-bar a,
+.leaflet-bar a:hover {
+  background: var(--ink-850);
+  color: var(--fg-dim);
+  border-bottom-color: var(--line);
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+}
+.leaflet-bar a:hover {
+  background: var(--ink-800);
+  color: var(--fg);
+}
+.leaflet-bar a.leaflet-disabled {
+  background: var(--ink-900);
+  color: var(--fg-mute);
+  opacity: 0.5;
+}
+
+.leaflet-control-attribution {
+  background: var(--map-panel);
+  color: var(--fg-mute);
+  font-size: 0.64rem;
+  padding: 1px 6px;
+}
+.leaflet-control-attribution a {
+  color: var(--fg-dim);
+}
+
+/* ---- popups ---- */
+.leaflet-popup-content-wrapper {
+  background: linear-gradient(180deg, var(--ink-850), var(--ink-900));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 45%);
+  color: var(--fg-dim);
+}
+.leaflet-popup-content {
+  margin: 0.7rem 0.85rem;
+  width: 15rem !important;
+  line-height: 1.45;
+}
+.leaflet-popup-tip {
+  background: var(--ink-900);
+  border: 1px solid var(--line);
+  box-shadow: none;
+}
+.leaflet-container a.leaflet-popup-close-button {
+  color: var(--fg-mute);
+  padding: 6px 7px 0 0;
+}
+.leaflet-container a.leaflet-popup-close-button:hover {
+  color: var(--fg);
+  background: transparent;
+}
+
+.pp-head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0 1.1rem 0.35rem 0;
+}
+.pp-name {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--fg);
+  text-decoration: none;
+}
+.pp-name:hover {
+  color: var(--map-cued);
+  text-decoration: underline;
+}
+.is-marquee-pp .pp-name {
+  color: var(--gold);
+}
+.pp-star {
+  color: var(--gold);
+}
+.pp-when {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+.pp-when .tilde {
+  font-family: var(--font-mono);
+  color: var(--fg-mute);
+}
+.pp-where {
+  margin: 0.3rem 0 0;
+  font-size: 0.78rem;
+  color: var(--fg-dim);
+}
+.pp-where b {
+  color: var(--fg);
+  font-weight: 500;
+}
+.pp-dist {
+  margin: 0.3rem 0 0;
+  font-size: 0.74rem;
+  color: var(--teal);
+}
+.pp-status {
+  display: inline-block;
+  margin: 0.4rem 0 0;
+  padding: 0.05rem 0.3rem;
+  border: 1px solid currentcolor;
+  border-radius: 2px;
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.pp-status.s-returning {
+  color: var(--teal);
+  background: var(--teal-wash);
+}
+.pp-status.s-discontinued {
+  color: var(--rust);
+  background: var(--rust-wash);
+}
+.pp-status.s-unverified {
+  color: var(--gold);
+  background: var(--gold-wash);
+}
+/*
+ * The precision line. Never omitted, on any marker — the whole point is that a
+ * pin can't quietly imply a precision the data doesn't have.
+ */
+.pp-prec {
+  margin: 0.5rem 0 0;
+  padding-top: 0.4rem;
+  border-top: 1px dashed var(--line);
+  font-size: 0.7rem;
+  font-style: italic;
+  color: var(--fg-mute);
+}
+.pp-go {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--teal);
+  text-decoration: none;
+}
+.pp-go:hover {
+  color: var(--fg);
+}
+
+/* Leaflet sets an inline background on divIcons in some paths; we never want
+   one, the pin element paints itself. */
+.leaflet-div-icon {
+  background: transparent;
+  border: 0;
+}
