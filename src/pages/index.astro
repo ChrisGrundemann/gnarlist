@@ -1,226 +1,300 @@
 ---
-// Phase 2 placeholder page.
+// Phase 3 — the list view.
 //
-// This deliberately does more than "hello world": it imports data/races.json
-// at BUILD time and derives every number below from it. Nothing here is
-// hardcoded. If the static-JSON-as-data-source approach (ARCHITECTURE.md §2.1)
-// were broken — bad path, malformed JSON, fields not surviving the build —
-// this page would fail to build rather than deploy a lie.
-import races from '../../data/races.json';
+// Every race in data/races.json is rendered here at build time, sorted into one
+// seasonal Jan-to-Dec arc. Filtering happens in the browser against rows that
+// are already on the page (see src/scripts/filter-client.ts), so the full list
+// works with JavaScript off and there is nothing to fetch.
+import FilterBar from '../components/FilterBar.astro';
+import RaceRow from '../components/RaceRow.astro';
+import Base from '../layouts/Base.astro';
+import { MONTH_NAMES, REGIONS } from '../lib/filters';
+import { allRaces } from '../lib/races';
+
+const races = allRaces();
 
 const total = races.length;
-const active = races.filter((r) => r.status === 'active').length;
+const running = races.filter((r) => r.status === 'active').length;
 const marquee = races.filter((r) => r.marquee).length;
+const regions = new Set(races.map((r) => r.location.region)).size;
+const longest = races.reduce((a, b) => Math.max(a, b.longest_ultra_miles ?? 0), 0);
 
-// Count by an arbitrary key — proves nested objects survive the build too.
-const countBy = (fn: (r: (typeof races)[number]) => string) => {
-  const counts = new Map<string, number>();
-  for (const r of races) counts.set(fn(r), (counts.get(fn(r)) ?? 0) + 1);
-  return [...counts].sort((a, b) => b[1] - a[1]);
-};
+// Group into month sections. The one permanently-cancelled event has no month
+// at all; it gets its own trailing section rather than being quietly dropped.
+type Section = { key: string; label: string; races: typeof races };
+const sections: Section[] = [];
+for (const race of races) {
+  const key = race.month ? String(race.month) : '';
+  const label = race.month ? MONTH_NAMES[race.month - 1] : 'No date';
+  if (sections.at(-1)?.key !== key) sections.push({ key, label, races: [] });
+  sections.at(-1)!.races.push(race);
+}
 
-const byStatus = countBy((r) => r.status);
-const byFormat = countBy((r) => r.format);
-const byRegion = countBy((r) => r.location.region);
-
-// Deepest reach into the schema: nested coordinates + normalized numeric
-// distances. These are the fields the map and filter phases depend on.
-const withCoords = races.filter(
-  (r) => typeof r.coordinates?.lat === 'number' && typeof r.coordinates?.lng === 'number'
-).length;
-const longest = races.reduce((a, b) =>
-  (b.longest_ultra_miles ?? 0) > (a.longest_ultra_miles ?? 0) ? b : a
-);
+const description = `A filterable list of ${total} Colorado ultramarathons — by format, distance, region and month.`;
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="generator" content={Astro.generator} />
-    <meta
-      name="description"
-      content={`GnarList — a free map and calendar of ${active} active Colorado ultramarathons.`}
-    />
-    <title>GnarList — Colorado Ultramarathons</title>
-  </head>
-  <body>
-    <main>
-      <p class="eyebrow">Phase 2 · scaffold &amp; deploy pipeline</p>
+<Base title="GnarList — Colorado Ultramarathons" description={description}>
+  <header class="masthead">
+    <div class="shell">
+      <p class="eyebrow">Colorado &middot; Ultramarathon Index</p>
       <h1>GnarList</h1>
-      <p class="lede">
-        Tracking <strong>{active}</strong> active Colorado ultramarathons.
+      <p class="deck">
+        <strong>{total}</strong> ways to spend a very long day on the high ground.
       </p>
-
-      <p class="note">
-        Placeholder page. Every number below is read from <code>data/races.json</code> at build
-        time — this page exists to prove the data pipeline, not to be the site. Real list, calendar,
-        map, and filter views land in Phases 3–6.
+      <p class="stats">
+        <span><b>{running}</b> running</span>
+        <span><b>{marquee}</b> marquee</span>
+        <span><b>{regions}</b> regions</span>
+        <span><b>{longest}</b> miles at the far end</span>
       </p>
+    </div>
+  </header>
 
-      <section>
-        <h2>Dataset</h2>
-        <ul class="stats">
-          <li><strong>{total}</strong> events total</li>
-          <li><strong>{withCoords}</strong> with map coordinates</li>
-          <li><strong>{marquee}</strong> marquee events</li>
-          <li>
-            Longest: <strong>{longest.longest_ultra_miles} mi</strong> — {longest.name}
-          </li>
-        </ul>
-      </section>
+  <main class="shell">
+    <p class="howto">
+      Filter by format, distance, region or month — they stack. The address bar keeps up, so
+      whatever you're looking at can be copied, bookmarked or sent to somebody else.
+    </p>
 
-      <div class="grid">
-        <section>
-          <h2>Status</h2>
-          <ul>
-            {byStatus.map(([k, n]) => <li><span>{k}</span><b>{n}</b></li>)}
-          </ul>
-        </section>
+    <FilterBar races={races} />
 
-        <section>
-          <h2>Format</h2>
-          <ul>
-            {byFormat.map(([k, n]) => <li><span>{k}</span><b>{n}</b></li>)}
-          </ul>
-        </section>
+    <p class="legend">
+      <span class="key"><i class="k-star">★</i> Marquee</span>
+      <span class="key"><i class="k-bar k-returning"></i> Returning</span>
+      <span class="key"><i class="k-bar k-discontinued"></i> Discontinued</span>
+      <span class="key"><i class="k-bar k-unverified"></i> Unverified</span>
+      <span class="key"><i class="k-tilde">~</i> Date not confirmed</span>
+    </p>
 
-        <section>
-          <h2>Region</h2>
-          <ul>
-            {byRegion.map(([k, n]) => <li><span>{k}</span><b>{n}</b></li>)}
-          </ul>
-        </section>
-      </div>
+    <div class="cols" aria-hidden="true">
+      <span>When</span>
+      <span>Race</span>
+      <span>Where</span>
+      <span>Distances</span>
+    </div>
 
-      <footer>
-        <p>
-          Built with Astro · static export on Cloudflare Workers ·
-          <a href="https://github.com/ChrisGrundemann/gnarlist">source on GitHub</a>
-        </p>
-      </footer>
-    </main>
-  </body>
-</html>
+    <noscript>
+      <p class="noscript">
+        Filtering needs JavaScript. All {total} events are listed below regardless.
+      </p>
+    </noscript>
+
+    <ul class="race-list" data-race-list>
+      {
+        sections.map((section) => (
+          <Fragment>
+            <li class="month-break" data-break data-month={section.key}>
+              <span>{section.label}</span>
+            </li>
+            {section.races.map((race) => (
+              <RaceRow race={race} />
+            ))}
+          </Fragment>
+        ))
+      }
+    </ul>
+
+    <p class="empty" data-empty hidden>
+      Nothing on the list matches all of that. Loosen a filter — or switch on
+      <em>Sub&#8209;50K</em> if you're after something shorter.
+    </p>
+
+    <footer class="foot">
+      <p>
+        {total} events across {REGIONS.length} Colorado regions. Hand-verified, corrections welcome.
+        Calendar and map views are next.
+      </p>
+      <p>
+        Built with Astro on Cloudflare Workers &middot;
+        <a href="https://github.com/ChrisGrundemann/gnarlist">source on GitHub</a>
+      </p>
+    </footer>
+  </main>
+
+  <script>
+    import '../scripts/filter-client';
+  </script>
+</Base>
 
 <style>
-  :root {
-    color-scheme: light dark;
-    --bg: #fbfaf8;
-    --fg: #1c1a17;
-    --muted: #6b665e;
-    --rule: #e2ded6;
-    --accent: #9c4a1a;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #16150f;
-      --fg: #ecebe6;
-      --muted: #9a958a;
-      --rule: #2e2c25;
-      --accent: #e08a4c;
-    }
-  }
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--fg);
-    font:
-      16px/1.55 ui-sans-serif,
-      system-ui,
-      -apple-system,
-      Segoe UI,
-      Helvetica,
-      Arial,
-      sans-serif;
-  }
-  main {
-    max-width: 46rem;
-    margin: 0 auto;
-    padding: 4rem 1.5rem 3rem;
-  }
-  .eyebrow {
-    margin: 0 0 0.5rem;
-    font-size: 0.75rem;
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-    color: var(--muted);
+  .masthead {
+    padding: clamp(2.25rem, 7vw, 4.5rem) 0 clamp(1.5rem, 4vw, 2.5rem);
+    border-bottom: 1px solid var(--line);
+    background:
+      linear-gradient(180deg, transparent, rgb(242 184 67 / 3%)),
+      transparent;
   }
   h1 {
-    margin: 0;
-    font-size: clamp(2.5rem, 9vw, 4rem);
-    letter-spacing: -0.03em;
-    line-height: 1;
-  }
-  .lede {
-    margin: 0.85rem 0 0;
-    font-size: 1.25rem;
-    color: var(--fg);
-  }
-  .lede strong {
-    color: var(--accent);
-  }
-  .note {
-    margin: 1.25rem 0 0;
-    padding: 0.9rem 1rem;
-    border-left: 3px solid var(--rule);
-    color: var(--muted);
-    font-size: 0.9rem;
-  }
-  code {
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.85em;
-  }
-  h2 {
-    margin: 2.25rem 0 0.6rem;
-    font-size: 0.75rem;
-    letter-spacing: 0.09em;
+    font-size: clamp(3.2rem, 13vw, 7rem);
+    line-height: 0.88;
+    letter-spacing: -0.005em;
     text-transform: uppercase;
-    color: var(--muted);
-    border-bottom: 1px solid var(--rule);
-    padding-bottom: 0.4rem;
+    margin: 0.35rem 0 0;
+    background: linear-gradient(175deg, #fff 10%, var(--gold) 130%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
-  ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
+  .deck {
+    margin: 0.9rem 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 3.4vw, 1.6rem);
+    font-weight: 400;
+    line-height: 1.25;
+    color: var(--fg-dim);
+    max-width: 30ch;
   }
-  li {
+  .deck strong {
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .stats {
     display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.3rem 0;
-    border-bottom: 1px solid var(--rule);
-    font-size: 0.925rem;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.4rem;
+    margin: 1.1rem 0 0;
+    font-family: var(--font-display);
+    font-size: 0.76rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--fg-mute);
   }
-  .stats li {
-    justify-content: flex-start;
-  }
-  .stats strong {
-    color: var(--accent);
-    margin-right: 0.4rem;
-  }
-  li b {
+  .stats b {
+    color: var(--teal);
     font-variant-numeric: tabular-nums;
   }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
-    gap: 0 2rem;
+
+  main {
+    padding: clamp(1.5rem, 4vw, 2.5rem) 0 4rem;
   }
-  footer {
-    margin-top: 3rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--rule);
-    color: var(--muted);
+  .howto {
+    margin: 0 0 1.25rem;
+    max-width: 58ch;
+    font-size: 0.9rem;
+    color: var(--fg-dim);
+  }
+
+  /* ---- legend ---- */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.1rem;
+    margin: 0 0 0.9rem;
+    font-size: 0.72rem;
+    color: var(--fg-mute);
+  }
+  .key {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .k-star {
+    color: var(--gold);
+    font-style: normal;
+  }
+  .k-tilde {
+    font-style: normal;
+    font-family: var(--font-mono);
+    border-bottom: 1px dotted var(--fg-mute);
+  }
+  .k-bar {
+    width: 3px;
+    height: 0.85rem;
+    display: inline-block;
+  }
+  .k-returning {
+    background: var(--teal-deep);
+  }
+  .k-discontinued {
+    background: var(--rust);
+  }
+  .k-unverified {
+    background: repeating-linear-gradient(
+      180deg,
+      var(--gold-deep) 0 3px,
+      transparent 3px 6px
+    );
+  }
+
+  /* ---- column headers: desktop only, they'd be noise stacked ---- */
+  .cols {
+    display: none;
+  }
+  @media (min-width: 60rem) {
+    .cols {
+      display: grid;
+      grid-template-columns: 6.5rem minmax(0, 1fr) 11rem 15rem;
+      gap: 0 1.25rem;
+      padding: 0 1rem 0.5rem 0.85rem;
+      border-bottom: 1px solid var(--line);
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--fg-mute);
+    }
+  }
+
+  .race-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  /* ---- month rules: the poster's season spine ---- */
+  .month-break {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 1.5rem 1rem 0.5rem 0.85rem;
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .month-break::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--gold-edge), transparent);
+  }
+  .month-break:first-child {
+    padding-top: 0.75rem;
+  }
+
+  .noscript {
+    margin: 0 0 1rem;
+    padding: 0.7rem 0.9rem;
+    border-left: 3px solid var(--gold-deep);
+    background: var(--gold-wash);
     font-size: 0.85rem;
+    color: var(--fg-dim);
   }
-  a {
-    color: inherit;
+
+  .empty {
+    margin: 0;
+    padding: 3rem 1rem;
+    text-align: center;
+    color: var(--fg-dim);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .empty em {
+    color: var(--teal);
+    font-style: normal;
+  }
+
+  .foot {
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+    color: var(--fg-mute);
+    font-size: 0.8rem;
+  }
+  .foot p {
+    margin: 0 0 0.35rem;
   }
 </style>

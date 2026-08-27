@@ -1,0 +1,425 @@
+---
+import { DISTANCES, FORMATS, MONTHS, REGIONS, SUB_50K } from '../lib/filters';
+import type { Choice } from '../lib/filters';
+import type { RaceView } from '../lib/races';
+
+interface Props {
+  races: RaceView[];
+}
+
+const { races } = Astro.props;
+
+// Initial (unfiltered) counts, rendered server-side so the panel is honest
+// before any JavaScript runs. The client script recomputes them as faceted
+// counts once filters are applied — see src/scripts/filter-client.ts.
+const tally = (pick: (r: RaceView) => string[]) => {
+  const n = new Map<string, number>();
+  for (const r of races) for (const t of new Set(pick(r))) n.set(t, (n.get(t) ?? 0) + 1);
+  return n;
+};
+
+const counts = {
+  format: tally((r) => r.tokens.formats),
+  dist: tally((r) => r.tokens.distances),
+  region: tally((r) => [r.tokens.region]),
+  month: tally((r) => (r.tokens.month ? [r.tokens.month] : [])),
+};
+
+const subCount = counts.dist.get(SUB_50K) ?? 0;
+
+const groups: { facet: keyof typeof counts; legend: string; choices: Choice[]; cls?: string }[] = [
+  { facet: 'format', legend: 'Format', choices: FORMATS },
+  { facet: 'dist', legend: 'Distance', choices: DISTANCES },
+  { facet: 'region', legend: 'Region', choices: REGIONS },
+  { facet: 'month', legend: 'Month', choices: MONTHS, cls: 'g-month' },
+];
+---
+
+<div class="filters-wrap">
+  <details class="filters" id="filters" open>
+    <summary>
+    <span class="sum-label">Filters</span>
+    <span class="sum-state" data-filter-summary>All {races.length} events</span>
+    <span class="sum-caret" aria-hidden="true"></span>
+  </summary>
+
+  <div class="body">
+    {
+      groups.map((g) => (
+        <fieldset class:list={['group', g.cls]}>
+          <legend class="eyebrow">{g.legend}</legend>
+          <div class="chips">
+            {g.choices.map((c) => (
+              <label
+                class:list={['chip', (counts[g.facet].get(c.value) ?? 0) === 0 && 'is-empty']}
+                data-chip={`${g.facet}:${c.value}`}
+                title={c.full ?? c.label}
+              >
+                <input type="checkbox" data-facet={g.facet} value={c.value} />
+                <span class="chip-face">
+                  {c.label}
+                  <b class="n" data-count>
+                    {counts[g.facet].get(c.value) ?? 0}
+                  </b>
+                </span>
+              </label>
+            ))}
+          </div>
+
+          {g.facet === 'dist' && (
+            <label
+              class="sub-toggle"
+              data-chip={`dist:${SUB_50K}`}
+              title="Events shorter than 50K — Box Canyon's 30K, the Sourdough snowshoe race. A distance selection like the chips above, kept separate so it doesn't clutter them."
+            >
+              <input type="checkbox" data-facet="sub" value="1" />
+              <span class="switch" aria-hidden="true" />
+              <span class="sub-text">
+                Sub&#8209;50K
+                <b class="n" data-count>
+                  {subCount}
+                </b>
+              </span>
+            </label>
+          )}
+        </fieldset>
+      ))
+    }
+    </div>
+  </details>
+
+  <div class="bar">
+    <p class="tally" aria-live="polite">
+      <b data-result-count>{races.length}</b> <span data-result-word>events</span>
+      <span class="of">of {races.length}</span>
+    </p>
+    <div class="acts">
+      <button type="button" class="act" data-copy-link>Copy link</button>
+      <button type="button" class="act act-clear" data-clear hidden>Clear filters</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  /*
+   * The results bar lives outside <details> on purpose: on a phone the panel
+   * starts collapsed, and the result count is the one thing that must stay
+   * visible no matter what. The wrapper supplies the shared card edge.
+   */
+  .filters-wrap {
+    position: relative;
+    margin: 0 0 1.75rem;
+    background: linear-gradient(180deg, var(--ink-850), var(--ink-900));
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .filters {
+    display: block;
+  }
+
+  /* ---- summary: the mobile disclosure control ---- */
+  summary {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1rem;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  .sum-state {
+    margin-left: auto;
+    color: var(--fg-mute);
+    letter-spacing: 0.06em;
+    font-size: 0.72rem;
+    text-transform: none;
+    font-weight: 400;
+  }
+  .sum-state.is-on {
+    color: var(--gold);
+  }
+  .sum-caret {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-right: 2px solid var(--fg-mute);
+    border-bottom: 2px solid var(--fg-mute);
+    transform: rotate(45deg) translate(-2px, -2px);
+    transition: transform 0.15s ease;
+  }
+  .filters[open] .sum-caret {
+    transform: rotate(-135deg) translate(-2px, -2px);
+  }
+
+  /*
+   * Both directions stated explicitly, on purpose. Browsers collapse <details>
+   * two different ways — an older UA `display: none` rule on the children, and
+   * a newer `::details-content { content-visibility: hidden }`. Any author
+   * `display` on a direct child silently defeats the first of those, which is
+   * exactly how this panel ended up permanently expanded on phones the first
+   * time around. Owning both states removes the dependency on which one a
+   * given browser uses.
+   */
+  .filters[open] > .body {
+    display: grid;
+  }
+  .filters:not([open]) > .body {
+    display: none;
+  }
+  .body {
+    gap: 1.1rem 2rem;
+    padding: 0.25rem 1rem 1rem;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  .group {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-inline-size: 0;
+  }
+  legend {
+    padding: 0;
+    margin-bottom: 0.5rem;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  /* ---- chips ---- */
+  .chip {
+    cursor: pointer;
+    user-select: none;
+  }
+  .chip input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .chip-face {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    padding: 0.36rem 0.6rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--ink-800);
+    color: var(--fg-dim);
+    font-family: var(--font-display);
+    font-size: 0.86rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    line-height: 1.1;
+    white-space: nowrap;
+    transition:
+      background 0.12s ease,
+      border-color 0.12s ease,
+      color 0.12s ease;
+  }
+  .chip:hover .chip-face {
+    border-color: var(--teal-edge);
+    color: var(--fg);
+  }
+  .chip input:checked + .chip-face {
+    background: var(--teal-wash);
+    border-color: var(--teal);
+    color: var(--teal);
+  }
+  .chip input:focus-visible + .chip-face {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+  .n {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+    color: var(--fg-mute);
+  }
+  .chip input:checked + .chip-face .n {
+    color: var(--teal-deep);
+  }
+  .chip.is-empty .chip-face,
+  .sub-toggle.is-empty .sub-text {
+    opacity: 0.4;
+  }
+
+  .g-month .chip-face {
+    min-width: 3.4rem;
+    justify-content: space-between;
+  }
+
+  /* ---- sub-50K toggle: deliberately not a chip (ARCHITECTURE.md §4) ---- */
+  .sub-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.6rem;
+    cursor: pointer;
+    user-select: none;
+  }
+  .sub-toggle input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .switch {
+    flex: none;
+    width: 2rem;
+    height: 1.1rem;
+    border-radius: 999px;
+    background: var(--ink-750);
+    border: 1px solid var(--line);
+    position: relative;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease;
+  }
+  .switch::after {
+    content: '';
+    position: absolute;
+    inset-block: 1px;
+    left: 1px;
+    width: 0.85rem;
+    border-radius: 999px;
+    background: var(--fg-mute);
+    transition:
+      transform 0.15s ease,
+      background 0.15s ease;
+  }
+  .sub-toggle input:checked + .switch {
+    background: var(--teal-wash);
+    border-color: var(--teal);
+  }
+  .sub-toggle input:checked + .switch::after {
+    transform: translateX(0.9rem);
+    background: var(--teal);
+  }
+  .sub-toggle input:focus-visible + .switch {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+  .sub-text {
+    font-size: 0.82rem;
+    color: var(--fg-dim);
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+
+  /* ---- footer bar ---- */
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 0.7rem 1rem;
+    border-top: 1px solid var(--line-soft);
+    background: var(--ink-950);
+  }
+  .tally {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+  }
+  .tally b {
+    color: var(--gold);
+    font-variant-numeric: tabular-nums;
+  }
+  .of {
+    color: var(--fg-mute);
+  }
+  .acts {
+    margin-left: auto;
+    display: flex;
+    gap: 0.5rem;
+  }
+  .act {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    color: var(--fg-dim);
+    font: 500 0.78rem/1 var(--font-display);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.5rem 0.7rem;
+    cursor: pointer;
+  }
+  .act:hover {
+    border-color: var(--teal-edge);
+    color: var(--fg);
+  }
+  .act-clear:hover {
+    border-color: var(--gold-edge);
+    color: var(--gold);
+  }
+
+  /* ---- desktop: the panel is always open, the summary disappears ---- */
+  @media (min-width: 60rem) {
+    summary {
+      display: none;
+    }
+    .body {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      border-top: 0;
+      padding-top: 1rem;
+    }
+    .g-month {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* ---- touch: chips and switches need real hit areas ---- */
+  @media (max-width: 59.99rem) {
+    .chip-face {
+      padding: 0.55rem 0.72rem;
+      font-size: 0.92rem;
+    }
+    .switch {
+      width: 2.4rem;
+      height: 1.35rem;
+    }
+    .switch::after {
+      width: 1.05rem;
+    }
+    .sub-toggle input:checked + .switch::after {
+      transform: translateX(1.05rem);
+    }
+    .sub-toggle {
+      padding: 0.3rem 0;
+    }
+    .sub-text {
+      font-size: 0.92rem;
+    }
+    .act {
+      padding: 0.65rem 0.85rem;
+    }
+    .g-month .chip-face {
+      min-width: 3.9rem;
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .g-month .chip-face {
+      min-width: 0;
+      padding-inline: 0.5rem;
+    }
+    .g-month .n {
+      display: none;
+    }
+  }
+</style>

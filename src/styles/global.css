@@ -1,0 +1,151 @@
+/*
+ * GnarList design tokens.
+ *
+ * Carries the poster identity forward (ARCHITECTURE.md §2.5): dark ground,
+ * gold/amber reserved for marquee events, teal as the working secondary,
+ * bold condensed display type. The posters' exact hexes weren't available, so
+ * these approximate the described direction rather than inventing a new one.
+ *
+ * Colour discipline that the rest of the CSS relies on:
+ *   gold  = marquee, and only marquee. It is the scarcest ink on the page.
+ *   teal  = distances and the interactive/selected state.
+ *   rust  = the one warning colour (discontinued).
+ *   everything else is greyscale.
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* Ground: cold near-black, high-altitude night sky. */
+  --ink-950: #080b0e;
+  --ink-900: #0b0f13;
+  --ink-850: #11161c;
+  --ink-800: #161d25;
+  --ink-750: #1c242e;
+
+  --line: #232d38;
+  --line-soft: #19212a;
+
+  --fg: #e8ecef;
+  --fg-dim: #a2aeb9;
+  --fg-mute: #6d7c89;
+
+  /* Marquee gold — the poster's ★ ink. */
+  --gold: #f2b843;
+  --gold-deep: #c8912b;
+  --gold-wash: rgb(242 184 67 / 10%);
+  --gold-edge: rgb(242 184 67 / 32%);
+
+  /* Working secondary. */
+  --teal: #46b6a8;
+  --teal-deep: #2b8b80;
+  --teal-wash: rgb(70 182 168 / 10%);
+  --teal-edge: rgb(70 182 168 / 30%);
+
+  /* The single warning ink. */
+  --rust: #c9755c;
+  --rust-wash: rgb(201 117 92 / 10%);
+  --rust-edge: rgb(201 117 92 / 32%);
+
+  /*
+   * Display face. No webfont this phase — a self-hosted condensed face
+   * (Oswald / Archivo Narrow) would be the real fix and is noted as Phase 6
+   * polish. Until then this stack finds a genuine condensed face on Linux,
+   * macOS and most Windows installs, and degrades to tightened system-ui.
+   */
+  --font-display: 'Oswald', 'Archivo Narrow', 'Roboto Condensed', 'Noto Sans Condensed',
+    'Liberation Sans Narrow', 'Helvetica Neue Condensed', 'Arial Narrow', system-ui, sans-serif;
+  --font-body: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, 'Liberation Mono', monospace;
+
+  --shell: 76rem;
+  --radius: 4px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(120rem 40rem at 50% -14rem, #16202b 0%, transparent 62%),
+    var(--ink-900);
+  color: var(--fg);
+  font: 16px/1.55 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+.shell {
+  max-width: var(--shell);
+  margin: 0 auto;
+  padding-inline: clamp(1rem, 4vw, 2.5rem);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.005em;
+  margin: 0;
+}
+
+/* Small uppercase label — the poster's connective tissue. */
+.eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  margin: 0;
+}
+
+a {
+  color: var(--teal);
+  text-decoration-color: var(--teal-edge);
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  color: var(--fg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/*
+ * The filter script hides rows with the `hidden` attribute. Rows are grids, and
+ * an author `display` beats the UA's `[hidden] { display: none }`, so restate it.
+ */
+[hidden] {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

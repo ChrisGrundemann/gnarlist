@@ -1,0 +1,332 @@
+---
+import { FORMATS } from '../lib/filters';
+import { STATUS_NOTE, type RaceView } from '../lib/races';
+
+interface Props {
+  race: RaceView;
+}
+
+const { race } = Astro.props;
+const status = race.status === 'active' ? null : STATUS_NOTE[race.status];
+
+const formatLabels = new Map(FORMATS.map((f) => [f.value, f.label]));
+// "standard" is the unmarked default — tagging 61 of 75 rows with it would be
+// noise. Everything else gets a tag, including the second format a mixed-format
+// event picks up, which is how Chase the Moon reads as timed *and* 50K.
+const formatTags = race.tokens.formats
+  .filter((f) => f !== 'standard')
+  .map((f) => formatLabels.get(f) ?? f);
+---
+
+<li
+  class:list={['race', race.marquee && 'is-marquee', race.status !== 'active' && `is-${race.status}`]}
+  data-race
+  data-formats={race.tokens.formats.join(' ')}
+  data-dists={race.tokens.distances.join(' ')}
+  data-region={race.tokens.region}
+  data-month={race.tokens.month}
+  data-name={race.name}
+>
+  <div class="when">
+    <span class:list={['d', race.date.approx && 'is-approx']} title={race.date.full}>
+      {race.date.primary}
+    </span>
+    <span class="y">{race.date.year}</span>
+  </div>
+
+  <div class="what">
+    <h3 class="name">
+      {race.marquee && <span class="star" title="Marquee event" aria-label="Marquee event">★</span>}
+      {race.name}
+    </h3>
+
+    {
+      status && (
+        <p class="status">
+          <span class="pill">{status.label}</span>
+          <span class="status-blurb">{status.blurb}</span>
+        </p>
+      )
+    }
+
+    {race.notes && <p class="hook">{race.notes}</p>}
+
+    {
+      race.companion_distances.length > 0 && (
+        <p class="also">Also offers {race.companion_distances.join(', ')}</p>
+      )
+    }
+  </div>
+
+  <div class="where">
+    <span class="town">{race.location.town}</span>
+    <span class="region">{race.regionLabel}</span>
+  </div>
+
+  <div class="dists" title={race.badges.all}>
+    {formatTags.map((t) => <span class="tag">{t}</span>)}
+    {race.badges.shown.map((b) => <span class="badge">{b}</span>)}
+    {race.badges.overflow > 0 && <span class="more">+{race.badges.overflow}</span>}
+  </div>
+</li>
+
+<style>
+  .race {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr) 11rem 15rem;
+    gap: 0 1.25rem;
+    align-items: start;
+    padding: 0.9rem 1rem 0.9rem 0.85rem;
+    border-bottom: 1px solid var(--line-soft);
+    border-left: 3px solid transparent;
+  }
+  .race:hover {
+    background: var(--ink-850);
+  }
+
+  /* ---- when ---- */
+  .when {
+    display: flex;
+    flex-direction: column;
+    padding-top: 0.1rem;
+  }
+  .d {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--fg);
+    white-space: nowrap;
+  }
+  /* Unconfirmed dates say so rather than pretending. */
+  .d.is-approx {
+    color: var(--fg-dim);
+    border-bottom: 1px dotted var(--fg-mute);
+    align-self: flex-start;
+    cursor: help;
+  }
+  .d.is-approx::before {
+    content: '~';
+    color: var(--fg-mute);
+  }
+  .y {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--fg-mute);
+    letter-spacing: 0.06em;
+  }
+
+  /* ---- what ---- */
+  .name {
+    font-size: 1.06rem;
+    line-height: 1.25;
+    letter-spacing: 0.01em;
+    color: var(--fg);
+  }
+  .star {
+    color: var(--gold);
+    font-size: 0.9em;
+    margin-right: 0.15rem;
+  }
+  .is-marquee {
+    border-left-color: var(--gold-deep);
+    background: linear-gradient(90deg, var(--gold-wash), transparent 26rem);
+  }
+  .is-marquee:hover {
+    background: linear-gradient(90deg, var(--gold-wash), transparent 26rem), var(--ink-850);
+  }
+  .is-marquee .name {
+    color: #fff;
+  }
+
+  .hook {
+    margin: 0.3rem 0 0;
+    font-size: 0.845rem;
+    line-height: 1.45;
+    color: var(--fg-dim);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+  .also {
+    margin: 0.25rem 0 0;
+    font-size: 0.75rem;
+    color: var(--fg-mute);
+  }
+
+  /* ---- status ---- */
+  .status {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0.35rem 0 0;
+  }
+  .pill {
+    font-family: var(--font-display);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 0.16rem 0.42rem;
+    border-radius: 2px;
+    border: 1px solid currentcolor;
+  }
+  .status-blurb {
+    font-size: 0.76rem;
+    color: var(--fg-mute);
+  }
+
+  /*
+   * Non-active events stay on the list and stay readable — hiding them loses
+   * real information — but none of them should be mistaken at a glance for a
+   * race you can enter this year.
+   */
+  .is-returning {
+    border-left-color: var(--teal-deep);
+  }
+  .is-returning .pill {
+    color: var(--teal);
+    background: var(--teal-wash);
+  }
+
+  .is-discontinued {
+    border-left-color: var(--rust);
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent 0 9px,
+      rgb(201 117 92 / 4%) 9px 18px
+    );
+  }
+  .is-discontinued .pill {
+    color: var(--rust);
+    background: var(--rust-wash);
+  }
+  .is-discontinued .name,
+  .is-discontinued .d {
+    color: var(--fg-mute);
+  }
+  .is-discontinued .badge,
+  .is-discontinued .tag {
+    opacity: 0.55;
+  }
+
+  .is-unverified {
+    border-left: 3px dashed var(--gold-deep);
+  }
+  .is-unverified .pill {
+    color: var(--gold);
+    background: var(--gold-wash);
+  }
+  .is-unverified .name {
+    color: var(--fg-dim);
+  }
+
+  /* ---- where ---- */
+  .where {
+    display: flex;
+    flex-direction: column;
+    padding-top: 0.15rem;
+    min-width: 0;
+  }
+  .town {
+    font-size: 0.88rem;
+    color: var(--fg-dim);
+  }
+  .region {
+    font-family: var(--font-display);
+    font-size: 0.68rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--fg-mute);
+    margin-top: 0.1rem;
+  }
+
+  /* ---- distances ---- */
+  .dists {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 0.3rem;
+    padding-top: 0.1rem;
+  }
+  .badge,
+  .tag,
+  .more {
+    font-family: var(--font-display);
+    font-size: 0.74rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.42rem;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .badge {
+    color: var(--teal);
+    background: var(--teal-wash);
+    border: 1px solid var(--teal-edge);
+  }
+  /* Format tag: same shape as a distance badge, deliberately quieter ink. */
+  .tag {
+    color: var(--fg-dim);
+    background: transparent;
+    border: 1px solid var(--line);
+    text-transform: uppercase;
+    font-size: 0.66rem;
+    letter-spacing: 0.13em;
+  }
+  .more {
+    color: var(--fg-mute);
+    border: 1px dashed var(--line);
+    cursor: help;
+  }
+
+  /* ---- narrow: stack into a card, no horizontal scrolling ---- */
+  @media (max-width: 60rem) {
+    .race {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.4rem 0;
+      padding: 1rem 0.9rem;
+    }
+    .when {
+      flex-direction: row;
+      align-items: baseline;
+      gap: 0.45rem;
+      padding-top: 0;
+      order: -1;
+    }
+    .d {
+      font-size: 0.82rem;
+      letter-spacing: 0.14em;
+      color: var(--gold);
+    }
+    .d.is-approx {
+      color: var(--gold-deep);
+      border-bottom-color: var(--gold-deep);
+    }
+    .name {
+      font-size: 1.12rem;
+    }
+    .where {
+      flex-direction: row;
+      align-items: baseline;
+      gap: 0.5rem;
+      padding-top: 0;
+    }
+    .region::before {
+      content: '·';
+      margin-right: 0.5rem;
+      color: var(--line);
+    }
+    .hook {
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+    }
+    .is-marquee,
+    .is-marquee:hover {
+      background: linear-gradient(90deg, var(--gold-wash), transparent 70%);
+    }
+  }
+</style>
