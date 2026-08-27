@@ -1,6 +1,6 @@
 ---
 import { FORMATS } from '../lib/filters';
-import { STATUS_NOTE, type RaceView } from '../lib/races';
+import { STATUS_NOTE, filterAttrs, raceHref, type RaceView } from '../lib/races';
 
 interface Props {
   race: RaceView;
@@ -19,14 +19,8 @@ const formatTags = race.tokens.formats
 ---
 
 <li
+  {...filterAttrs(race)}
   class:list={['race', race.marquee && 'is-marquee', race.status !== 'active' && `is-${race.status}`]}
-  data-race
-  data-formats={race.tokens.formats.join(' ')}
-  data-dists={race.tokens.distances.join(' ')}
-  data-region={race.tokens.region}
-  data-month={race.tokens.month}
-  data-counted={race.counted ? '1' : '0'}
-  data-name={race.name}
 >
   <div class="when">
     <span class:list={['d', race.date.approx && 'is-approx']} title={race.date.full}>
@@ -37,8 +31,10 @@ const formatTags = race.tokens.formats
 
   <div class="what">
     <h3 class="name">
-      {race.marquee && <span class="star" title="Marquee event" aria-label="Marquee event">★</span>}
-      {race.name}
+      <a href={raceHref(race)}>
+        {race.marquee && <span class="star" title="Marquee event" aria-label="Marquee event">★</span>}
+        {race.name}
+      </a>
     </h3>
 
     {
@@ -73,6 +69,7 @@ const formatTags = race.tokens.formats
 
 <style>
   .race {
+    position: relative;
     display: grid;
     grid-template-columns: 6.5rem minmax(0, 1fr) 11rem 15rem;
     gap: 0 1.25rem;
@@ -123,6 +120,26 @@ const formatTags = race.tokens.formats
     line-height: 1.25;
     letter-spacing: 0.01em;
     color: var(--fg);
+  }
+  /*
+   * The name is the row's one real link; the pseudo-element stretches its hit
+   * area over the whole row. One link per row keeps the tab order and the
+   * accessibility tree honest — a row is a race, not four separate targets —
+   * and nothing else in a row is clickable, so nothing gets buried.
+   */
+  .name a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .name a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .race:hover .name a {
+    color: #fff;
+    text-decoration: underline;
+    text-decoration-color: var(--teal-edge);
   }
   .star {
     color: var(--gold);

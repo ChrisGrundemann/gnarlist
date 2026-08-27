@@ -99,8 +99,11 @@ const groups: { facet: keyof typeof counts; legend: string; choices: Choice[]; c
 
   <div class="bar">
     <p class="tally" aria-live="polite">
-      <b data-result-count>{counting.length}</b> <span data-result-word>events</span>
-      <span class="of">of {counting.length}</span>
+      {/* Explicit spaces: `compressHTML` eats the whitespace between these,
+          and the bar renders as "101 EVENTSOF 101" without them. */}
+      <b data-result-count>{counting.length}</b>{' '}
+      <span data-result-word>events</span>{' '}
+      <span class="of">of {counting.length}</span>{' '}
       <span class="uncounted" data-uncounted hidden>
         &plus;<b data-uncounted-count>0</b> shown, not counted
       </span>

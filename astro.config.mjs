@@ -9,7 +9,9 @@ export default defineConfig({
   output: 'static',
 
   // Deployed URL. Needed for absolute URLs, sitemap, and canonical tags.
-  // Update to 'https://gnarlist.co' when the canonical domain is connected
-  // (deferred — see ARCHITECTURE.md §2.4).
-  site: 'https://gnarlist.cgrundemann.workers.dev',
+  // The canonical domain is live (ARCHITECTURE.md §2.4) — Cloudflare Custom
+  // Domain on the Worker. The workers.dev URL still resolves and still serves
+  // the same Worker, so per-event permalinks (Phase 4) would otherwise emit
+  // canonical tags pointing at a hostname we don't want indexed.
+  site: 'https://gnarlist.co',
 });

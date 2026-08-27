@@ -256,3 +256,77 @@ export const STATUS_NOTE: Record<Exclude<Status, 'active'>, { label: string; blu
     blurb: 'Reported by a source but not independently confirmed. Check before entering.',
   },
 };
+
+/**
+ * Canonical permalink for an event (ARCHITECTURE.md §4.6). The `slug` field has
+ * been URL contract since Phase 1; this is the one place that turns it into a
+ * path, so a future route change is a one-line edit rather than a grep.
+ */
+export function raceHref(r: Pick<Race, 'slug'>): string {
+  return `/races/${r.slug}/`;
+}
+
+/**
+ * The `data-*` attributes the browser filter reads off an element.
+ *
+ * Shared verbatim by the list row and the calendar cell so the two views can
+ * never drift into filtering differently — which is the whole point of the
+ * filter contract living in filters.ts. Spread it: `<li {...filterAttrs(r)}>`.
+ */
+export function filterAttrs(r: RaceView): Record<string, string> {
+  return {
+    'data-race': '',
+    'data-formats': r.tokens.formats.join(' '),
+    'data-dists': r.tokens.distances.join(' '),
+    'data-region': r.tokens.region,
+    'data-month': r.tokens.month,
+    'data-counted': r.counted ? '1' : '0',
+    'data-name': r.name,
+  };
+}
+
+/**
+ * A source string as a link, when it is one. Most entries are bare domains
+ * (`hardrock100.com`); a few are offline citations (`Town of Keystone permit
+ * filing`) that must render as plain text rather than a broken href.
+ */
+export function sourceLink(s: string): { label: string; href: string | null } {
+  const looksLikeHost = /^[a-z0-9.-]+\.[a-z]{2,}(\/\S*)?$/i.test(s);
+  if (!looksLikeHost) return { label: s, href: null };
+  return { label: s, href: s.startsWith('http') ? s : `https://${s}` };
+}
+
+/**
+ * The season grouped into twelve months, plus a trailing bucket for the one
+ * record with no month at all. Every month is present even when empty — the
+ * calendar draws the whole year, and March being empty is a fact about the
+ * Colorado season worth showing, not a gap to close.
+ */
+export function byMonth(races: RaceView[]): { month: number | null; races: RaceView[] }[] {
+  const buckets = Array.from({ length: 12 }, (_, i) => ({
+    month: (i + 1) as number | null,
+    races: [] as RaceView[],
+  }));
+  const undated = { month: null as number | null, races: [] as RaceView[] };
+  for (const r of races) (r.month ? buckets[r.month - 1] : undated).races.push(r);
+  return undated.races.length ? [...buckets, undated] : buckets;
+}
+
+/**
+ * The `n` events in the same region as `races[i]`, nearest to it in season
+ * order — nearest on the calendar rather than nearest alphabetically. Returned
+ * back in season order.
+ *
+ * Lives here rather than in the page because Astro evaluates `getStaticPaths`
+ * in its own module scope, where only imports are in reach.
+ */
+export function nearestInRegion(races: RaceView[], i: number, n: number): RaceView[] {
+  const region = races[i].location.region;
+  return races
+    .map((r, j) => ({ r, j, d: Math.abs(j - i) }))
+    .filter(({ r }) => r.location.region === region && r.slug !== races[i].slug)
+    .sort((a, b) => a.d - b.d)
+    .slice(0, n)
+    .sort((a, b) => a.j - b.j)
+    .map(({ r }) => r);
+}

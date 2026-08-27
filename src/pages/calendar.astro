@@ -1,0 +1,334 @@
+---
+// Phase 4 — the calendar view.
+//
+// The interactive generalization of the "Colorado Ultra Season" poster: twelve
+// month blocks, events sitting inside their month, blocks sized by what's
+// actually in them rather than to a uniform cell (ARCHITECTURE.md §2.5).
+//
+// Filtering is the same engine as the list view — same src/lib/filters.ts, same
+// URL params, same client script. Switching views is a navigation that carries
+// the query string, not a state reset (§4.5).
+import CalendarMonth from '../components/CalendarMonth.astro';
+import FilterBar from '../components/FilterBar.astro';
+import ViewSwitch from '../components/ViewSwitch.astro';
+import Base from '../layouts/Base.astro';
+import { MONTH_NAMES } from '../lib/filters';
+import { allRaces, byMonth } from '../lib/races';
+
+const races = allRaces();
+const total = races.length;
+const counted = races.filter((r) => r.counted).length;
+
+const months = byMonth(races);
+// The meter's full scale, in counted events — same arithmetic as every other
+// displayed number on the site (ARCHITECTURE.md §4's counting rule).
+const max = Math.max(...months.map((m) => m.races.filter((r) => r.counted).length));
+
+const present = new Set(races.map((r) => r.status));
+
+// The jump strip. On a phone the twelve blocks are one long column, so getting
+// to October shouldn't mean scrolling past September's twenty events.
+const strip = months
+  .filter((m) => m.month !== null)
+  .map((m) => ({
+    key: String(m.month),
+    initial: MONTH_NAMES[m.month! - 1].slice(0, 1),
+    label: MONTH_NAMES[m.month! - 1],
+    n: m.races.filter((r) => r.counted).length,
+  }));
+
+const description = `A twelve-month calendar of ${counted} Colorado ultramarathons — filter by format, distance, region and month, then jump straight to any race.`;
+---
+
+<Base title="Calendar — GnarList Colorado Ultramarathons" description={description}>
+  <header class="masthead">
+    <div class="shell">
+      <p class="eyebrow">Colorado &middot; Ultramarathon Index</p>
+      <h1>A Typical Year<br />on the High Ground</h1>
+      <p class="deck">
+        {counted} events, January to December. The season has a shape — it shows.
+      </p>
+    </div>
+  </header>
+
+  <main class="shell">
+    <ViewSwitch current="calendar" />
+
+    <p class="howto">
+      Filters carry between the list and the calendar — set them once, switch views, they hold.
+      Tap any race for its full record.
+    </p>
+
+    <FilterBar races={races} />
+
+    <p class="legend">
+      <span class="key"><i class="k-star">★</i> Marquee</span>
+      {present.has('returning') && <span class="key"><i class="k-bar k-returning" /> Returning</span>}
+      {present.has('discontinued') && (
+        <span class="key"><i class="k-bar k-discontinued" /> Discontinued</span>
+      )}
+      {present.has('unverified') && (
+        <span class="key"><i class="k-bar k-unverified" /> Unverified</span>
+      )}
+      <span class="key"><i class="k-tilde">~</i> Date not confirmed</span>
+    </p>
+
+    <nav class="strip" aria-label="Jump to month">
+      {
+        strip.map((m) => (
+          <a
+            href={`#m-${m.key}`}
+            data-strip={m.key}
+            title={`${m.label} — ${m.n} ${m.n === 1 ? 'event' : 'events'}`}
+            style={`--h: ${max ? Math.round((m.n / max) * 100) : 0}%`}
+          >
+            <span class="s-track"><span class="s-bar" /></span>
+            <span class="s-i" aria-hidden="true">
+              {m.initial}
+            </span>
+            <span class="visually-hidden">{m.label}</span>
+          </a>
+        ))
+      }
+    </nav>
+
+    <noscript>
+      <p class="noscript">
+        Filtering needs JavaScript. All {total} events are on the calendar regardless.
+      </p>
+    </noscript>
+
+    <div class="year">
+      {
+        months.map((m) => (
+          <div class="slot" id={m.month ? `m-${m.month}` : 'm-none'}>
+            <CalendarMonth month={m.month} races={m.races} max={max} />
+          </div>
+        ))
+      }
+    </div>
+
+    <p class="empty" data-empty hidden>
+      Nothing on the calendar matches all of that. Loosen a filter — or switch on
+      <em>Sub&#8209;50K</em> if you're after something shorter.
+    </p>
+
+    <footer class="foot">
+      <p>
+        {counted} events across the season, plus {total - counted} listed for the record. The map
+        view is next.
+      </p>
+      <p>
+        Built with Astro on Cloudflare Workers &middot;
+        <a href="https://github.com/ChrisGrundemann/gnarlist">source on GitHub</a>
+      </p>
+    </footer>
+  </main>
+
+  <script>
+    import '../scripts/filter-client';
+  </script>
+</Base>
+
+<style>
+  .masthead {
+    padding: clamp(1.75rem, 5vw, 3.25rem) 0 clamp(1.25rem, 3vw, 2rem);
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, transparent, rgb(242 184 67 / 3%)), transparent;
+  }
+  h1 {
+    font-size: clamp(2rem, 6.2vw, 3.6rem);
+    line-height: 0.95;
+    letter-spacing: -0.005em;
+    text-transform: uppercase;
+    margin: 0.35rem 0 0;
+    background: linear-gradient(175deg, #fff 10%, var(--gold) 150%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .deck {
+    margin: 0.8rem 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 2.8vw, 1.25rem);
+    color: var(--fg-dim);
+    max-width: 42ch;
+  }
+
+  main {
+    padding: clamp(1.25rem, 3vw, 2rem) 0 4rem;
+  }
+  .howto {
+    margin: 0 0 1.25rem;
+    max-width: 58ch;
+    font-size: 0.9rem;
+    color: var(--fg-dim);
+  }
+
+  /* ---- legend: identical vocabulary to the list view ---- */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.1rem;
+    margin: 0 0 0.9rem;
+    font-size: 0.72rem;
+    color: var(--fg-mute);
+  }
+  .key {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .k-star {
+    color: var(--gold);
+    font-style: normal;
+  }
+  .k-tilde {
+    font-style: normal;
+    font-family: var(--font-mono);
+    border-bottom: 1px dotted var(--fg-mute);
+  }
+  .k-bar {
+    width: 3px;
+    height: 0.85rem;
+    display: inline-block;
+  }
+  .k-returning {
+    background: var(--teal-deep);
+  }
+  .k-discontinued {
+    background: var(--rust);
+  }
+  .k-unverified {
+    background: repeating-linear-gradient(180deg, var(--gold-deep) 0 3px, transparent 3px 6px);
+  }
+
+  /* ---- the jump strip: navigation and a season profile in one ---- */
+  .strip {
+    display: flex;
+    gap: 2px;
+    align-items: flex-end;
+    margin: 0 0 1.25rem;
+    padding: 0.4rem 0.5rem 0.3rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--ink-850);
+  }
+  .strip a {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.2rem;
+    min-width: 0;
+    padding: 0.2rem 0;
+    border-radius: 2px;
+    text-decoration: none;
+  }
+  .strip a:hover {
+    background: var(--ink-800);
+  }
+  /*
+   * The bar's percentage needs something definite to resolve against, so the
+   * track owns the height and the bar owns the fill. Without the track the bar
+   * was a flex item competing with the month letter and every month came out
+   * roughly the same height — which is precisely the information this strip
+   * exists to carry.
+   */
+  .s-track {
+    flex: none;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: 100%;
+    height: 1.75rem;
+  }
+  .s-bar {
+    width: 100%;
+    max-width: 1.6rem;
+    height: max(2px, var(--h));
+    background: var(--gold-deep);
+    border-radius: 1px;
+  }
+  .strip a:hover .s-bar {
+    background: var(--gold);
+  }
+  .s-i {
+    font-family: var(--font-display);
+    font-size: 0.64rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--fg-mute);
+  }
+  .strip a:hover .s-i {
+    color: var(--fg);
+  }
+  /* A month the current filter has emptied still holds its slot — the year
+     keeps its shape — it just stops advertising itself as somewhere to go. */
+  .strip a.is-empty {
+    opacity: 0.35;
+  }
+
+  /*
+   * The year, packed rather than tiled.
+   *
+   * Multi-column, not a row-major grid, and that's the whole design decision: a
+   * grid row is as tall as its tallest cell, so a September with twenty events
+   * next to a March with none leaves a hole the height of nineteen races.
+   * Columns let each block be exactly its own height and flow the next one in
+   * behind it, which is what the poster did with a paste-up. Months stay in
+   * order reading down each column, and the layout re-packs itself for free
+   * when a filter changes — no measuring, no JS.
+   */
+  .year {
+    columns: 1;
+    column-gap: 1.35rem;
+  }
+  .slot {
+    break-inside: avoid;
+    scroll-margin-top: 1rem;
+  }
+
+  @media (min-width: 42rem) {
+    .year {
+      columns: 2;
+    }
+  }
+  @media (min-width: 68rem) {
+    .year {
+      columns: 3;
+    }
+  }
+
+  .noscript {
+    margin: 0 0 1rem;
+    padding: 0.7rem 0.9rem;
+    border-left: 3px solid var(--gold-deep);
+    background: var(--gold-wash);
+    font-size: 0.85rem;
+    color: var(--fg-dim);
+  }
+
+  .empty {
+    margin: 0;
+    padding: 2.5rem 1rem;
+    text-align: center;
+    color: var(--fg-dim);
+  }
+  .empty em {
+    color: var(--teal);
+    font-style: normal;
+  }
+
+  .foot {
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+    color: var(--fg-mute);
+    font-size: 0.8rem;
+  }
+  .foot p {
+    margin: 0 0 0.35rem;
+  }
+</style>

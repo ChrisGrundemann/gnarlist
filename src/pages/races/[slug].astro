@@ -1,0 +1,775 @@
+---
+// Phase 4 — the event permalink (ARCHITECTURE.md §4.6).
+//
+// One real, stable, linkable page per event at /races/<slug>/, using the slug
+// that has been URL contract since Phase 1. This is the full record — every
+// field in the schema, not the subset that fits a list row or a calendar cell —
+// and it is the page search engines get to index now that gnarlist.co is live
+// and deliberately indexable (§2.4).
+//
+// Room to grow, deliberately: §4.6 names these pages as the future home of
+// reviews and photos. None of that is built (no database, no submissions — see
+// §2.3), but the layout is a document column plus a facts rail rather than one
+// dense table, so a future section drops into the column without a re-layout.
+// The marked insertion point below is where it goes.
+import Base from '../../layouts/Base.astro';
+import { DISTANCES, FORMATS, MONTH_NAMES, REGIONS, SUB_50K } from '../../lib/filters';
+import {
+  STATUS_NOTE,
+  allRaces,
+  nearestInRegion,
+  raceHref,
+  sourceLink,
+  type RaceView,
+} from '../../lib/races';
+
+export function getStaticPaths() {
+  const races = allRaces();
+  return races.map((race, i) => ({
+    params: { slug: race.slug },
+    // Neighbours in season order, so every page has a way onward that isn't
+    // the back button. They wrap, so December leads back round to January.
+    props: {
+      race,
+      prev: races[(i - 1 + races.length) % races.length],
+      next: races[(i + 1) % races.length],
+      // Region neighbours, nearest in the season and capped. Denver Metro holds
+      // 22 events; listing all of them on all 22 pages would bury the record
+      // under a directory. The "see the whole region" link below carries the
+      // rest, and it goes to the list view where that job belongs.
+      siblings: nearestInRegion(races, i, 6),
+    },
+  }));
+}
+
+interface Props {
+  race: RaceView;
+  prev: RaceView;
+  next: RaceView;
+  siblings: RaceView[];
+}
+
+const { race, prev, next, siblings } = Astro.props;
+
+const status = race.status === 'active' ? null : STATUS_NOTE[race.status];
+const formatLabel = FORMATS.find((f) => f.value === race.format)?.full ?? race.format;
+const regionChoice = REGIONS.find((r) => r.value === race.location.region);
+const regionLabel = regionChoice?.full ?? race.regionLabel;
+
+// Secondary formats the event surfaces under beyond its headline one — the
+// mixed-format rule from ARCHITECTURE.md §4. Stated explicitly here because
+// this is the page where "why does this show up under Timed?" gets answered.
+const alsoFormats = race.tokens.formats
+  .filter((f) => f !== race.format)
+  .map((f) => FORMATS.find((x) => x.value === f)?.label ?? f);
+
+/**
+ * A distance token as a human label. Most are distances, but an event whose
+ * headline isn't a fixed distance carries a format word as its
+ * `distance_category` — `timed`, `backyard`, `stage` — so those resolve through
+ * the format vocabulary rather than falling through as a bare lowercase token.
+ */
+const distLabel = (v: string) =>
+  v === SUB_50K
+    ? 'Sub-50K'
+    : (DISTANCES.find((d) => d.value === v)?.label ??
+      FORMATS.find((f) => f.value === v)?.label ??
+      v);
+const distanceTokens = race.tokens.distances.map(distLabel);
+
+const monthName = race.month ? MONTH_NAMES[race.month - 1] : null;
+
+/** `July 19–21, 2026` / `July 2026` / null — the date, spelled out. */
+const longDate = (() => {
+  if (!race.date_start) return monthName ? `${monthName} ${race.date.year}` : null;
+  const m = MONTH_NAMES[Number(race.date_start.slice(5, 7)) - 1];
+  const d = Number(race.date_start.slice(8, 10));
+  if (!race.date_end) return `${m} ${d}, ${race.date.year}`;
+  const em = MONTH_NAMES[Number(race.date_end.slice(5, 7)) - 1];
+  const ed = Number(race.date_end.slice(8, 10));
+  return em === m
+    ? `${m} ${d}–${ed}, ${race.date.year}`
+    : `${m} ${d} – ${em} ${ed}, ${race.date.year}`;
+})();
+
+/** The extra shape a distance option carries beyond its label. */
+function detail(d: RaceView['ultra_distances'][number]): string | null {
+  if (d.loop_miles != null) return `${d.loop_miles} mi loop, last runner standing`;
+  if (d.stages != null) return `${d.stages} stages${d.miles != null ? `, ${d.miles} mi total` : ''}`;
+  if (d.hours != null) return `${d.hours}-hour time limit`;
+  if (d.miles != null) return `${d.miles}${d.miles_approximate ? '±' : ''} miles`;
+  return null;
+}
+
+const headline = race.ultra_distances.find(
+  (d) => race.longest_ultra_miles != null && d.miles === race.longest_ultra_miles,
+);
+
+const sources = race.source.map(sourceLink);
+
+// Metadata, derived rather than written — the same discipline §4 records for
+// the masthead copy. A hand-written description would go stale the first time
+// a distance or a status changed.
+const title = `${race.name} — ${race.location.town}, Colorado | GnarList`;
+const description = (() => {
+  const labels = race.ultra_distances.map((d) => d.label);
+  const dist = (labels.length > 4 ? [...labels.slice(0, 4), '…'] : labels).join(' / ') || formatLabel;
+  const when =
+    race.status === 'discontinued' ? 'no longer held' : (longDate ?? 'date not yet announced');
+  const lead =
+    `${race.name} — ${dist}, ${when}. ` +
+    `A Colorado ultramarathon in ${race.location.town} (${regionLabel}).`;
+  if (!race.notes) return lead;
+  // Trim to a word boundary — a description cut mid-word reads as broken in a
+  // search result, and the notes field runs long on the well-documented races.
+  const full = `${lead} ${race.notes}`;
+  return full.length <= 300 ? full : `${full.slice(0, 297).replace(/\s+\S*$/, '')}…`;
+})();
+---
+
+<Base title={title} description={description}>
+  <div class="shell page">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/" data-back="/">List</a>
+      <span aria-hidden="true">/</span>
+      <a href="/calendar/" data-back="/calendar/">Calendar</a>
+      <span aria-hidden="true">/</span>
+      <span class="here">{race.name}</span>
+    </nav>
+
+    <article class:list={['race', race.marquee && 'is-marquee', `is-${race.status}`]}>
+      <header class="hero">
+        <p class="eyebrow">
+          {monthName && <>{monthName} {race.date.year} &middot; </>}{regionLabel}
+        </p>
+        <h1>
+          {race.marquee && <span class="star" aria-label="Marquee event">★</span>}
+          {race.name}
+        </h1>
+        <p class="when">
+          <span class:list={['date', race.date.approx && 'is-approx']}>{race.date.full}</span>
+        </p>
+
+        {
+          status && (
+            <p class="status">
+              <span class="pill">{status.label}</span>
+              <span>{status.blurb}</span>
+            </p>
+          )
+        }
+
+        <ul class="badges" aria-label="Distances offered">
+          {race.marquee && <li class="badge badge-star">★ Marquee</li>}
+          <li class="badge badge-fmt">{formatLabel}</li>
+          {race.ultra_distances.map((d) => (
+            <li class:list={['badge', d === headline && 'is-headline']}>{d.label}</li>
+          ))}
+        </ul>
+      </header>
+
+      <div class="cols">
+        <div class="doc">
+          {
+            race.notes && (
+              <section class="block">
+                <h2>The hook</h2>
+                <p class="prose">{race.notes}</p>
+              </section>
+            )
+          }
+
+          <section class="block">
+            <h2>Distances</h2>
+            <ul class="dists">
+              {
+                race.ultra_distances.map((d) => (
+                  <li class:list={[d === headline && 'is-headline']}>
+                    <span class="d-label">{d.label}</span>
+                    {detail(d) && <span class="d-detail">{detail(d)}</span>}
+                  </li>
+                ))
+              }
+            </ul>
+            {
+              race.companion_distances.length > 0 && (
+                <p class="also">
+                  <b>Also on the day:</b> {race.companion_distances.join(', ')} — shorter companion
+                  events, not counted as ultras.
+                </p>
+              )
+            }
+            {
+              alsoFormats.length > 0 && (
+                <p class="also">
+                  <b>Surfaces under:</b> {[formatLabel, ...alsoFormats].join(', ')} — this event
+                  offers more than one kind of race, so it appears under each rather than being
+                  forced into one bucket.
+                </p>
+              )
+            }
+          </section>
+
+          {
+            /*
+             * ── Room to grow ─────────────────────────────────────────────
+             * Reviews, photos and other community-contributed sections land
+             * here, as further <section class="block"> siblings. Deliberately
+             * not built this phase: there is no database and no submissions
+             * path (ARCHITECTURE.md §2.3, §4.6). The column is a single
+             * stack of self-contained blocks precisely so adding one is an
+             * insertion rather than a re-layout.
+             * ─────────────────────────────────────────────────────────────
+             */
+          }
+
+          <section class="block">
+            <h2>Elsewhere in {regionLabel}</h2>
+            {
+              siblings.length > 0 ? (
+                <ul class="siblings">
+                  {siblings.map((s) => (
+                    <li>
+                      <a href={raceHref(s)}>
+                        {s.marquee && <span class="star">★</span>}
+                        {s.name}
+                      </a>
+                      <span class="s-when">{s.date.primary}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p class="prose muted">
+                  The only event on the list in this region.
+                </p>
+              )
+            }
+            <p class="more-link">
+              <a href={`/?region=${race.location.region}`}>
+                See {regionLabel} on the list &rarr;
+              </a>
+            </p>
+          </section>
+        </div>
+
+        <aside class="rail" aria-label="Record">
+          <h2 class="rail-h">The record</h2>
+          <dl class="facts">
+            <dt>Where</dt>
+            <dd>
+              {race.location.town}, Colorado<br />
+              <span class="sub">{race.location.county.join(' & ')} County</span><br />
+              <a href={`/?region=${race.location.region}`}>{regionLabel}</a>
+            </dd>
+
+            <dt>When</dt>
+            <dd>
+              {race.date.full}
+              {
+                /* Only where there is a date to be unsure about. A permanently
+                   cancelled race has no date at all, and "not confirmed by the
+                   organizer" would read as though one were still coming. */
+                !race.date_confirmed && race.month != null && (
+                  <><br /><span class="sub warn">Not confirmed by the organizer.</span></>
+                )
+              }
+            </dd>
+
+            <dt>Format</dt>
+            <dd>{formatLabel}</dd>
+
+            <dt>Filed under</dt>
+            <dd class="tokens">
+              {distanceTokens.map((d) => <span class="token">{d}</span>)}
+            </dd>
+
+            <dt>Organizer</dt>
+            <dd>
+              {race.organizer ?? <span class="sub">Not recorded</span>}
+              {
+                race.organizer && !race.organizer_confirmed && (
+                  <><br /><span class="sub warn">Not independently confirmed.</span></>
+                )
+              }
+            </dd>
+
+            <dt>First run</dt>
+            <dd>
+              {
+                race.year_started ? (
+                  <>
+                    {race.year_started}
+                    {!race.year_started_confirmed && (
+                      <><br /><span class="sub warn">Reported, not confirmed.</span></>
+                    )}
+                  </>
+                ) : (
+                  <span class="sub">Not recorded</span>
+                )
+              }
+            </dd>
+
+            <dt>Start</dt>
+            <dd>
+              <span class="mono">{race.coordinates.lat}, {race.coordinates.lng}</span><br />
+              <span class="sub">
+                {race.coordinates.precision}-level, from {race.coordinates.derived_from}
+              </span>
+            </dd>
+
+            <dt>Sources</dt>
+            <dd>
+              <ul class="sources">
+                {
+                  sources.map((s) => (
+                    <li>
+                      {s.href ? (
+                        <a href={s.href} rel="noopener">
+                          {s.label}
+                        </a>
+                      ) : (
+                        s.label
+                      )}
+                    </li>
+                  ))
+                }
+              </ul>
+            </dd>
+          </dl>
+        </aside>
+      </div>
+    </article>
+
+    <nav class="near" aria-label="Nearby on the calendar">
+      <a class="n-prev" href={raceHref(prev)}>
+        <span class="n-dir">&larr; Earlier</span>
+        <span class="n-name">{prev.name}</span>
+        <span class="n-when">{prev.date.primary}</span>
+      </a>
+      <a class="n-next" href={raceHref(next)}>
+        <span class="n-dir">Later &rarr;</span>
+        <span class="n-name">{next.name}</span>
+        <span class="n-when">{next.date.primary}</span>
+      </a>
+    </nav>
+
+    <footer class="foot">
+      <p>
+        Hand-verified from the sources above. Something wrong or out of date?{' '}
+        <a href="https://github.com/ChrisGrundemann/gnarlist/issues">Open an issue</a>.
+      </p>
+      <p>
+        <a href="/" data-back="/">All Colorado ultramarathons</a> &middot;{' '}
+        <a href="/calendar/" data-back="/calendar/">The season calendar</a>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    import '../../scripts/race-back';
+  </script>
+</Base>
+
+<style>
+  .page {
+    padding: clamp(1.25rem, 4vw, 2.5rem) 0 4rem;
+    max-width: 68rem;
+  }
+
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--fg-mute);
+    margin-bottom: 1.5rem;
+  }
+  .crumbs a {
+    text-decoration: none;
+  }
+  .crumbs .here {
+    color: var(--fg-dim);
+    text-transform: none;
+    letter-spacing: 0.04em;
+  }
+
+  /* ---- hero ---- */
+  .hero {
+    border-left: 3px solid transparent;
+    padding-left: 0.85rem;
+  }
+  @media (min-width: 56rem) {
+    .hero {
+      padding-left: 1rem;
+      margin-left: -1rem;
+    }
+  }
+  h1 {
+    font-size: clamp(1.9rem, 5.5vw, 3.1rem);
+    line-height: 1.02;
+    letter-spacing: -0.005em;
+    text-transform: uppercase;
+    margin: 0.3rem 0 0;
+    color: var(--fg);
+  }
+  .star {
+    color: var(--gold);
+    font-size: 0.75em;
+    /* em, not rem: the h1 runs from 1.9rem to 3.1rem and a fixed gap
+       disappears at the top of that range. */
+    margin-right: 0.22em;
+  }
+  .when {
+    margin: 0.7rem 0 0;
+  }
+  .date {
+    font-family: var(--font-display);
+    font-size: 1.02rem;
+    letter-spacing: 0.05em;
+    color: var(--fg-dim);
+  }
+  .date.is-approx::before {
+    content: '~ ';
+    color: var(--fg-mute);
+  }
+
+  .status {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.8rem 0 0;
+    font-size: 0.86rem;
+    color: var(--fg-dim);
+  }
+  .pill {
+    font-family: var(--font-display);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 0.18rem 0.45rem;
+    border-radius: 2px;
+    border: 1px solid currentcolor;
+  }
+
+  .badges {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 1.1rem 0 0;
+    padding: 0;
+  }
+  .badge {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 0.26rem 0.5rem;
+    border-radius: 2px;
+    color: var(--teal);
+    background: var(--teal-wash);
+    border: 1px solid var(--teal-edge);
+  }
+  .badge.is-headline {
+    color: #eafffb;
+    background: rgb(70 182 168 / 18%);
+    border-color: var(--teal);
+  }
+  .badge-fmt {
+    color: var(--fg-dim);
+    background: transparent;
+    border-color: var(--line);
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.13em;
+  }
+  .badge-star {
+    color: var(--gold);
+    background: var(--gold-wash);
+    border-color: var(--gold-edge);
+  }
+
+  /* ---- status treatments: the same three as list and calendar ---- */
+  .is-marquee .hero {
+    border-left-color: var(--gold-deep);
+  }
+  .is-marquee h1 {
+    color: #fff;
+  }
+  .is-returning .hero {
+    border-left-color: var(--teal-deep);
+  }
+  .is-returning .pill {
+    color: var(--teal);
+    background: var(--teal-wash);
+  }
+  .is-discontinued .hero {
+    border-left-color: var(--rust);
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent 0 9px,
+      rgb(201 117 92 / 4%) 9px 18px
+    );
+  }
+  .is-discontinued .pill {
+    color: var(--rust);
+    background: var(--rust-wash);
+  }
+  .is-discontinued h1 {
+    color: var(--fg-dim);
+  }
+  .is-unverified .hero {
+    border-left: 3px dashed var(--gold-deep);
+  }
+  .is-unverified .pill {
+    color: var(--gold);
+    background: var(--gold-wash);
+  }
+
+  /* ---- body: document column + facts rail ---- */
+  .cols {
+    display: grid;
+    gap: 2rem;
+    margin-top: 2.25rem;
+  }
+  @media (min-width: 56rem) {
+    .cols {
+      grid-template-columns: minmax(0, 1fr) 19rem;
+      gap: 2.5rem;
+    }
+  }
+
+  .block {
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .block:last-child {
+    border-bottom: 0;
+    margin-bottom: 0;
+  }
+  .block h2,
+  .rail-h {
+    font-family: var(--font-display);
+    font-size: 0.76rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 0.7rem;
+  }
+  .prose {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--fg-dim);
+    max-width: 62ch;
+  }
+  .muted {
+    color: var(--fg-mute);
+  }
+
+  .dists {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line-soft);
+  }
+  .dists li {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.9rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .d-label {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--fg);
+  }
+  .dists li.is-headline .d-label {
+    color: var(--teal);
+  }
+  .d-detail {
+    font-size: 0.82rem;
+    color: var(--fg-mute);
+  }
+  .also {
+    margin: 0.9rem 0 0;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--fg-mute);
+    max-width: 62ch;
+  }
+  .also b {
+    color: var(--fg-dim);
+    font-weight: 600;
+  }
+
+  .siblings {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .siblings li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 0.35rem 0;
+  }
+  .siblings a {
+    text-decoration: none;
+  }
+  .siblings a:hover {
+    text-decoration: underline;
+  }
+  .s-when {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--fg-mute);
+    white-space: nowrap;
+  }
+  .more-link {
+    margin: 0.9rem 0 0;
+    font-size: 0.85rem;
+  }
+
+  /* ---- rail ---- */
+  .rail {
+    align-self: start;
+    padding: 1rem 1.1rem 1.2rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--ink-850);
+  }
+  .facts {
+    margin: 0;
+    display: grid;
+    gap: 0.15rem 0;
+  }
+  .facts dt {
+    font-family: var(--font-display);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--fg-mute);
+    margin-top: 0.9rem;
+  }
+  .facts dt:first-of-type {
+    margin-top: 0;
+  }
+  .facts dd {
+    margin: 0.2rem 0 0;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    color: var(--fg-dim);
+  }
+  .sub {
+    font-size: 0.78rem;
+    color: var(--fg-mute);
+  }
+  .warn {
+    color: var(--rust);
+  }
+  .mono {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--fg-dim);
+  }
+  .tokens {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  .token {
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    padding: 0.12rem 0.35rem;
+    border-radius: 2px;
+    color: var(--teal);
+    background: var(--teal-wash);
+    border: 1px solid var(--teal-edge);
+  }
+  .sources {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .sources li {
+    padding: 0.1rem 0;
+    word-break: break-word;
+  }
+
+  /* ---- prev / next ---- */
+  .near {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 2.5rem;
+  }
+  @media (min-width: 44rem) {
+    .near {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .near a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--ink-850);
+    text-decoration: none;
+  }
+  .near a:hover {
+    border-color: var(--teal-edge);
+    background: var(--ink-800);
+  }
+  .n-next {
+    text-align: right;
+  }
+  .n-dir {
+    font-family: var(--font-display);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--fg-mute);
+  }
+  .n-name {
+    font-family: var(--font-display);
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: var(--fg);
+  }
+  .near a:hover .n-name {
+    color: var(--teal);
+  }
+  .n-when {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--fg-mute);
+  }
+
+  .foot {
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+    color: var(--fg-mute);
+    font-size: 0.8rem;
+  }
+  .foot p {
+    margin: 0 0 0.35rem;
+  }
+</style>

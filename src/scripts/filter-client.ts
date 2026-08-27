@@ -1,13 +1,26 @@
-// Client-side filtering for the list view.
+// Client-side filtering, shared by the list view and the calendar view.
 //
-// Every row is rendered at build time and stays in the DOM; filtering only
-// toggles visibility. At 75 records that is instant, needs no framework, and
-// means the full list still renders with JavaScript disabled or still loading.
+// Every event is rendered at build time and stays in the DOM; filtering only
+// toggles visibility. At 102 records that is instant, needs no framework, and
+// means both views still render in full with JavaScript disabled or still
+// loading.
 //
 // All filter semantics live in ../lib/filters.ts, shared with the build-time
-// render and with Phases 4-5.
+// render. This file knows nothing about what a view looks like — it works off
+// four contracts, and any future view (the Phase 5 map) can opt in by honouring
+// them rather than by growing a branch in here:
+//
+//   [data-race]        an event. Carries its filter tokens as data attributes
+//                      (see `filterAttrs` in ../lib/races.ts).
+//   [data-break]       a heading that owns the sibling events following it,
+//                      until the next break. The list view's month rules.
+//   [data-group]       a container that owns the events inside it. The
+//                      calendar's month blocks.
+//   [data-view-link]   a link to the other view. Rewritten on every change so
+//                      the filter state travels with the navigation.
 
 import {
+  FILTER_STORE,
   MONTHS,
   countActive,
   matches,
@@ -27,18 +40,17 @@ interface Row {
    * Does this row contribute to displayed numbers? Discontinued and unverified
    * events don't — see `countsTowardTotals` in ../lib/races.ts. They filter,
    * sort and render exactly like every other row; they're only excluded from
-   * arithmetic. Emitted as `data-counted` by RaceRow.astro so this script never
+   * arithmetic. Emitted as `data-counted` by `filterAttrs` so this script never
    * has to know the status vocabulary.
    */
   counted: boolean;
 }
 
-const list = document.querySelector<HTMLElement>('[data-race-list]');
 const panel = document.querySelector<HTMLElement>('.filters-wrap');
-if (list && panel) init(list, panel);
+if (panel && document.querySelector('[data-race]')) init(panel);
 
-function init(list: HTMLElement, panel: HTMLElement) {
-  const rows: Row[] = [...list.querySelectorAll<HTMLElement>('[data-race]')].map((el) => ({
+function init(panel: HTMLElement) {
+  const rows: Row[] = [...document.querySelectorAll<HTMLElement>('[data-race]')].map((el) => ({
     el,
     tokens: {
       formats: split(el.dataset.formats),
@@ -51,7 +63,21 @@ function init(list: HTMLElement, panel: HTMLElement) {
 
   const countedTotal = rows.filter((r) => r.counted).length;
 
-  const nodes = [...list.children] as HTMLElement[];
+  // Sibling-run headings (list view). Each break owns everything after it up to
+  // the next break, so the walk is over the shared parent's children.
+  const breakRuns = buildBreakRuns();
+  // Container groups (calendar view).
+  const groups = [...document.querySelectorAll<HTMLElement>('[data-group]')].map((el) => ({
+    el,
+    key: el.dataset.monthBlock ?? '',
+    max: Number(el.dataset.groupMax ?? 0),
+    count: el.querySelector<HTMLElement>('[data-group-count]'),
+    empty: el.querySelector<HTMLElement>('[data-group-empty]'),
+    rows: [...el.querySelectorAll<HTMLElement>('[data-race]')],
+  }));
+  const stripLinks = [...document.querySelectorAll<HTMLElement>('[data-strip]')];
+  const viewLinks = [...document.querySelectorAll<HTMLAnchorElement>('[data-view-link]')];
+
   const inputs = [...panel.querySelectorAll<HTMLInputElement>('input[data-facet]')];
   const empty = document.querySelector<HTMLElement>('[data-empty]');
   const resultCount = panel.querySelector<HTMLElement>('[data-result-count]');
@@ -103,7 +129,7 @@ function init(list: HTMLElement, panel: HTMLElement) {
 
   /**
    * The panel is server-rendered open so it still works with JavaScript off.
-   * On a phone that is a wall of chips above the list, so collapse it here —
+   * On a phone that is a wall of chips above the results, so collapse it here —
    * the summary line carries the active-filter state while it's shut. Above the
    * breakpoint the summary is display:none, so the panel must be forced back
    * open on the way up or a narrow-then-widened window loses its filters.
@@ -116,6 +142,21 @@ function init(list: HTMLElement, panel: HTMLElement) {
     wide.addEventListener('change', () => {
       if (wide.matches) details.open = true;
     });
+  }
+
+  /** Each `[data-break]` heading paired with the sibling rows it heads. */
+  function buildBreakRuns() {
+    const runs: { el: HTMLElement; rows: HTMLElement[] }[] = [];
+    for (const brk of document.querySelectorAll<HTMLElement>('[data-break]')) {
+      const run: HTMLElement[] = [];
+      for (let n = brk.nextElementSibling; n; n = n.nextElementSibling) {
+        const el = n as HTMLElement;
+        if (el.hasAttribute('data-break')) break;
+        if (el.hasAttribute('data-race')) run.push(el);
+      }
+      runs.push({ el: brk, rows: run });
+    }
+    return runs;
   }
 
   function split(v: string | undefined): string[] {
@@ -178,9 +219,8 @@ function init(list: HTMLElement, panel: HTMLElement) {
     // `shown` is how many rows are on screen and drives the empty state;
     // `visible` is how many of those count and drives every displayed number.
     // Collapsing them back into one is the bug this split exists to prevent —
-    // Region → Denver Metro + Sub-50K leaves Sourdough (unverified) as the only
-    // row, so shown = 1 and visible = 0, and the "nothing matches" copy would
-    // otherwise appear directly above a visible result.
+    // a filter can legitimately leave a discontinued row as the only survivor,
+    // and the "nothing matches" copy must not appear above a visible result.
     let shown = 0;
     let visible = 0;
     for (const r of rows) {
@@ -191,19 +231,32 @@ function init(list: HTMLElement, panel: HTMLElement) {
       if (r.counted) visible++;
     }
 
-    // Hide a month heading once nothing under it survives the filter.
-    let heading: HTMLElement | null = null;
-    let under = 0;
-    for (const node of nodes) {
-      if (node.hasAttribute('data-break')) {
-        if (heading) heading.hidden = under === 0;
-        heading = node;
-        under = 0;
-      } else if (!node.hidden) {
-        under++;
+    // Hide a list month heading once nothing under it survives the filter.
+    for (const run of breakRuns) {
+      run.el.hidden = !run.rows.some((el) => !el.hidden);
+    }
+
+    // Calendar month blocks stay in place — the year keeps its twelve blocks
+    // however hard the filter bites — but they collapse to the slim empty
+    // treatment, restate their count, and redraw their density bar.
+    for (const g of groups) {
+      let gShown = 0;
+      let gCounted = 0;
+      for (const el of g.rows) {
+        if (el.hidden) continue;
+        gShown++;
+        if (el.dataset.counted === '1') gCounted++;
+      }
+      g.el.classList.toggle('is-empty', gShown === 0);
+      if (g.empty) g.empty.hidden = gShown > 0;
+      if (g.count) g.count.textContent = String(gCounted);
+      g.el.style.setProperty('--fill', g.max > 0 ? `${Math.round((gCounted / g.max) * 100)}%` : '0%');
+      for (const link of stripLinks) {
+        if (link.dataset.strip !== g.key) continue;
+        link.style.setProperty('--h', g.max > 0 ? `${Math.round((gCounted / g.max) * 100)}%` : '0%');
+        link.classList.toggle('is-empty', gShown === 0);
       }
     }
-    if (heading) heading.hidden = under === 0;
 
     updateCounts();
 
@@ -223,11 +276,32 @@ function init(list: HTMLElement, panel: HTMLElement) {
       summary.classList.toggle('is-on', active > 0);
     }
 
+    const search = searchFromState(state);
+    wireViewLinks(search);
+    try {
+      sessionStorage.setItem(FILTER_STORE, search);
+    } catch {
+      // Private-mode storage refusal. The back-link just won't be pre-filtered.
+    }
+
     if (pushUrl) {
       // replaceState, not pushState: toggling six chips shouldn't bury the
       // previous page under six history entries. The URL still reflects state
       // at every moment, so copy/bookmark/share works the same either way.
-      history.replaceState(null, '', location.pathname + searchFromState(state) + location.hash);
+      history.replaceState(null, '', location.pathname + search + location.hash);
+    }
+  }
+
+  /**
+   * Point the other-view link at the same filter state. This is the mechanism
+   * behind "filters carry between views" (ARCHITECTURE.md §4.5): the two views
+   * are separate pages, so state crosses in the query string, and the link has
+   * to be current at the moment it's clicked rather than at page load.
+   */
+  function wireViewLinks(search: string) {
+    for (const a of viewLinks) {
+      const base = a.dataset.viewLink;
+      if (base) a.href = base + search;
     }
   }
 

@@ -7,6 +7,7 @@
 // works with JavaScript off and there is nothing to fetch.
 import FilterBar from '../components/FilterBar.astro';
 import RaceRow from '../components/RaceRow.astro';
+import ViewSwitch from '../components/ViewSwitch.astro';
 import Base from '../layouts/Base.astro';
 import { MONTH_NAMES, REGIONS } from '../lib/filters';
 import { allRaces } from '../lib/races';
@@ -91,9 +92,12 @@ const description = `A filterable list of ${counted} Colorado ultramarathons —
   </header>
 
   <main class="shell">
+    <ViewSwitch current="list" />
+
     <p class="howto">
-      Filter by format, distance, region or month — they stack. The address bar keeps up, so
-      whatever you're looking at can be copied, bookmarked or sent to somebody else.
+      Filter by format, distance, region or month — they stack, and they carry over to the
+      calendar. The address bar keeps up, so whatever you're looking at can be copied,
+      bookmarked or sent to somebody else. Tap any race for its full record.
     </p>
 
     <FilterBar races={races} />
@@ -147,7 +151,7 @@ const description = `A filterable list of ${counted} Colorado ultramarathons —
     <footer class="foot">
       <p>
         {counted} events across {REGIONS.length} Colorado regions, plus {total - counted} listed for
-        the record. Hand-verified, corrections welcome. Calendar and map views are next.
+        the record. Hand-verified, corrections welcome. The map view is next.
       </p>
       <p>
         Built with Astro on Cloudflare Workers &middot;

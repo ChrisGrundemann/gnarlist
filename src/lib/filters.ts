@@ -20,6 +20,16 @@ export const PARAM = {
 
 export type Facet = 'format' | 'dist' | 'region' | 'month';
 
+/**
+ * sessionStorage key holding the last filter query string.
+ *
+ * The query string is the source of truth for filter state; this is a courtesy
+ * copy so an event permalink can offer a way back into the view you came from.
+ * Permalinks deliberately keep clean canonical URLs (ARCHITECTURE.md §4.6) and
+ * so can't carry the params themselves.
+ */
+export const FILTER_STORE = 'gnarlist:filters';
+
 export interface Choice {
   /** Token used in data attributes and URL params. URL-safe, lowercase. */
   value: string;

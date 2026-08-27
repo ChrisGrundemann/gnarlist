@@ -1,0 +1,128 @@
+---
+// One month block in the twelve-month grid.
+//
+// Month blocks are deliberately NOT uniform height (ARCHITECTURE.md §2.5 — the
+// poster's shape): the block is as tall as its events make it, and the grid
+// flows around that. September carries 20 events and reads as the wall it is;
+// March carries none and collapses to a slim rule. The density meter under the
+// heading makes that read hold even when a block is scrolled past.
+import CalendarEvent from './CalendarEvent.astro';
+import { MONTH_NAMES } from '../lib/filters';
+import type { RaceView } from '../lib/races';
+
+interface Props {
+  month: number | null;
+  races: RaceView[];
+  /** Busiest month in the dataset — the meter's full scale. */
+  max: number;
+}
+
+const { month, races, max } = Astro.props;
+
+const label = month ? MONTH_NAMES[month - 1] : 'No date';
+const key = month ? String(month) : '';
+// The count on a month block is the counted count, not the row count
+// (ARCHITECTURE.md §4). Golden Gate Dirty 30 is listed under June and visible
+// there; it just doesn't add to June's number.
+const counted = races.filter((r) => r.counted).length;
+const fill = max > 0 ? Math.round((counted / max) * 100) : 0;
+---
+
+<section
+  class:list={['month', races.length === 0 && 'is-empty']}
+  data-group
+  data-group-max={max}
+  data-month-block={key}
+  style={`--fill: ${fill}%`}
+  aria-label={`${label} — ${counted} ${counted === 1 ? 'event' : 'events'}`}
+>
+  <h2 class="head">
+    <span class="mname">{label}</span>
+    <span class="mcount"><b data-group-count>{counted}</b></span>
+  </h2>
+
+  <div class="meter" aria-hidden="true"></div>
+
+  <ul class="evs">
+    {races.map((race) => <CalendarEvent race={race} />)}
+  </ul>
+
+  <p class="none" data-group-empty hidden={races.length > 0}>No events</p>
+</section>
+
+<style>
+  .month {
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    margin: 0 0 1.35rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: linear-gradient(180deg, var(--ink-850), var(--ink-900) 8rem);
+    overflow: hidden;
+  }
+
+  .head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    padding: 0.6rem 0.7rem 0.45rem;
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .mcount {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    color: var(--fg-mute);
+  }
+  .mcount b {
+    color: var(--fg-dim);
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /*
+   * Density, drawn. The bar is the month's share of the busiest month, so the
+   * year reads as a season curve at a glance the way the poster's stacked
+   * columns did — quiet through the winter, a wall in July and September.
+   */
+  .meter {
+    height: 2px;
+    background: var(--line-soft);
+    position: relative;
+  }
+  .meter::after {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--fill, 0%);
+    background: linear-gradient(90deg, var(--gold-deep), var(--gold));
+    transition: width 0.18s ease;
+  }
+
+  .evs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .none {
+    margin: 0;
+    padding: 0.7rem;
+    font-size: 0.76rem;
+    font-style: italic;
+    color: var(--fg-mute);
+    border-top: 1px solid var(--line-soft);
+  }
+
+  /* A month with nothing in it is a fact about the Colorado season, not a hole
+     to hide — it just doesn't get to take up the space of a busy one. */
+  .month.is-empty {
+    background: none;
+    opacity: 0.62;
+  }
+</style>

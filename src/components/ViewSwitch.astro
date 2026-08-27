@@ -1,0 +1,84 @@
+---
+// The list ↔ calendar switch.
+//
+// Filter state must survive the trip (ARCHITECTURE.md §4.5 — the reason Phase 3
+// was built first). Both views are separate pages, so the state travels the only
+// way it can across a navigation: in the query string. These links are rendered
+// with a bare href so they work with JavaScript off, and the filter client
+// rewrites the inactive one to carry the live filter state on every change. See
+// `wireViewLinks` in src/scripts/filter-client.ts.
+interface Props {
+  current: 'list' | 'calendar';
+}
+
+const { current } = Astro.props;
+
+const views = [
+  { id: 'list', href: '/', label: 'List', hint: 'Every event in one seasonal run' },
+  { id: 'calendar', href: '/calendar/', label: 'Calendar', hint: 'The year at a glance' },
+] as const;
+---
+
+<nav class="views" aria-label="View">
+  {
+    views.map((v) => {
+      const active = v.id === current;
+      return (
+        <a
+          class:list={['view', active && 'is-on']}
+          href={v.href}
+          data-view-link={active ? null : v.href}
+          aria-current={active ? 'page' : null}
+          title={v.hint}
+        >
+          {v.label}
+        </a>
+      );
+    })
+  }
+</nav>
+
+<style>
+  .views {
+    display: inline-flex;
+    margin: 0 0 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--ink-850);
+    overflow: hidden;
+  }
+  .view {
+    padding: 0.5rem 1rem;
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--fg-mute);
+    text-decoration: none;
+    border-right: 1px solid var(--line);
+  }
+  .view:last-child {
+    border-right: 0;
+  }
+  .view:hover {
+    color: var(--fg);
+    background: var(--ink-800);
+  }
+  .view.is-on {
+    color: var(--gold);
+    background: var(--gold-wash);
+  }
+
+  @media (max-width: 59.99rem) {
+    .views {
+      display: flex;
+      width: 100%;
+    }
+    .view {
+      flex: 1;
+      text-align: center;
+      padding: 0.7rem 0.5rem;
+    }
+  }
+</style>
