@@ -1,17 +1,23 @@
 # GnarList
 
 A public, free website that maps and calendars **active Colorado ultramarathons** — filterable by
-format, distance, region, and date.
+format, distance, region, and month.
+
+**Live at [gnarlist.co](https://gnarlist.co).**
 
 It grows out of two hand-researched static posters (a "Colorado Ultra Season" calendar and a
-"Colorado Ultra Map") built from a verified dataset of ~75 events. This site generalizes those two
-fixed views into an interactive, filterable, shareable tool.
+"Colorado Ultra Map"). This site generalizes those two fixed views into an interactive, filterable,
+shareable tool; the dataset behind it has since grown from 75 records at Phase 1 to 102.
 
-**Current status: Phases 3–5 built (list, calendar, map).** All 102 events render in three views —
-a seasonally-sorted list, a twelve-month calendar with per-month day timelines, and an interactive
-clustered map — all filterable by format, distance, region and month, with filter state in the URL
-so any view can be shared or bookmarked and carried between views. Every event also has its own
-permalink page at `/races/<slug>/`. Phase 6 is polish and search.
+**Current status: Phases 1–5 built.** All 102 events render in three views — a seasonally-sorted
+list, a twelve-month calendar with per-month day timelines, and an interactive clustered map — each
+filterable by format, distance, region and month (plus a separate sub-50K toggle), with filter state
+in the URL so any view can be shared, bookmarked, and carried across to the other two. Every event
+also has a permalink page at `/races/<slug>/`.
+
+**Next up:** a design/colour sweep across the whole site, deliberately held back until the map
+existed — basemap tiles are the hardest surface for the palette to work against, and that's hard to
+judge in the abstract. Then Phase 6: mobile polish and basic search.
 
 📐 **[ARCHITECTURE.md](./ARCHITECTURE.md) is the source of truth** for architectural decisions,
 the phased build plan, and what's deliberately out of scope. Read it before making changes.
@@ -25,6 +31,21 @@ the phased build plan, and what's deliberately out of scope. Read it before maki
 | Hosting | Cloudflare (Workers static assets), auto-deploy on push to `main` |
 | Data | Static JSON in the repo (`data/races.json`), read at build time |
 | Map | [Leaflet](https://leafletjs.com) + `leaflet.markercluster`, over free OpenStreetMap tiles darkened in CSS — no API key (ARCHITECTURE.md §2.2) |
+| Discoverability | `@astrojs/sitemap`, JSON-LD `SportsEvent` on every permalink, `public/robots.txt` |
+
+## Pages
+
+Three views over one dataset, plus a page per event.
+
+| Path | What it is |
+|---|---|
+| `/` | Every event in one Jan→Dec run, grouped by month |
+| `/calendar/` | Twelve month boxes, each with a day timeline showing when races actually fall (plus a thirteenth for the one record with no date at all) |
+| `/map/` | Clustered Leaflet map plus a region-grouped index; honest about town-level coordinates |
+| `/races/<slug>/` | The full record for one event |
+
+Filters are one engine (`src/lib/filters.ts`) shared by all three views, and filter state travels
+between them in the query string.
 
 ## Layout
 
@@ -34,44 +55,53 @@ SCHEMA.md                    Data model documentation
 Colorado_Ultramarathons.xlsx Hand-verified source spreadsheet (provenance)
 data/races.json              Canonical dataset (102 events) — hand-maintained; see note below
 scripts/generate_races.py    Phase 1 conversion — historical, do NOT re-run (see header)
-scripts/geocode.py           Coordinate lookup helper
-src/pages/                   Astro pages — index (list), calendar, map, races/[slug]
-src/lib/                     Build-time data layer: filters, races, timeline, map
-src/scripts/                 Browser islands: filter-client, calendar-timeline, map-client
+scripts/geocode.py           Nominatim lookup helper — an operator tool; never writes to the dataset
+astro.config.mjs             Static output, canonical site URL, sitemap integration
+wrangler.jsonc               Cloudflare Workers deploy config (assets-only — no `main` entry)
+public/                      Favicons and robots.txt
+src/pages/                   index (list), calendar, map, races/[slug]
+src/layouts/Base.astro       <head>, canonical/OG tags, named `head` slot for JSON-LD
+src/components/              FilterBar, ViewSwitch, and one row/cell component per view
+src/lib/                     Build-time: filters, races, timeline, map, map-data, structured-data
+src/scripts/                 Browser islands: filter-client, calendar-timeline, map-client, race-back
+src/styles/                  global.css (design tokens) + map.css (marker language, Leaflet theme)
 ```
-
-## The three views
-
-| Path | What it is |
-|---|---|
-| `/` | Every event in one Jan→Dec run, grouped by month |
-| `/calendar/` | Twelve month boxes, each with a day timeline showing when races actually fall |
-| `/map/` | Clustered Leaflet map plus a region-grouped index; honest about town-level coordinates |
-| `/races/<slug>/` | The full record for one event |
-
-Filters are one engine (`src/lib/filters.ts`) shared by all three, and filter state travels between
-views in the query string.
 
 ## Develop
 
-Requires Node ≥ 22.12.
+Requires Node ≥ 22.12 (pinned in `.nvmrc`).
 
 ```sh
 npm install
 npm run dev      # local dev server at http://localhost:4321
-npm run build    # static build → dist/
+npm run build    # static build → dist/ (105 pages: 3 views + 102 permalinks)
 npm run preview  # serve the built dist/ locally
 ```
+
+Deploys run automatically on push to `main` via Cloudflare Workers Builds. To deploy by hand:
+`npx wrangler deploy`.
+
+`npm run check` is declared in `package.json` but **is not wired up** — `@astrojs/check` and
+`typescript` aren't installed, so the command stops and offers to install them. Types here are
+documentation, not CI enforcement. Adding them is a standing follow-up (ARCHITECTURE.md §7).
+
+**Verifying a change:** a green build is necessary but not sufficient. This project has repeatedly
+shipped bugs a passing build was perfectly happy with — a collapsed CSS content box, silently wrong
+event spans, watermarked map tiles. Look at the rendered page.
 
 ## Data changes
 
 The dataset is edited **by pull request, not in place** — see ARCHITECTURE.md §5. A PR diff on
-`data/races.json` is reviewable; a silent overwrite isn't. This project has already caught several
-real research errors (a mountain bike race and a non-ultra race, both miscategorized as running
-ultras) through exactly that review step.
+`data/races.json` is reviewable; a silent overwrite isn't. That review step has already caught real
+research errors: a mountain bike race and a running-but-not-ultra race, both listed by aggregators
+as running ultras and both removed. A third never made it in — an Arizona event that aggregators
+place in Colorado, on a name collision with a Colorado mountain — which is why §5.3 says an
+aggregator's location field is derived data, not sourced data.
 
 ## License
 
-**Not yet decided.** This repo intentionally carries no license file for now, which means default
-copyright applies — all rights reserved. Licensing (for the code and for the dataset, which may
-warrant different terms) is an open question to settle before public launch.
+**No license file, deliberately** — default copyright applies, all rights reserved, for the code and
+for `data/races.json` alike. This is a settled decision rather than an oversight (ARCHITECTURE.md
+§8): the MIT file added during the Phase 2 scaffold was removed on purpose. Note that facts — race
+names, dates, locations, distances — aren't copyrightable regardless of licensing; only the specific
+compilation and the original writing are. Not legal advice.
