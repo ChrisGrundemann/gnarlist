@@ -12,6 +12,8 @@ A public, free website that visualizes active Colorado ultramarathons — filter
 
 **Working convention across sessions:** Claude Code should commit locally as it works, but should not push to the remote. The user reviews and pushes manually once a session's work is complete. State this explicitly in every prompt handed to Claude Code — don't rely on it being remembered from a prior session.
 
+**Verification convention, relevant from Phase 3 onward:** a successful build is necessary but not sufficient. Claude Code should verify the build succeeds and (where practical) that the data layer is correctly wired, but the actual visual/interactive result — does it look right, does it behave right — is verified by the user directly, not claimed by Claude Code from the build output alone.
+
 ---
 
 ## 2. Core architectural decisions
@@ -48,6 +50,12 @@ These were deliberated explicitly and shouldn't be silently re-opened by a futur
 - **Hosting/deploy:** Cloudflare, deployed as a Worker with native static assets (not classic Pages) — connected to the GitHub repo via Workers Builds for automatic deploys on push/merge to main. **Note for future sessions, corrected during Phase 2:** Cloudflare's own current guidance is to start new projects on Workers rather than Pages — Pages still works but is in maintenance mode, with new platform investment going to Workers. The live URL uses the `*.workers.dev` subdomain pattern (this is expected and correct, not a misconfiguration — Workers projects get a personalized `workers.dev` subdomain the same way Pages projects used to get `pages.dev`). Build command `npm run build`, deploy via `npx wrangler deploy`, root directory `/`. Don't "fix" this back to classic Pages in a future session; it was a deliberate, verified update to the original decision, not a mistake to correct.
 - **Domain:** **gnarlist.co** is canonical for now — "GnarList," `.co` read as "Colorado," matching the site's current CO-only scope. Also registered: `gnarlist.run`, `gnarlist.racing`, `thegnarlist.com` — set these up as redirects to the canonical domain once there's something live worth pointing them at (Cloudflare handles multi-domain redirects natively). **Explicitly deferred out of Phase 2** — connecting any real domain (canonical or redirects) requires registrar-level DNS action tied to the user's accounts, which is outside what a Claude Code session can do; revisit once the initial deploy is live (it is — see §2.4 above). `thegnarlist.com` is reserved as the likely future canonical domain if/when the project expands beyond Colorado — that's a deliberate rename to revisit later, not a decision to make now.
 
+### 2.5 Visual design: carry the poster identity forward, no separate design tool
+
+**Decision:** No dedicated Claude Design pass for the site UI. The two static posters ("Colorado Ultra Season" calendar, "Colorado Ultra Map") already established a real visual identity — dark palette, gold/amber accents for marquee/highlighted content, teal as a secondary accent, bold condensed headers, a specific typographic voice ("A Typical Year on the High Ground"). Carry that forward as an explicit constraint in UI-building prompts from Phase 3 onward, executed via Claude Code's `frontend-design` skill rather than mocked up separately first.
+
+**Why:** Design tools are strongest on static or near-static compositions — which is exactly why they worked well for the posters. A filtering UI is stateful and interactive in a way that's hard to meaningfully mock up outside the real implementation; a static mockup of hypothetical filter states would just need reverse-engineering into working interactivity anyway. Building with zero visual direction risks generic defaults and real rework later; the cheap fix is stating the existing identity explicitly up front, not routing through a separate tool.
+
 ---
 
 ## 3. Tech stack
@@ -76,6 +84,19 @@ The existing spreadsheet/poster data needs to become a real schema. At minimum, 
 - Notes/hook fact, source(s)
 
 **Deferred field, not in v1:** elevation profile / total gain data. See §6.
+
+**Filter-UX decisions (settled before Phase 3, apply consistently across Phases 3–5 since calendar and map reuse the same filter logic):**
+- **Sub-50K events** (Box Canyon 30K, Sourdough Snowshoe, etc.) get a separate toggle, not folded into the main distance filter — keeps the primary distance filter intuitive for someone thinking in standard ultra distances (50K/50mi/100K/100mi) rather than cluttering it with borderline entries.
+- **Mixed-format events** (e.g. Chase the Moon: primarily a 12-hr timed event, but also offers a standard 50K) get a secondary tag so they surface under both relevant filters, rather than being forced into one bucket and becoming invisible to someone filtering by the other.
+
+---
+
+## 4.5. Phase 3 scope additions (pulled forward from later phases)
+
+Two things originally scoped later, deliberately moved up before Phase 3 started because retrofitting them after filter components already exist is more disruptive than building them in from day one:
+
+- **Shareable/bookmarkable filtered URLs** — moved from Phase 6 into Phase 3. Filter state (format, distance, region, date, sub-50K toggle) should be reflected in the URL so a filtered view can be shared or bookmarked.
+- **Baseline mobile usability** — distinct from mobile *polish* (still Phase 6). The site should be genuinely usable on a phone from Phase 3 onward, not just functional on desktop with polish deferred; a race-finder tool that doesn't work on mobile for three phases is a real gap given how people actually browse this kind of thing.
 
 ---
 
@@ -108,10 +129,10 @@ Each phase becomes one or more Claude Code prompts, built and reviewed iterative
 
 1. **Data foundation** — convert the verified spreadsheet into the real schema (§4): add coordinates, normalize distance fields, generate slugs, encode status/marquee/region. Mostly a data-decisions step, human-directed with Claude Code executing. **Status: complete.** `SCHEMA.md` approved, `data/races.json` built (75 records: 71 active, 2 returning, 1 discontinued, 1 unverified), validated clean (no duplicate slugs, no missing required fields, no missing coordinates, marquee list matches the approved 14).
 2. **Project scaffold** — repo init, framework choice (§3), Cloudflare deploy pipeline, a live "hello world" placeholder page. Proves the plumbing before building features on it. **Status: complete.** Astro scaffolded, `.gitignore` and `.nvmrc` in place, README added, placeholder page builds from `data/races.json` at build time with zero shipped JS, licensing resolved (no license file — §8), live site verified in production matching the local build exactly (71 active / 75 total / 75 with coordinates / 14 marquee), deploy config committed as `wrangler.jsonc` (validated via `wrangler deploy --dry-run` plus a negative-control test; no `main` field since `output: 'static'` produces an assets-only Worker — don't "helpfully" add one later), `wrangler` added as a devDependency so a clean clone can actually deploy, push-to-deploy confirmed end-to-end (footer text change, pushed, live site updated). **One thing worth a manual check, not a blocker:** `workers_dev` and `preview_urls` in the committed config were inferred as `true` rather than read from the dashboard — confirm they match actual dashboard settings before relying on them.
-3. **List/table view + core filters** — format, distance, region, month. The simplest useful version of the site; validates the data layer end-to-end.
+3. **List/table view + core filters** — format, distance, region, month, plus the sub-50K toggle and mixed-format secondary tagging (§4). Now also includes shareable filtered URLs and baseline mobile usability, pulled forward from Phase 6 (§4.5). Visual identity carries forward from the posters (§2.5). The simplest useful version of the site; validates the data layer and filter logic end-to-end for reuse in Phases 4–5.
 4. **Calendar view** — interactive, filterable, click-through to event detail. Generalizes the static poster.
 5. **Map view** — interactive Leaflet map (§2.2), filterable, real zoom-based clustering instead of manual insets.
-6. **Event detail pages + polish** — permalinks, shareable filtered URLs, mobile responsiveness, basic search.
+6. **Event detail pages + polish** — permalinks, mobile *polish* (baseline usability already lands in Phase 3, per §4.5), basic search.
 7. **Data maintenance workflow** — a semi-automated research-assistant tool that checks known sources per event on a schedule and proposes a PR for human review (§5.4). Deferred until after the site itself is live — no point maintaining a site that doesn't exist yet.
 8. **Stretch phases** — elevation profiles/difficulty scoring (pending new data sourcing, §6); community submissions (pending D1 build-out, §2.3).
 
