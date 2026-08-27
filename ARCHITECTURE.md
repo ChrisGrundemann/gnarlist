@@ -50,7 +50,7 @@ These were deliberated explicitly and shouldn't be silently re-opened by a futur
 
 - **Code + data:** GitHub (public repo).
 - **Hosting/deploy:** Cloudflare, deployed as a Worker with native static assets (not classic Pages) — connected to the GitHub repo via Workers Builds for automatic deploys on push/merge to main. **Note for future sessions, corrected during Phase 2:** Cloudflare's own current guidance is to start new projects on Workers rather than Pages — Pages still works but is in maintenance mode, with new platform investment going to Workers. The live URL uses the `*.workers.dev` subdomain pattern (this is expected and correct, not a misconfiguration — Workers projects get a personalized `workers.dev` subdomain the same way Pages projects used to get `pages.dev`). Build command `npm run build`, deploy via `npx wrangler deploy`, root directory `/`. Don't "fix" this back to classic Pages in a future session; it was a deliberate, verified update to the original decision, not a mistake to correct.
-- **Domain:** **gnarlist.co** is canonical for now — "GnarList," `.co` read as "Colorado," matching the site's current CO-only scope. Also registered: `gnarlist.run`, `gnarlist.racing`, `thegnarlist.com` — set these up as redirects to the canonical domain once there's something live worth pointing them at (Cloudflare handles multi-domain redirects natively). **Explicitly deferred out of Phase 2** — connecting any real domain (canonical or redirects) requires registrar-level DNS action tied to the user's accounts, which is outside what a Claude Code session can do; revisit once the initial deploy is live (it is — see §2.4 above). `thegnarlist.com` is reserved as the likely future canonical domain if/when the project expands beyond Colorado — that's a deliberate rename to revisit later, not a decision to make now.
+- **Domain:** **gnarlist.co** is canonical and **live** — connected via Cloudflare Custom Domain on the Worker (dashboard-only step, done manually per §2.4's original guidance). "GnarList," `.co` read as "Colorado," matching the site's current CO-only scope. **Indexing: deliberately left open** — considered a temporary `noindex` while the site was mid-build (list view only, no calendar/map yet), decided against it; the site is genuinely useful at its current stage and event permalink pages (Phase 4, see §7) benefit directly from being search-discoverable. Revisit only if there's a specific reason to reconsider, not by default. Also registered: `gnarlist.run`, `gnarlist.racing`, `thegnarlist.com` — still deferred as redirects to the canonical domain (§8), no urgency now that the canonical domain itself is live. `thegnarlist.com` is reserved as the likely future canonical domain if/when the project expands beyond Colorado — that's a deliberate rename to revisit later, not a decision to make now.
 
 ### 2.5 Visual design: carry the poster identity forward, no separate design tool
 
@@ -167,6 +167,18 @@ Two things originally scoped later, deliberately moved up before Phase 3 started
 
 ---
 
+## 4.6. Phase 4 scope addition: event permalink pages pulled forward from Phase 6
+
+**Decision:** every event gets a real, stable, linkable page (using the existing `slug` field from §4 — e.g. `/races/hardrock-100`), built in Phase 4 alongside the calendar rather than deferred to Phase 6. Both the list view (Phase 3) and the calendar (Phase 4) should link to these pages, not just show inline expansions.
+
+**Why pulled forward:** two reasons, one immediate and one strategic.
+1. Immediate: gnarlist.co is now live and deliberately indexable (§2.4) — individual event pages with real metadata (title, description, canonical URL) are genuinely more search-discoverable than a filtered list view, and there's no reason to wait on that benefit.
+2. Strategic: these pages are the intended future home for community features not yet built — reviews, photos, and similar user-contributed content. That's explicitly still deferred (§2.3, §6 — no live database, no submissions yet), but the pages themselves need to exist with room to grow into that role rather than being retrofitted later. Build the page with reasonable structural room for future sections; don't build any review/photo infrastructure now.
+
+This is the same "retrofitting later is more disruptive than building it right the first time" logic as §4.5, applied one phase later.
+
+---
+
 ## 5. Data governance principles (carried forward from this project's research phase)
 
 These are hard-won and should inform both the data schema and the eventual maintenance workflow:
@@ -211,9 +223,9 @@ Each phase becomes one or more Claude Code prompts, built and reviewed iterative
    - No self-hosted webfont yet — the condensed display stack currently falls back to whatever's installed locally (Noto Sans Condensed / Liberation Sans Narrow / Arial Narrow / system-ui depending on OS), degrading gracefully but inconsistently. Self-hosting Oswald or Archivo Narrow is the real fix — deliberately left for Phase 6 rather than adding a font binary/license mid-session.
    - `npm run check` (TypeScript enforcement) isn't wired up — Claude Code declined to add `@astrojs/check` + `typescript` as devDependencies without being asked. Types currently function as documentation, not CI enforcement. Worth adding explicitly if desired.
    - TransRockies Pass to Pub surfaces under Format→Stage but deliberately not Distance→50mi, since its distance lives in a `stages` field rather than `miles`. Confirmed as the right call — a multi-day stage race isn't equivalent to a standalone 50-miler for someone filtering by distance.
-4. **Calendar view** — interactive, filterable, click-through to event detail. Generalizes the static poster.
+4. **Calendar view + event permalink pages** — interactive, filterable calendar generalizing the static poster, plus a real linkable page per event (pulled forward from Phase 6, see §4.6 — both the list and calendar views link to these pages).
 5. **Map view** — interactive Leaflet map (§2.2), filterable, real zoom-based clustering instead of manual insets. **Read §4's region scheme first:** TransRockies Pass to Pub is a genuinely cross-boundary route whose single region value and single coordinate are both deliberate simplifications for the filter/pin, and this view is where that's supposed to get honest treatment.
-6. **Event detail pages + polish** — permalinks, mobile *polish* (baseline usability already lands in Phase 3, per §4.5), basic search.
+6. **Polish** — mobile *polish* (baseline usability already lands in Phase 3, per §4.5), basic search. Permalinks no longer belong here — see §4.6.
 7. **Data maintenance workflow** — a semi-automated research-assistant tool that checks known sources per event on a schedule and proposes a PR for human review (§5.4). Deferred until after the site itself is live — no point maintaining a site that doesn't exist yet.
 8. **Stretch phases** — elevation profiles/difficulty scoring (pending new data sourcing, §6); community submissions (pending D1 build-out, §2.3).
 
@@ -222,7 +234,7 @@ Each phase becomes one or more Claude Code prompts, built and reviewed iterative
 ## 8. Open items / revisit later
 
 - **Licensing — resolved.** No license file, default all-rights-reserved, for both code and data. Applies to the repo's code and to `races.json` alike unless split later. The MIT license file added during Phase 2 scaffold has been removed and confirmed gone. Note: facts (race names, dates, locations, distances) aren't copyrightable regardless of license choice — only the specific compilation and original writing (notes/descriptions) are protectable. Not legal advice; consult a lawyer if this ever matters commercially.
-- Redirect setup for `gnarlist.run` / `gnarlist.racing` / `thegnarlist.com` → `gnarlist.co` — see §2.4, deferred until there's a live deploy worth pointing a domain at.
+- Redirect setup for `gnarlist.run` / `gnarlist.racing` / `thegnarlist.com` → `gnarlist.co` — see §2.4. The canonical domain is now live; these are still deferred, just no longer blocked on anything — do whenever convenient, no urgency either way.
 - Whether/when to build the Phase 7 data-maintenance tooling and Phase 8 stretch items — revisit once the core site (Phases 1–6) is live and real usage patterns exist.
 - **Ragnar Trail Colorado — revisit before the 2027 season.** 2026 is confirmed as its final year at Snowmass; the organizer says it moves to "a new spot in the Rockies" for 2027 and has not said the new spot is in Colorado. This is the dataset's only event with a known expiry, so it will not simply roll forward like the rest. Either it relocates within Colorado (update venue, coordinates, region — it is currently `mountains-western-slope` on Pitkin County) or it leaves the state and the record should go. Do not let a forward-dated aggregator listing decide this: RunGuides already carries a "2027 Ragnar Trail Colorado | Snowmass Village" page, which contradicts the organizer and is exactly the §5.3 pattern.
 - Sanity-check "GnarList" naming against Gnar Runners (a race organizer already in the dataset) before public launch — low-confidence concern, probably fine, worth a glance rather than a deep dive.
