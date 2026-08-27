@@ -61,7 +61,7 @@
       "county": [
         "Lake"
       ],
-      "region": "san-juans"
+      "region": "central-mountains"
     },
     "ultra_distances": [
       {
@@ -104,7 +104,7 @@
       "county": [
         "Lake"
       ],
-      "region": "san-juans"
+      "region": "central-mountains"
     },
     "ultra_distances": [
       {
@@ -1706,7 +1706,7 @@
       "county": [
         "Larimer"
       ],
-      "region": "denver-metro"
+      "region": "northern-front-range"
     },
     "ultra_distances": [
       {
@@ -1751,7 +1751,7 @@
       "county": [
         "Jackson"
       ],
-      "region": "denver-metro"
+      "region": "mountains-western-slope"
     },
     "ultra_distances": [
       {
@@ -1798,7 +1798,7 @@
       "county": [
         "Larimer"
       ],
-      "region": "denver-metro"
+      "region": "northern-front-range"
     },
     "ultra_distances": [
       {
@@ -1847,7 +1847,7 @@
       "county": [
         "Larimer"
       ],
-      "region": "denver-metro"
+      "region": "northern-front-range"
     },
     "ultra_distances": [
       {
@@ -1896,7 +1896,7 @@
       "county": [
         "Weld"
       ],
-      "region": "denver-metro"
+      "region": "northern-front-range"
     },
     "ultra_distances": [
       {
@@ -1962,7 +1962,7 @@
       "county": [
         "Weld"
       ],
-      "region": "denver-metro"
+      "region": "northern-front-range"
     },
     "ultra_distances": [
       {
@@ -2616,7 +2616,7 @@
       "county": [
         "Clear Creek"
       ],
-      "region": "mountains-western-slope"
+      "region": "denver-metro"
     },
     "ultra_distances": [
       {
@@ -2806,7 +2806,7 @@
       "county": [
         "Chaffee"
       ],
-      "region": "mountains-western-slope"
+      "region": "central-mountains"
     },
     "ultra_distances": [
       {
@@ -2849,7 +2849,7 @@
       "county": [
         "Chaffee"
       ],
-      "region": "mountains-western-slope"
+      "region": "central-mountains"
     },
     "ultra_distances": [
       {
@@ -2895,7 +2895,7 @@
         "Lake",
         "Eagle"
       ],
-      "region": "mountains-western-slope"
+      "region": "central-mountains"
     },
     "ultra_distances": [
       {
@@ -2944,7 +2944,7 @@
       "county": [
         "Chaffee"
       ],
-      "region": "mountains-western-slope"
+      "region": "central-mountains"
     },
     "ultra_distances": [
       {
