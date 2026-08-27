@@ -1,7 +1,21 @@
 #!/usr/bin/env python3
 """Generate data/races.json from structured event definitions.
 
-Run from repo root:  python3 scripts/generate_races.py > data/races.json
+    !!  HISTORICAL ARTIFACT — DO NOT RE-RUN AGAINST data/races.json  !!
+
+This built the Phase 1 dataset (75 records) from the source spreadsheet. The
+live data file has since diverged from it and this script has NOT been kept in
+sync. Re-running the command below would silently destroy:
+
+  * the 13 region corrections from the geographic audit (ARCHITECTURE.md §4)
+  * the 6 organizer/detail corrections from Aravaipa's own calendar
+  * the 15 events added by the completeness pass (75 -> 90)
+
+Kept in the repo for provenance — it documents how the original conversion was
+done — not as a tool anyone should still be running. Edit data/races.json
+directly, or write a one-off migration script against it, and review the diff.
+
+Original (now unsafe) usage:  python3 scripts/generate_races.py > data/races.json
 """
 
 import json

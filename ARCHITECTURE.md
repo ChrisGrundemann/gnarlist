@@ -104,18 +104,25 @@ The original seven regions were carried straight over from the posters, which gr
 
 | Slug | Chip label | Full label | Covers | Listed / counted |
 |---|---|---|---|---|
-| `san-juans` | San Juans | San Juans | Silverton, Ouray, Telluride, Lake City, Creede, Durango | 11 / 11 |
-| `front-range-cs` | Colo. Springs | Colorado Springs / Pikes Peak | El Paso, Teller, south Douglas | 15 / 15 |
-| `denver-metro` | Denver Metro | Denver Metro & Foothills | Jefferson, Boulder, Gilpin, Clear Creek, Adams, north Douglas | 14 / 12 |
-| `northern-front-range` | N. Front Range | Northern Front Range | Larimer, Weld — Fort Collins, Greeley, Red Feather | 5 / 5 |
+| `san-juans` | San Juans | San Juans | San Juan, Ouray, San Miguel, Hinsdale, Mineral, La Plata, **Rio Grande** | 13 / 13 |
+| `front-range-cs` | Colo. Springs | Colorado Springs / Pikes Peak | El Paso, Teller, south Douglas | 16 / 16 |
+| `denver-metro` | Denver Metro | Denver Metro & Foothills | Jefferson, Boulder, Gilpin, Clear Creek, Adams, north Douglas, edge of Park¹ | 19 / 17 |
+| `northern-front-range` | N. Front Range | Northern Front Range | Larimer, Weld — Fort Collins, Greeley, Loveland, Red Feather | 6 / 6 |
 | `estes-park` | Estes Park | Estes Park / RMNP | Estes Park | 4 / 4 |
-| `mountains-western-slope` | Western Slope | Mountains / Western Slope | Routt, Grand, Jackson, Gunnison, Pitkin, Mesa, Delta | 13 / 13 |
-| `central-mountains` | Central Mtns | Central Mountains / Sawatch | Lake, Chaffee — Upper Arkansas valley and the Sawatch | 6 / 6 |
+| `mountains-western-slope` | Western Slope | Mountains / Western Slope | Routt, Grand, Jackson, Gunnison, Pitkin, Mesa, Delta, **Summit** | 18 / 18 |
+| `central-mountains` | Central Mtns | Central Mountains / Sawatch | Lake, Chaffee, Eagle² — Upper Arkansas valley and the Sawatch | 7 / 7 |
 | `fairplay-south-park` | South Park | Fairplay / South Park | Park (Fairplay, Como) | 2 / 2 |
 | `southern-colorado` | Southern CO | Southern Colorado | Pueblo, Fremont, Huerfano, Custer | 5 / 5 |
-| | | | **Total** | **75 / 73** |
+| | | | **Total** | **90 / 88** |
 
-*(Listed = rows rendered. Counted = rows contributing to displayed numbers — see the counting rule below.)*
+*(Listed = rows rendered. Counted = rows contributing to displayed numbers — see the counting rule below. Counts updated by the completeness pass that took the dataset from 75 to 90 events; the "Covers" column now names counties rather than towns, since the town lists stopped being representative once regions held 15+ events.)*
+
+¹ Sawmill Trail Runs straddles the Jefferson/Park line at Pine; it is a Denver-foothills race that happens to clip Park County, **not** a South Park event. ² TransRockies finishes in Eagle County after starting in Lake — see the cross-boundary note below. Both are artifacts of `location.county` being an array; neither implies the region owns the whole county.
+
+**Two county extensions, added by the completeness pass — reasoned, not arbitrary.** Both regions absorbed a county that wasn't previously in their definition. Recording why here so neither reads later as an unexplained exception:
+
+- **Summit County → `mountains-western-slope`** (The Summit 200). Summit is west of the Continental Divide and is the same high-mountain-resort character as Grand, Pitkin and Routt, all already in this region. The alternative was `central-mountains`, but that region is specifically the Upper Arkansas valley *east* of the Divide — putting Summit there would repeat exactly the Divide-crossing error the audit had just finished fixing.
+- **Rio Grande County → `san-juans`** (La Garita 200). The La Garita Mountains are part of the broader San Juan volcanic field, and South Fork sits immediately adjacent to Creede in Mineral County, already in this region. This one is a genuine judgment call rather than a clean geographic fact — the La Garitas are a distinct sub-range, and if the dataset ever grows a real San Luis Valley cluster, Rio Grande County is the first thing that should be reconsidered.
 
 **The two new regions, and why they had to exist:**
 
@@ -133,6 +140,14 @@ The original seven regions were carried straight over from the posters, which gr
 **Counting rule (settled here, applies to every view from Phase 4 on):** events with `status: discontinued` or `status: unverified` **do not contribute to any displayed number** — not the overall result count, not a faceted chip count, not a masthead stat. They remain fully visible and browsable in the list, keeping their existing rust/hatched treatment. This is a *counting* rule, not a visibility rule, and the two must not be quietly merged by a later phase: hiding these events would defeat the point of carrying them, which is that the record is complete. `active` and `returning` count normally — a returning race is coming back.
 
 Implemented as `countsTowardTotals` in `src/lib/races.ts` (the single definition), surfaced per row as `data-counted` so the browser script never needs to know the status vocabulary. Two consequences worth knowing before they look like bugs: **Denver Metro shows 12 above 14 rows**, because both non-counting events happen to live there; and a filter combination can legitimately produce **a count of 0 with rows still on screen** (Region → Denver Metro plus the Sub-50K toggle leaves only the unverified Sourdough Snowshoe). The list view handles the second by tracking rows-shown separately from events-counted, so the "nothing matches" copy never appears above a visible row, and by showing a "+n shown, not counted" note in the results bar whenever the two diverge. Phases 4 and 5 need the same split.
+
+**Dataset coverage — where the 90 events came from, and what is deliberately absent.** A completeness pass after the region audit took the dataset from 75 to 90. The 15 additions were all confirmed-active with organizer-level or equivalent sourcing. Three categories were held back on purpose, and a future session should not treat any of them as an oversight to fix:
+
+- **Tier B — ~13 calendar-listed-only events.** Real listings, but zero organizer or course verification done yet. Held for a separate pass with its own verification budget rather than folded in on aggregator listings alone (§5.1). These are *pending*, not rejected.
+- **Tier C — ~10 dormant events.** No 2026 or 2027 listing anywhere. This is a weaker state than `status: unverified`, which means "reported but unconfirmed" — Tier C is closer to "no evidence this still runs." Adding them as `unverified` would overstate what we know; the status vocabulary has no honest slot for them, and inventing one is not worth it for events nobody can enter.
+- **Babbitt's Backyard Ultra — rejected outright,** not deferred. Arizona event, mis-geocoded into Colorado. See §5.3.
+
+**Open data question, not yet acted on:** the organizer's own site for **Weld Your Mettle** lists fixed distances (14 mi, marathon, 50K, 50 mi, 100K, 100 mi) alongside the 36-hour timed event, but the record carries only timed options (36/24/12/9/6/3-hr). If the site is right, this is a mixed-format event currently invisible to anyone filtering for 100-mile or 50K — the §5.3 failure mode exactly. It was left unchanged because the completeness pass was scoped to verifying its *location* (which held: Eaton, not Windsor as UltraRunning lists), and §5.3 says format changes get human confirmation rather than a unilateral edit. Worth resolving early in the next data pass.
 
 ---
 
@@ -152,6 +167,8 @@ These are hard-won and should inform both the data schema and the eventual maint
 1. **Don't trust a single aggregator.** UltraSignup, RunningInTheUSA, RunGuides, etc. each carry stale, duplicate, or misclassified entries. Cross-reference against the race's own organizer site before trusting a listing.
 2. **"Not confirmed" is a legitimate data state, not a gap to hide.** Several fields (year started, exact date) are genuinely unconfirmed for some events — the schema and UI should be able to represent that honestly rather than forcing a guess.
 3. **Format/category errors are the most dangerous kind.** This project has caught a mountain bike race (Colorado Trail Race) and a running-but-not-ultra race (Louisville Trail Races) both miscategorized as active running ultramarathons. Any automated or semi-automated data collection should flag category/format for human confirmation, not just date/location changes.
+
+   **Same family, different mechanism — aggregator geocoding drift.** The completeness pass rejected **Babbitt's Backyard Ultra**, which aggregators list as Colorado. It is a Flagstaff, *Arizona* event, mis-geocoded onto Colorado's Flagstaff Mountain (above Boulder) by a name collision. **Do not add it.** The lesson generalizes past this one race: an aggregator's *location* field is derived data, not sourced data, and a plausible-looking Colorado coordinate is not evidence the race is in Colorado. Verify the venue against the organizer, the same way format gets verified.
 4. **Prefer PR-based review over silent overwrites** for any data update, automated or manual, at least until the process has a long track record.
 
 ---
