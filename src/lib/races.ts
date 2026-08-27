@@ -193,9 +193,11 @@ function badges(r: Race) {
  * Whether an event contributes to any displayed number — the overall result
  * count, the faceted chip counts, the masthead stats.
  *
- * `discontinued` (Golden Gate Dirty 30) and `unverified` (Sourdough Snowshoe)
- * do not: counting a permanently-cancelled race among "14 events in Denver
- * Metro" overstates what someone can actually go run. They stay fully visible
+ * `discontinued` and `unverified` do not: counting a permanently-cancelled race
+ * among "23 events in Denver Metro" overstates what someone can actually go run.
+ * Currently only Golden Gate Dirty 30 is excluded — Sourdough Snowshoe was the
+ * `unverified` case until it was verified and promoted. The rule is written
+ * against the statuses, not against whichever races happen to hold them. They stay fully visible
  * and browsable in the list with their existing rust/hatched treatment — this
  * is a counting rule, not a visibility rule, and the two must not be conflated
  * by a later phase. `returning` counts normally; it's coming back.

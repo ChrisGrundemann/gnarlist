@@ -15,12 +15,41 @@ const races = allRaces();
 
 // `total` is how many rows the page renders; `counted` is how many of those
 // contribute to a displayed number (races.ts `countsTowardTotals`). They differ
-// by the two events that are listed for the record but aren't races anyone can
-// enter — one discontinued, one unverified. Every headline figure below is the
-// counted one; `total` only ever describes the list itself.
+// by the events that are listed for the record but aren't races anyone can
+// enter. Every headline figure below is the counted one; `total` only ever
+// describes the list itself.
+//
+// The breakdown is derived, never written out by hand. It used to read "one
+// discontinued, one unverified", which silently became false the moment
+// Sourdough Snowshoe was verified and promoted to active — copy that states a
+// fact about the data should be computed from the data.
 const total = races.length;
 const counting = races.filter((r) => r.counted);
 const counted = counting.length;
+
+/** Statuses present in the dataset right now, so the legend can't advertise a
+ *  key with no rows behind it (as `unverified` did once Sourdough moved). */
+const present = new Set(races.map((r) => r.status));
+
+/** e.g. `one discontinued`, or `one discontinued and two unverified`. */
+const NUMBER_WORDS = ['no', 'one', 'two', 'three', 'four', 'five'];
+const uncountedBreakdown = (() => {
+  const tally = new Map<string, number>();
+  for (const r of races) if (!r.counted) tally.set(r.status, (tally.get(r.status) ?? 0) + 1);
+  const parts = [...tally].map(([status, n]) => `${NUMBER_WORDS[n] ?? n} ${status}`);
+  if (parts.length === 0) return '';
+  if (parts.length === 1) return parts[0];
+  return `${parts.slice(0, -1).join(', ')} and ${parts.at(-1)}`;
+})();
+
+/** Sentence for the legend, naming only the statuses that actually occur. */
+const uncountedRule = (() => {
+  const kinds = (['discontinued', 'unverified'] as const).filter((k) => present.has(k));
+  if (kinds.length === 0) return '';
+  const label = kinds.length === 2 ? 'Discontinued and unverified' :
+    kinds[0].charAt(0).toUpperCase() + kinds[0].slice(1);
+  return `${label} events are listed, but not counted.`;
+})();
 const marquee = counting.filter((r) => r.marquee).length;
 const regions = new Set(counting.map((r) => r.location.region)).size;
 const longest = counting.reduce((a, b) => Math.max(a, b.longest_ultra_miles ?? 0), 0);
@@ -49,7 +78,9 @@ const description = `A filterable list of ${counted} Colorado ultramarathons —
       </p>
       <p class="stats">
         <span
-          title={`${total} events are listed in full, including ${total - counted} that don't count toward any total — one discontinued, one unverified.`}
+          title={`${total} events are listed in full, including ${total - counted} that ${
+            total - counted === 1 ? "doesn't" : "don't"
+          } count toward any total — ${uncountedBreakdown}.`}
           ><b>{total}</b> listed</span
         >
         <span><b>{marquee}</b> marquee</span>
@@ -69,11 +100,15 @@ const description = `A filterable list of ${counted} Colorado ultramarathons —
 
     <p class="legend">
       <span class="key"><i class="k-star">★</i> Marquee</span>
-      <span class="key"><i class="k-bar k-returning"></i> Returning</span>
-      <span class="key"><i class="k-bar k-discontinued"></i> Discontinued</span>
-      <span class="key"><i class="k-bar k-unverified"></i> Unverified</span>
+      {present.has('returning') && <span class="key"><i class="k-bar k-returning" /> Returning</span>}
+      {present.has('discontinued') && (
+        <span class="key"><i class="k-bar k-discontinued" /> Discontinued</span>
+      )}
+      {present.has('unverified') && (
+        <span class="key"><i class="k-bar k-unverified" /> Unverified</span>
+      )}
       <span class="key"><i class="k-tilde">~</i> Date not confirmed</span>
-      <span class="key note">Discontinued and unverified events are listed, but not counted.</span>
+      {uncountedRule && <span class="key note">{uncountedRule}</span>}
     </p>
 
     <div class="cols" aria-hidden="true">

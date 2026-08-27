@@ -16,8 +16,9 @@ const { races } = Astro.props;
 // Only `counted` events contribute (races.ts `countsTowardTotals`): the
 // discontinued and unverified rows are listed and filterable like anything
 // else, they just don't inflate a number that reads as "races you could enter".
-// Both currently sit in Denver Metro, so that chip shows 12 above 14 rows —
-// the "+n not counted" note in the bar below exists to explain exactly that.
+// The excluded rows still sit in Denver Metro, so that chip reads one short of
+// its row count — the "+n not counted" note in the bar below explains exactly
+// that gap wherever it appears.
 const counting = races.filter((r) => r.counted);
 
 const tally = (pick: (r: RaceView) => string[]) => {
