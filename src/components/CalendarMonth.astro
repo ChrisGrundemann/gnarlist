@@ -1,39 +1,47 @@
 ---
-// One month block in the twelve-month grid.
+// One month box in the row-major twelve-box grid.
 //
-// Month blocks are deliberately NOT uniform height (ARCHITECTURE.md §2.5 — the
-// poster's shape): the block is as tall as its events make it, and the grid
-// flows around that. September carries 20 events and reads as the wall it is;
-// March carries none and collapses to a slim rule. The density meter under the
-// heading makes that read hold even when a block is scrolled past.
+// The box is a day-timeline over a compact event list. The timeline is what
+// makes this a calendar rather than a list in a box: date information carried
+// spatially, at the real day-of-month position, with multi-day events drawn as
+// spans. The list underneath is the index the timeline points into.
+//
+// Geometry — lane packing, the day-cell maths, and the rule about which events
+// may be placed at all — lives in src/lib/timeline.ts, which is where the
+// reasoning for each is written down.
 import CalendarEvent from './CalendarEvent.astro';
 import { MONTH_NAMES } from '../lib/filters';
+import { monthTimeline } from '../lib/timeline';
 import type { RaceView } from '../lib/races';
 
 interface Props {
   month: number | null;
   races: RaceView[];
-  /** Busiest month in the dataset — the meter's full scale. */
-  max: number;
 }
 
-const { month, races, max } = Astro.props;
+const { month, races } = Astro.props;
 
 const label = month ? MONTH_NAMES[month - 1] : 'No date';
 const key = month ? String(month) : '';
-// The count on a month block is the counted count, not the row count
-// (ARCHITECTURE.md §4). Golden Gate Dirty 30 is listed under June and visible
-// there; it just doesn't add to June's number.
+// The count is the counted count, not the row count (ARCHITECTURE.md §4).
+// Golden Gate Dirty 30 is visible wherever it sits; it just doesn't add to a
+// number that reads as "races you could enter".
 const counted = races.filter((r) => r.counted).length;
-const fill = max > 0 ? Math.round((counted / max) * 100) : 0;
+
+const tl = month ? monthTimeline(month, races) : null;
+
+/** Status modifiers, shared by a timeline mark and its row. */
+const markClass = (m: { marquee: boolean; status: RaceView['status'] }) => [
+  'mk',
+  m.marquee && 'is-marquee',
+  m.status !== 'active' && `is-${m.status}`,
+];
 ---
 
 <section
-  class:list={['month', races.length === 0 && 'is-empty']}
+  class:list={['month', races.length === 0 && 'is-empty', !month && 'is-nodate']}
   data-group
-  data-group-max={max}
   data-month-block={key}
-  style={`--fill: ${fill}%`}
   aria-label={`${label} — ${counted} ${counted === 1 ? 'event' : 'events'}`}
 >
   <h2 class="head">
@@ -41,7 +49,55 @@ const fill = max > 0 ? Math.round((counted / max) * 100) : 0;
     <span class="mcount"><b data-group-count>{counted}</b></span>
   </h2>
 
-  <div class="meter" aria-hidden="true"></div>
+  {
+    tl && (
+      /*
+       * aria-hidden, and every mark is tabindex="-1". Each mark duplicates a
+       * row that sits directly below it, so exposing both would make a screen
+       * reader read the month twice and put twenty untabbable-looking links in
+       * the way. The rows carry all of the semantics and all of the keyboard
+       * access; the strip is a pointer affordance layered on top. It still
+       * degrades to a working link with JavaScript off.
+       */
+      <div class="tl" style={`--lanes: ${tl.lanes}`} aria-hidden="true">
+        <div class:list={['gutter', tl.approx.length === 0 && 'is-quiet']}>
+          <span class="tilde" title="Day not confirmed">~</span>
+          <span class="gmarks">
+            {tl.approx.map((m) => (
+              <a
+                class:list={[...markClass(m), 'is-approx']}
+                data-mark={m.slug}
+                href={`/races/${m.slug}/`}
+                tabindex="-1"
+                title={m.label}
+              />
+            ))}
+          </span>
+        </div>
+
+        <div class="axis">
+          <div class="lanes">
+            {tl.marks.map((m) => (
+              <a
+                class:list={[...markClass(m), m.continues && 'is-continues']}
+                data-mark={m.slug}
+                href={`/races/${m.slug}/`}
+                tabindex="-1"
+                title={m.label}
+                style={`--from: ${m.from.toFixed(3)}%; --span: ${m.span.toFixed(3)}%; --lane: ${m.lane}`}
+              />
+            ))}
+          </div>
+          <div class="rule" />
+          <div class="ticks">
+            {tl.ticks.map((d) => (
+              <span style={`--at: ${(((d - 1) / tl.days) * 100).toFixed(3)}%`}>{d}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   <ul class="evs">
     {races.map((race) => <CalendarEvent race={race} />)}
@@ -52,12 +108,11 @@ const fill = max > 0 ? Math.round((counted / max) * 100) : 0;
 
 <style>
   .month {
-    break-inside: avoid;
-    -webkit-column-break-inside: avoid;
-    margin: 0 0 1.35rem;
+    display: flex;
+    flex-direction: column;
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    background: linear-gradient(180deg, var(--ink-850), var(--ink-900) 8rem);
+    background: linear-gradient(180deg, var(--ink-850), var(--ink-900) 7rem);
     overflow: hidden;
   }
 
@@ -65,7 +120,7 @@ const fill = max > 0 ? Math.round((counted / max) * 100) : 0;
     display: flex;
     align-items: baseline;
     gap: 0.6rem;
-    padding: 0.6rem 0.7rem 0.45rem;
+    padding: 0.55rem 0.7rem 0.4rem;
     font-size: 0.86rem;
     font-weight: 700;
     letter-spacing: 0.24em;
@@ -85,23 +140,147 @@ const fill = max > 0 ? Math.round((counted / max) * 100) : 0;
     font-variant-numeric: tabular-nums;
   }
 
-  /*
-   * Density, drawn. The bar is the month's share of the busiest month, so the
-   * year reads as a season curve at a glance the way the poster's stacked
-   * columns did — quiet through the winter, a wall in July and September.
-   */
-  .meter {
-    height: 2px;
-    background: var(--line-soft);
-    position: relative;
+  /* ---- the day timeline ---- */
+  .tl {
+    --lane-h: 6px;
+    display: flex;
+    align-items: stretch;
+    gap: 0.4rem;
+    padding: 0.15rem 0.7rem 0.4rem;
   }
-  .meter::after {
+
+  /*
+   * The "~" gutter, outside the day axis, for events whose day the data doesn't
+   * support placing. Reserved on every month so all twelve axes share one
+   * scale; it just goes quiet where there's nothing in it. July holds five.
+   */
+  .gutter {
+    flex: none;
+    width: 2.3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px dashed var(--line);
+    padding-right: 0.35rem;
+  }
+  .gutter.is-quiet {
+    opacity: 0.3;
+  }
+  .tilde {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    color: var(--fg-mute);
+    line-height: 1;
+    text-align: right;
+  }
+  .gmarks {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: 1px;
+    height: calc(var(--lanes) * var(--lane-h));
+  }
+  /*
+   * A gutter mark keeps its status colour but is drawn as a dashed column, so
+   * uncertainty reads as uncertainty. Solid was worse than wrong: a full-height
+   * solid bar made the events we know *least* about the loudest thing on the
+   * strip, and July's five of them looked like the busiest week of the year.
+   * Dashes for "not confirmed" is the same idiom the unverified status already
+   * uses (§2.5).
+   */
+  .gmarks .mk {
+    position: relative;
+    width: 4px;
+    height: 100%;
+    top: auto;
+    opacity: 0.75;
+    mask-image: repeating-linear-gradient(180deg, #000 0 2px, transparent 2px 4px);
+  }
+  .gmarks .mk:hover,
+  .gmarks .mk.is-cued {
+    opacity: 1;
+  }
+
+  .axis {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .lanes {
+    position: relative;
+    height: calc(var(--lanes) * var(--lane-h));
+  }
+  .rule {
+    height: 1px;
+    background: var(--line);
+  }
+  .ticks {
+    position: relative;
+    height: 0.72rem;
+  }
+  .ticks span {
+    position: absolute;
+    left: var(--at);
+    top: 0;
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    line-height: 1;
+    color: var(--fg-mute);
+    transform: translateX(-1px);
+  }
+
+  /*
+   * A mark occupies its day cell, so a single day is one cell wide and a
+   * three-day stage race is visibly three. Simultaneous events stack into
+   * lanes rather than drawing on top of each other — six races share
+   * 26 September, and as one thick tick that would lie about the day and leave
+   * five of them unclickable.
+   */
+  .mk {
+    position: absolute;
+    left: var(--from);
+    width: max(4px, var(--span));
+    top: calc(var(--lane) * var(--lane-h) + 1px);
+    height: calc(var(--lane-h) - 2px);
+    border-radius: 1px;
+    background: var(--teal);
+  }
+  /*
+   * The lane is a few pixels tall; the pointer target shouldn't be. An overlay
+   * pseudo-element rather than padding on the mark itself — `box-sizing:
+   * border-box` is global, so padding would eat the declared height and leave
+   * nothing to paint. Kept modest so a mark doesn't swallow clicks meant for
+   * the lane above or below it.
+   */
+  .mk::after {
     content: '';
     position: absolute;
-    inset: 0 auto 0 0;
-    width: var(--fill, 0%);
-    background: linear-gradient(90deg, var(--gold-deep), var(--gold));
-    transition: width 0.18s ease;
+    inset: -2px -3px;
+  }
+  .mk:hover,
+  .mk.is-cued {
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--ink-900);
+  }
+  /* Gold means marquee and nothing else (§2.5) — on the strip it also gets the
+     full lane height, so it reads heavier without breaking the lane grid. */
+  .mk.is-marquee {
+    background: var(--gold);
+    top: calc(var(--lane) * var(--lane-h));
+    height: var(--lane-h);
+  }
+  .mk.is-returning {
+    background: var(--teal-deep);
+  }
+  .mk.is-discontinued {
+    background: var(--rust);
+  }
+  .mk.is-unverified {
+    background: repeating-linear-gradient(90deg, var(--gold-deep) 0 2px, transparent 2px 4px);
+  }
+  /* Runs past the end of the month — Colorado 24 Hour Run, 31 Oct into 1 Nov. */
+  .mk.is-continues {
+    border-radius: 1px 0 0 1px;
+    box-shadow: 2px 0 0 -1px var(--fg-mute);
   }
 
   .evs {
@@ -112,7 +291,7 @@ const fill = max > 0 ? Math.round((counted / max) * 100) : 0;
 
   .none {
     margin: 0;
-    padding: 0.7rem;
+    padding: 0.6rem 0.7rem;
     font-size: 0.76rem;
     font-style: italic;
     color: var(--fg-mute);
@@ -124,5 +303,20 @@ const fill = max > 0 ? Math.round((counted / max) * 100) : 0;
   .month.is-empty {
     background: none;
     opacity: 0.62;
+  }
+
+  /* The one record with no month at all sits below the year, full width. */
+  .month.is-nodate .head {
+    color: var(--fg-mute);
+  }
+
+  @media (max-width: 59.99rem) {
+    .tl {
+      --lane-h: 8px;
+      padding-bottom: 0.5rem;
+    }
+    .mk::after {
+      inset: -3px -4px;
+    }
   }
 </style>

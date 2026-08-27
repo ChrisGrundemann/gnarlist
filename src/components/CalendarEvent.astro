@@ -1,13 +1,26 @@
 ---
-// One event inside a calendar month block.
+// One event row inside a calendar month box.
 //
-// Visual hierarchy is Phase 3's, not a new one (ARCHITECTURE.md §2.5): ★ marquee
-// gets the larger, gold-washed treatment; returning is a teal rule; discontinued
-// is a rust rule over hatching; unverified is a dashed gold rule. Distance
-// badges are the same teal-on-wash chips the list uses, just fewer of them —
-// a calendar cell has a fraction of a list row's width.
-import { FORMATS } from '../lib/filters';
-import { STATUS_NOTE, filterAttrs, raceHref, type RaceView } from '../lib/races';
+// Deliberately a single compact line, not the card this used to be. Two
+// reasons, and they're the same reason from two directions:
+//
+//   1. It answers the "the calendar reads as the list view" complaint. The town,
+//      the hook text and the companion distances all live one click away on the
+//      permalink and one view away on the list. A calendar's job is *when*; the
+//      row carries the day, the name, and one distance chip, and the day-timeline
+//      above it carries the shape of the month. Stripping the row of everything
+//      the list already says better is what makes the two views distinct.
+//   2. It is the main lever on the dead-space problem. A row-major grid makes
+//      every box in a row as tall as that row's tallest box, so height variance
+//      between months is the cost. Compact rows are ~26px against the old
+//      cards' ~70px, which cuts the variance — and therefore the wasted space —
+//      by roughly two thirds before layout is touched at all. See
+//      ARCHITECTURE.md §7 item 4.
+//
+// The visual language itself is unchanged from Phase 3/4: ★ marquee in gold,
+// teal rule for returning, rust over hatching for discontinued, dashed gold for
+// unverified, teal chip for the distance.
+import { filterAttrs, raceHref, STATUS_NOTE, type RaceView } from '../lib/races';
 
 interface Props {
   race: RaceView;
@@ -16,211 +29,155 @@ interface Props {
 const { race } = Astro.props;
 const status = race.status === 'active' ? null : STATUS_NOTE[race.status];
 
-const formatLabels = new Map(FORMATS.map((f) => [f.value, f.label]));
-const formatTags = race.tokens.formats
-  .filter((f) => f !== 'standard')
-  .map((f) => formatLabels.get(f) ?? f);
-
-// The lead glyph. A confirmed date gets its day number (the calendar read);
-// anything else gets a tilde, matching the list view's convention for a date
-// the organizer hasn't actually announced. The full string is the tooltip
-// either way, so nothing is lost by the compression.
+// The lead glyph. A confirmed date gets its day number; anything else gets a
+// tilde, matching the list view and matching where the timeline puts it — an
+// unconfirmed event sits in the strip's "~" gutter rather than on a day.
+// The gate is `date_confirmed`, not the presence of `date_start`, which is why
+// Leadville Trail 100 reads "~15–16" and not "15–16".
 const day = (() => {
-  if (!race.date_start) return { text: '~', approx: true };
+  if (!race.date_confirmed || !race.date_start) return { text: '~', approx: true };
   const d = Number(race.date_start.slice(8, 10));
   if (race.date_end) {
     const ed = Number(race.date_end.slice(8, 10));
     const sameMonth = race.date_end.slice(5, 7) === race.date_start.slice(5, 7);
-    return { text: sameMonth ? `${d}–${ed}` : `${d}→`, range: true, approx: false };
+    return { text: sameMonth ? `${d}–${ed}` : `${d}→`, approx: false, range: true };
   }
   return { text: String(d), approx: false };
 })() as { text: string; approx: boolean; range?: boolean };
-
-// Marquee events carry a third badge; everything else gets two. The cap is
-// tighter than the list's four because the cell is narrower, not because the
-// data is different — the full set is on the permalink page and in the tooltip.
-const cap = race.marquee ? 3 : 2;
-const badges = race.badges.shown.length > cap
-  ? race.badges.shown.slice(0, cap)
-  : race.badges.shown;
-const overflow = race.badges.overflow + Math.max(0, race.badges.shown.length - badges.length);
 ---
 
 <li
   {...filterAttrs(race)}
+  data-ev={race.slug}
   class:list={['ev', race.marquee && 'is-marquee', race.status !== 'active' && `is-${race.status}`]}
 >
   <span
-    class:list={['day', day.approx && 'is-approx', day.range && 'is-range']}
+    class:list={['d', day.approx && 'is-approx', day.range && 'is-range']}
     title={race.date.full}>{day.text}</span
   >
-
-  <span class="body">
-    <a class="name" href={raceHref(race)}>
-      {race.marquee && <span class="star" aria-label="Marquee event">★</span>}
-      {race.name}
-    </a>
-
-    <span class="meta">
-      <span class="town">{race.location.town}</span>
-      {status && <span class="pill">{status.label}</span>}
-    </span>
-
-    <span class="tags" title={race.badges.all}>
-      {formatTags.map((t) => <span class="tag">{t}</span>)}
-      {badges.map((b) => <span class="badge">{b}</span>)}
-      {overflow > 0 && <span class="more">+{overflow}</span>}
-    </span>
-  </span>
+  <a class="nm" href={raceHref(race)} title={status ? `${race.name} — ${status.label}` : race.name}>
+    {race.marquee && <span class="star" aria-label="Marquee event">★</span>}{race.name}
+  </a>
+  {status && <span class="pill" title={status.blurb}>{status.label.slice(0, 4)}</span>}
+  <span class="bd">{race.categoryLabel}</span>
 </li>
 
 <style>
   .ev {
     position: relative;
-    display: grid;
-    grid-template-columns: 2.6rem minmax(0, 1fr);
-    gap: 0 0.5rem;
-    padding: 0.5rem 0.6rem 0.5rem 0.5rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    padding: 0.28rem 0.55rem 0.28rem 0.4rem;
     border-top: 1px solid var(--line-soft);
     border-left: 3px solid transparent;
+    line-height: 1.35;
   }
-  .ev:hover {
+  .ev:hover,
+  /* Set by the timeline script when a mark is picked — the row is what the
+     mark points at, so it has to be findable once you get there. */
+  .ev.is-cued {
     background: var(--ink-850);
   }
-
-  /* The whole cell is the hit area; the name is the one real link in it. */
-  .name::after {
-    content: '';
-    position: absolute;
-    inset: 0;
+  .ev.is-cued {
+    outline: 1px solid var(--teal-edge);
+    outline-offset: -1px;
   }
 
-  .day {
-    font-family: var(--font-display);
-    font-size: 1.05rem;
-    font-weight: 600;
-    line-height: 1.15;
+  .d {
+    flex: none;
+    width: 2.4rem;
     text-align: right;
+    font-family: var(--font-display);
+    font-size: 0.88rem;
+    font-weight: 600;
     color: var(--fg-dim);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
-  .day.is-approx {
+  .d.is-approx {
     color: var(--fg-mute);
     cursor: help;
   }
-  /*
-   * A multi-day event's "25–27" is three times the width of a "5" and was
-   * spilling out of the day track into the race name. It steps down a size
-   * rather than widening the track for everyone — single days are the common
-   * case and the column reads better staying tight.
-   */
-  .day.is-range {
-    font-size: 0.8rem;
+  /* "25–27" is three times the width of a "5"; it steps down rather than
+     widening the column for the common single-day case. */
+  .d.is-range {
+    font-size: 0.72rem;
     letter-spacing: -0.01em;
   }
 
-  .body {
-    display: block;
+  .nm {
+    flex: 1 1 auto;
     min-width: 0;
-  }
-  .name {
-    display: block;
     font-family: var(--font-display);
-    font-size: 0.94rem;
-    font-weight: 600;
-    line-height: 1.2;
+    font-size: 0.9rem;
+    font-weight: 500;
     color: var(--fg);
     text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .ev:hover .name {
+  /* The whole row is the hit area; the name is its one real link. */
+  .nm::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .ev:hover .nm,
+  .ev.is-cued .nm {
     color: #fff;
-    text-decoration: underline;
-    text-decoration-color: var(--teal-edge);
   }
   .star {
     color: var(--gold);
     font-size: 0.85em;
-    margin-right: 0.1rem;
+    margin-right: 0.2em;
   }
 
-  .meta {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 0.3rem 0.45rem;
-    margin-top: 0.12rem;
-    font-size: 0.74rem;
-    color: var(--fg-mute);
-  }
-
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.22rem;
-    margin-top: 0.3rem;
-  }
-  .badge,
-  .tag,
-  .more {
+  .bd {
+    flex: none;
     font-family: var(--font-display);
-    font-size: 0.67rem;
+    font-size: 0.66rem;
     font-weight: 500;
     letter-spacing: 0.04em;
-    line-height: 1.35;
-    padding: 0.08rem 0.3rem;
+    padding: 0.05rem 0.28rem;
     border-radius: 2px;
-    max-width: 100%;
-    overflow-wrap: anywhere;
-  }
-  .badge {
     color: var(--teal);
     background: var(--teal-wash);
     border: 1px solid var(--teal-edge);
+    white-space: nowrap;
   }
-  .tag {
-    color: var(--fg-dim);
-    border: 1px solid var(--line);
-    text-transform: uppercase;
-    font-size: 0.6rem;
-    letter-spacing: 0.12em;
-  }
-  .more {
-    color: var(--fg-mute);
-    border: 1px dashed var(--line);
-  }
-
   .pill {
+    flex: none;
     font-family: var(--font-display);
-    font-size: 0.6rem;
+    font-size: 0.58rem;
     font-weight: 600;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    padding: 0.06rem 0.3rem;
+    padding: 0.02rem 0.24rem;
     border-radius: 2px;
     border: 1px solid currentcolor;
+    cursor: help;
   }
 
-  /* ---- ★ marquee: the poster's loudest voice, unchanged from Phase 3 ---- */
+  /* ---- ★ marquee ---- */
   .is-marquee {
     border-left-color: var(--gold-deep);
-    background: linear-gradient(90deg, var(--gold-wash), transparent 88%);
+    background: linear-gradient(90deg, var(--gold-wash), transparent 92%);
   }
-  .is-marquee:hover {
-    background: linear-gradient(90deg, var(--gold-wash), transparent 88%), var(--ink-850);
+  .is-marquee:hover,
+  .is-marquee.is-cued {
+    background: linear-gradient(90deg, var(--gold-wash), transparent 92%), var(--ink-850);
   }
-  .is-marquee .name {
-    font-size: 1.06rem;
+  .is-marquee .nm {
+    font-weight: 600;
     color: #fff;
   }
-  .is-marquee .day {
+  .is-marquee .d {
     color: var(--gold);
   }
-  .is-marquee .meta {
-    color: var(--fg-dim);
-  }
 
-  /* ---- status: same three treatments as the list view ---- */
+  /* ---- status: the same three treatments as the list view ---- */
   .is-returning {
     border-left-color: var(--teal-deep);
   }
@@ -241,12 +198,11 @@ const overflow = race.badges.overflow + Math.max(0, race.badges.shown.length - b
     color: var(--rust);
     background: var(--rust-wash);
   }
-  .is-discontinued .name,
-  .is-discontinued .day {
+  .is-discontinued .nm,
+  .is-discontinued .d {
     color: var(--fg-mute);
   }
-  .is-discontinued .badge,
-  .is-discontinued .tag {
+  .is-discontinued .bd {
     opacity: 0.55;
   }
 
@@ -257,29 +213,24 @@ const overflow = race.badges.overflow + Math.max(0, race.badges.shown.length - b
     color: var(--gold);
     background: var(--gold-wash);
   }
-  .is-unverified .name {
+  .is-unverified .nm {
     color: var(--fg-dim);
   }
 
-  /* ---- touch: a calendar cell still has to be tappable ---- */
+  /* ---- touch: a row still has to be tappable ---- */
   @media (max-width: 59.99rem) {
     .ev {
-      padding: 0.65rem 0.7rem 0.65rem 0.6rem;
+      padding-block: 0.45rem;
+      gap: 0.5rem;
     }
-    .name {
-      font-size: 1rem;
+    .nm {
+      font-size: 0.95rem;
     }
-    .is-marquee .name {
-      font-size: 1.1rem;
+    .d {
+      font-size: 0.92rem;
     }
-    .meta,
-    .badge,
-    .tag,
-    .more {
-      font-size: 0.76rem;
-    }
-    .tag {
-      font-size: 0.66rem;
+    .bd {
+      font-size: 0.7rem;
     }
   }
 </style>

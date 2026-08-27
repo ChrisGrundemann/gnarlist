@@ -7,7 +7,7 @@
 // API, only this file changes.
 
 import raw from '../../data/races.json';
-import { REGIONS, SUB_50K, type RaceTokens } from './filters';
+import { DISTANCES, FORMATS, REGIONS, SUB_50K, type RaceTokens } from './filters';
 
 export type Status = 'active' | 'returning' | 'discontinued' | 'unverified';
 export type Format = 'standard' | 'backyard' | 'timed' | 'stage';
@@ -55,6 +55,15 @@ export interface RaceView extends Race {
   sortKey: [number, number, number, string];
   month: number | null;
   regionLabel: string;
+  /**
+   * The headline distance bucket as a human label — `100 mi`, `50K`, `Timed`.
+   * The calendar's compact rows have room for exactly one chip, and this is the
+   * one that answers "what kind of race is this" fastest. Resolves through the
+   * format vocabulary for the events whose `distance_category` is a format word
+   * (`timed`, `backyard`, `stage`), which is the same fallback the permalink
+   * page's "Filed under" row uses.
+   */
+  categoryLabel: string;
   date: DateParts;
   /** Distance labels for badges, capped; `overflow` counts what was dropped. */
   badges: { shown: string[]; overflow: number; all: string };
@@ -75,6 +84,12 @@ const MONTH_ABBR = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP
 const K50_MILES = 31.1;
 
 const regionLabels = new Map(REGIONS.map((r) => [r.value, r.full ?? r.label]));
+
+const categoryLabels = new Map<string, string>([
+  ...DISTANCES.map((d) => [d.value, d.label] as [string, string]),
+  ...FORMATS.map((f) => [f.value, f.label] as [string, string]),
+  [SUB_50K, 'Sub-50K'],
+]);
 
 /**
  * Is this distance entry a fixed-distance race option, as opposed to a timed
@@ -225,6 +240,8 @@ function toView(r: Race): RaceView {
     // event is never mistaken for a 2026 one. Undated events sort to the end.
     sortKey: [month ?? 99, day, r.date_approx_year, r.name],
     regionLabel: regionLabels.get(r.location.region) ?? r.location.region,
+    categoryLabel: categoryLabels.get(normalizeCategory(r.distance_category)) ??
+      normalizeCategory(r.distance_category),
     date: dateParts(r),
     badges: badges(r),
   };

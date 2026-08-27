@@ -18,6 +18,9 @@
 //                      calendar's month blocks.
 //   [data-view-link]   a link to the other view. Rewritten on every change so
 //                      the filter state travels with the navigation.
+//
+// And one outbound signal: a `gnarlist:filtered` CustomEvent on document after
+// every pass, for anything that has to react without being wired in here.
 
 import {
   FILTER_STORE,
@@ -70,7 +73,6 @@ function init(panel: HTMLElement) {
   const groups = [...document.querySelectorAll<HTMLElement>('[data-group]')].map((el) => ({
     el,
     key: el.dataset.monthBlock ?? '',
-    max: Number(el.dataset.groupMax ?? 0),
     count: el.querySelector<HTMLElement>('[data-group-count]'),
     empty: el.querySelector<HTMLElement>('[data-group-empty]'),
     rows: [...el.querySelectorAll<HTMLElement>('[data-race]')],
@@ -236,9 +238,9 @@ function init(panel: HTMLElement) {
       run.el.hidden = !run.rows.some((el) => !el.hidden);
     }
 
-    // Calendar month blocks stay in place — the year keeps its twelve blocks
+    // Calendar month boxes stay in place — the year keeps its twelve boxes
     // however hard the filter bites — but they collapse to the slim empty
-    // treatment, restate their count, and redraw their density bar.
+    // treatment and restate their count. The jump strip dims to match.
     for (const g of groups) {
       let gShown = 0;
       let gCounted = 0;
@@ -250,10 +252,10 @@ function init(panel: HTMLElement) {
       g.el.classList.toggle('is-empty', gShown === 0);
       if (g.empty) g.empty.hidden = gShown > 0;
       if (g.count) g.count.textContent = String(gCounted);
-      g.el.style.setProperty('--fill', g.max > 0 ? `${Math.round((gCounted / g.max) * 100)}%` : '0%');
       for (const link of stripLinks) {
         if (link.dataset.strip !== g.key) continue;
-        link.style.setProperty('--h', g.max > 0 ? `${Math.round((gCounted / g.max) * 100)}%` : '0%');
+        const slot = link.querySelector('[data-strip-count]');
+        if (slot) slot.textContent = String(gCounted);
         link.classList.toggle('is-empty', gShown === 0);
       }
     }
@@ -290,6 +292,15 @@ function init(panel: HTMLElement) {
       // at every moment, so copy/bookmark/share works the same either way.
       history.replaceState(null, '', location.pathname + search + location.hash);
     }
+
+    /*
+     * A fifth contract, and the only one that points outward: anything else on
+     * the page that has to react to a filter change listens for this instead of
+     * being wired in here. The calendar's day-timeline uses it to mirror row
+     * visibility onto its marks. Keeps this file's promise — it knows the four
+     * DOM contracts above and nothing about what any view looks like.
+     */
+    document.dispatchEvent(new CustomEvent('gnarlist:filtered'));
   }
 
   /**
