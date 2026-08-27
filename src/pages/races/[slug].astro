@@ -22,6 +22,7 @@ import {
   sourceLink,
   type RaceView,
 } from '../../lib/races';
+import { eventJsonLd, jsonLdScript } from '../../lib/structured-data';
 
 export function getStaticPaths() {
   const races = allRaces();
@@ -111,7 +112,7 @@ const sources = race.source.map(sourceLink);
 // the masthead copy. A hand-written description would go stale the first time
 // a distance or a status changed.
 const title = `${race.name} — ${race.location.town}, Colorado | GnarList`;
-const description = (() => {
+const descriptionFull = (() => {
   const labels = race.ultra_distances.map((d) => d.label);
   const dist = (labels.length > 4 ? [...labels.slice(0, 4), '…'] : labels).join(' / ') || formatLabel;
   const when =
@@ -119,15 +120,29 @@ const description = (() => {
   const lead =
     `${race.name} — ${dist}, ${when}. ` +
     `A Colorado ultramarathon in ${race.location.town} (${regionLabel}).`;
-  if (!race.notes) return lead;
-  // Trim to a word boundary — a description cut mid-word reads as broken in a
-  // search result, and the notes field runs long on the well-documented races.
-  const full = `${lead} ${race.notes}`;
-  return full.length <= 300 ? full : `${full.slice(0, 297).replace(/\s+\S*$/, '')}…`;
+  return race.notes ? `${lead} ${race.notes}` : lead;
 })();
+
+// The 300-character cap is about how long a <meta> description usefully renders
+// in a search result, so it applies to the tag and not to the JSON-LD, which
+// has no such constraint and takes `descriptionFull`. Trimmed to a word
+// boundary — a description cut mid-word reads as broken.
+const description =
+  descriptionFull.length <= 300
+    ? descriptionFull
+    : `${descriptionFull.slice(0, 297).replace(/\s+\S*$/, '')}…`;
+
+// schema.org/SportsEvent. Every non-obvious mapping in here — which dates are
+// safe to assert, how the four statuses translate, when an organizer is named —
+// is argued in src/lib/structured-data.ts rather than decided inline.
+const jsonLd = jsonLdScript(
+  eventJsonLd(race, new URL(Astro.url.pathname, Astro.site).href, descriptionFull),
+);
 ---
 
 <Base title={title} description={description}>
+  <script slot="head" type="application/ld+json" is:inline set:html={jsonLd} />
+
   <div class="shell page">
     <nav class="crumbs" aria-label="Breadcrumb">
       <a href="/" data-back="/">List</a>

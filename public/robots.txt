@@ -1,0 +1,10 @@
+# gnarlist.co — a free, hand-verified index of Colorado ultramarathons.
+#
+# Indexing is open on purpose (ARCHITECTURE.md §2.4). A noindex was considered
+# while the site was mid-build and decided against: it is genuinely useful at
+# its current stage, and the per-event permalink pages exist partly so they can
+# be found from a search.
+User-agent: *
+Allow: /
+
+Sitemap: https://gnarlist.co/sitemap-index.xml
