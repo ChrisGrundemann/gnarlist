@@ -1,0 +1,46 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+
+  // Worker name — this is what produces the deployed hostname
+  // gnarlist.cgrundemann.workers.dev. Renaming this creates a NEW Worker
+  // rather than renaming the existing one.
+  "name": "gnarlist",
+
+  "compatibility_date": "2026-08-26",
+
+  // No "main" field, deliberately.
+  //
+  // Astro is configured with output: 'static' and no Cloudflare adapter, so
+  // `npm run build` emits only static files to dist/ — there is no _worker.js
+  // and no server entrypoint to point at. That makes this an assets-only
+  // Worker: Cloudflare serves dist/ directly from its asset storage and no
+  // Worker code runs per request.
+  //
+  // If a future phase needs server-side logic (e.g. the D1 upgrade path in
+  // ARCHITECTURE.md §2.1), add @astrojs/cloudflare and point "main" at the
+  // generated worker entrypoint. Until then, adding "main" would break the
+  // deploy — wrangler would look for a script that the build never produces.
+  "assets": {
+    "directory": "./dist"
+
+    // "not_found_handling" is intentionally unset (defaults to "none").
+    // The "404-page" mode serves dist/404.html, which this build does not
+    // produce yet. Revisit in Phase 6 (event detail pages + polish) once a
+    // real 404 page exists.
+  },
+
+  // Serve on the *.workers.dev subdomain. This is how the site is currently
+  // reachable; see ARCHITECTURE.md §2.4 for why workers.dev (not pages.dev)
+  // is expected here.
+  "workers_dev": true,
+
+  // Preview URLs for non-production branches pushed to the connected repo.
+  "preview_urls": true
+
+  // Build/CI settings deliberately NOT in this file:
+  //   - Build command (`npm run build`), deploy command (`npx wrangler
+  //     deploy`), and root directory (`/`) are Workers Builds settings that
+  //     live in the Cloudflare dashboard.
+  //   - The build token is dashboard-side CI auth and must never be
+  //     committed here.
+}

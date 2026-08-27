@@ -5,6 +5,9 @@ node_modules/
 dist/
 .astro/
 
+# Wrangler local state (config itself, wrangler.jsonc, IS tracked)
+.wrangler/
+
 # Environment / secrets
 .env
 .env.*
