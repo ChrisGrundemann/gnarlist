@@ -216,8 +216,9 @@ function init(shell: HTMLElement, host: HTMLElement, points: MapPoint[]) {
     }) as GnarMarker;
     marker.gnar = p;
     marker.bindPopup(() => popup(p), { closeButton: true, autoPanPadding: [24, 24] });
-    marker.on('mouseover', () => setCue(p.slug, false));
-    marker.on('click', () => setCue(p.slug, true));
+    // Hover and click now do the same thing — paint the pair. Click used to
+    // additionally scroll the page; see setCue for why it no longer does.
+    marker.on('mouseover click', () => setCue(p.slug));
     return marker;
   }
 
@@ -261,8 +262,7 @@ function init(shell: HTMLElement, host: HTMLElement, points: MapPoint[]) {
     const finish = cap(r.path[r.path.length - 1], r.finishLabel, 'F', true);
 
     for (const layer of [line, start, finish]) {
-      layer.on('mouseover', () => setCue(p.slug, false));
-      layer.on('click', () => setCue(p.slug, true));
+      layer.on('mouseover click', () => setCue(p.slug));
       if (layer !== line) (layer as L.Marker).bindPopup(() => popup(p));
     }
     line.bindPopup(() => popup(p));
@@ -398,9 +398,27 @@ function init(shell: HTMLElement, host: HTMLElement, points: MapPoint[]) {
    *
    * A cued marker that is currently inside a collapsed cluster paints the
    * cluster instead. Zooming the map on hover would be worse than useless.
+   *
+   * Cueing paints; it deliberately does NOT scroll. The calendar's version of
+   * this ends with `row.scrollIntoView({ block: 'nearest' })`, and its comment
+   * says why that is safe there: a mark and its row sit in the same month box,
+   * so `nearest` is a few pixels' nudge "without yanking the whole page around
+   * it". That precondition is false here. The index starts *below* a 68vh map,
+   * so a pin's row is commonly 800–1400px further down the document, and
+   * `nearest` — which scrolls the minimum distance to reveal the target — has
+   * to scroll the map, and the popup the click just opened, clean off the
+   * screen to obey. Clicking a pin made the thing you clicked disappear, and
+   * then the pointer landed on some unrelated row and cued *that* instead.
+   *
+   * There is no smaller scroll available: for most races the map and the row
+   * cannot both be on screen at once, so scrolling only "when it fits" would
+   * just make the jump intermittent, which is how this was reported. The pin's
+   * popup already carries the name, date, place, distances and a link to the
+   * full record, so nothing is lost by staying put — the row still lights up,
+   * and it is still lit when the reader scrolls down on their own terms.
    */
-  function setCue(slug: string | null, scroll: boolean) {
-    if (cued === slug && !scroll) return;
+  function setCue(slug: string | null) {
+    if (cued === slug) return;
     cued = slug;
 
     for (const [key, row] of rows) row.classList.toggle('is-cued', key === slug);
@@ -418,19 +436,17 @@ function init(shell: HTMLElement, host: HTMLElement, points: MapPoint[]) {
       }
     }
     for (const el of routeEls.get(slug)?.() ?? []) el.classList.add('is-cued');
-
-    if (scroll) rows.get(slug)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 
   for (const [slug, row] of rows) {
-    row.addEventListener('pointerenter', () => setCue(slug, false));
+    row.addEventListener('pointerenter', () => setCue(slug));
   }
-  document.addEventListener('pointerleave', () => setCue(null, false));
+  document.addEventListener('pointerleave', () => setCue(null));
   // Re-paint after a cluster redraw, which throws away the elements we painted.
   cluster.on('animationend spiderfied unspiderfied', () => {
     const slug = cued;
     cued = null;
-    setCue(slug, false);
+    setCue(slug);
   });
 
   // ---------------------------------------------------------------
@@ -464,11 +480,11 @@ function init(shell: HTMLElement, host: HTMLElement, points: MapPoint[]) {
       }
     }
 
-    if (cued && rows.get(cued)?.hidden) setCue(null, false);
+    if (cued && rows.get(cued)?.hidden) setCue(null);
     else if (cued) {
       const slug = cued;
       cued = null;
-      setCue(slug, false);
+      setCue(slug);
     }
   }
 
