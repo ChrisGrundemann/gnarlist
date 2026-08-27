@@ -4294,5 +4294,585 @@
     "status": "active",
     "marquee": false,
     "notes": "4.167-mi out-and-back loop with ~140 ft of gain per lap. Same club as The Sneffles Round."
+  },
+  {
+    "slug": "suffer-better-fall-trail-run",
+    "name": "Suffer Better Fall Trail Run",
+    "organizer": "Suffer Better (nonprofit)",
+    "organizer_confirmed": true,
+    "source": [
+      "runsignup.com"
+    ],
+    "coordinates": {
+      "lat": 39.5084,
+      "lng": -105.416,
+      "precision": "venue",
+      "derived_from": "Staunton State Park, Colorado"
+    },
+    "location": {
+      "town": "Pine (Staunton State Park)",
+      "county": [
+        "Park",
+        "Jefferson"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "25K",
+      "25K (FishSlappers division)",
+      "5K"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-10-10",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Oct 10, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": 2017,
+    "year_started_confirmed": true,
+    "status": "active",
+    "marquee": false,
+    "notes": "Two loops of the 25K route, the second run in reverse — Scout Line, Marmot Passage, Bugling Elk, Staunton Ranch, Old Mill, Chase Meadow and Davis Ponds singletrack. Cup-free aid stations. Benefits Conservation Colorado, Western Resource Advocates and Running Rivers. Stable second-Saturday-of-October slot. Same organizer hosts the Colorado edition of Running Up for Air at this venue."
+  },
+  {
+    "slug": "thumbs-up-summer-slam",
+    "name": "Thumbs Up Summer Slam",
+    "organizer": "Running Wild Events",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 40.3772,
+      "lng": -105.5232,
+      "precision": "town",
+      "derived_from": "Estes Park, Colorado"
+    },
+    "location": {
+      "town": "Estes Park",
+      "county": [
+        "Larimer"
+      ],
+      "region": "estes-park"
+    },
+    "ultra_distances": [
+      {
+        "label": "~12-hr timed (sunup to sundown)",
+        "hours": 12
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": null,
+    "distance_category": "timed",
+    "format": "timed",
+    "date_start": "2026-07-18",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "July 18, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Thumb Open Space. Sunup-to-sundown repeats of a 2 km out-and-back lap with 540 ft of gain, counted by poker chip. Milestone pins at 14, 18 and 26 ascents — the cumulative-vertical equivalents of Estes Cone, Deer Mountain and Longs Peak. 35-participant cap. Cannot predate 2022, when the trail opened, but no start year is confirmed."
+  },
+  {
+    "slug": "thumbs-up-vertical-challenge",
+    "name": "Thumbs Up Vertical Challenge",
+    "organizer": "Running Wild Events",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 40.3772,
+      "lng": -105.5232,
+      "precision": "town",
+      "derived_from": "Estes Park, Colorado"
+    },
+    "location": {
+      "town": "Estes Park",
+      "county": [
+        "Larimer"
+      ],
+      "region": "estes-park"
+    },
+    "ultra_distances": [
+      {
+        "label": "~8-hr timed (winter)",
+        "hours": 8
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": null,
+    "distance_category": "timed",
+    "format": "timed",
+    "date_start": null,
+    "date_end": null,
+    "date_confirmed": false,
+    "date_display": "~Dec 5, 2026 (approximate — first-Saturday pattern)",
+    "date_approx_month": 12,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Winter edition of the Thumbs Up format at Thumb Open Space. Date is inferred from the first-Saturday-of-December pattern only — the last confirmed edition was Dec 6, 2025, and no 2026 listing has been found in a primary source."
+  },
+  {
+    "slug": "power-of-four-trail-run",
+    "name": "Power of Four Trail Run",
+    "organizer": "Aspen Skiing Company",
+    "organizer_confirmed": true,
+    "source": [
+      "aspensnowmass.com",
+      "runsignup.com"
+    ],
+    "coordinates": {
+      "lat": 39.1911,
+      "lng": -106.8236,
+      "precision": "town",
+      "derived_from": "Aspen, Colorado"
+    },
+    "location": {
+      "town": "Aspen to Snowmass Village",
+      "county": [
+        "Pitkin"
+      ],
+      "region": "mountains-western-slope"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "25K",
+      "10K"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-07-18",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "July 18, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": 2013,
+    "year_started_confirmed": true,
+    "status": "active",
+    "marquee": false,
+    "notes": "Point-to-point across all four Aspen Snowmass mountains — Aspen Mountain to Highlands to Buttermilk to Snowmass — starting 6am at Gondola Plaza and finishing at Snowmass Base Village. Part of the Audi Power of Four Series; the ski-mountaineering and mountain-bike races under that banner are separately organized and remain out of this dataset."
+  },
+  {
+    "slug": "maces-hideout-100",
+    "name": "Mace's Hideout 100",
+    "organizer": "Tempest Adventures LLC",
+    "organizer_confirmed": true,
+    "source": [
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 38.075,
+      "lng": -104.9867,
+      "precision": "town",
+      "derived_from": "Beulah, Colorado"
+    },
+    "location": {
+      "town": "Beulah",
+      "county": [
+        "Pueblo"
+      ],
+      "region": "southern-colorado"
+    },
+    "ultra_distances": [
+      {
+        "label": "100 mi",
+        "miles": 100
+      },
+      {
+        "label": "50 mi",
+        "miles": 50
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": 100,
+    "distance_category": "100m",
+    "format": "standard",
+    "date_start": "2026-06-06",
+    "date_end": "2026-06-07",
+    "date_confirmed": true,
+    "date_display": "June 6–7, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": 2021,
+    "year_started_confirmed": true,
+    "status": "active",
+    "marquee": false,
+    "notes": "Run under a San Isabel / Rio Grande National Forest special-use permit. Ranges from 6,600 to 11,600 ft with Spanish Peaks and Sangre de Cristo views. Capped at 75 entrants per distance. Same organizer as Creede 50/100 and La Garita 200."
+  },
+  {
+    "slug": "run-the-ranch",
+    "name": "Run the Ranch",
+    "organizer": "Sweetheart City Racing",
+    "organizer_confirmed": true,
+    "source": [
+      "runsignup.com"
+    ],
+    "coordinates": {
+      "lat": 40.3978,
+      "lng": -105.075,
+      "precision": "town",
+      "derived_from": "Loveland, Colorado"
+    },
+    "location": {
+      "town": "Loveland",
+      "county": [
+        "Larimer"
+      ],
+      "region": "northern-front-range"
+    },
+    "ultra_distances": [
+      {
+        "label": "12-hr solo",
+        "hours": 12
+      },
+      {
+        "label": "6-hr solo",
+        "hours": 6
+      },
+      {
+        "label": "4-hr solo",
+        "hours": 4
+      }
+    ],
+    "companion_distances": [
+      "Friday 5K",
+      "Friday 10K"
+    ],
+    "longest_ultra_miles": null,
+    "distance_category": "timed",
+    "format": "timed",
+    "date_start": "2026-04-10",
+    "date_end": "2026-04-11",
+    "date_confirmed": true,
+    "date_display": "Apr 10–11, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": 2020,
+    "year_started_confirmed": true,
+    "status": "active",
+    "marquee": false,
+    "notes": "Sylvan Dale Guest Ranch — exclusive access to private ranch trails. Cupless event; $5/day ranch fee; cabin and camping lodging on site. Relay variants (2- and 4-person teams) and virtual options exist alongside the solo timed races."
+  },
+  {
+    "slug": "running-up-for-air-staunton-rocks",
+    "name": "Running Up for Air – Staunton Rocks",
+    "organizer": "Up For Air Series, hosted by Suffer Better",
+    "organizer_confirmed": true,
+    "source": [
+      "runsignup.com"
+    ],
+    "coordinates": {
+      "lat": 39.5084,
+      "lng": -105.416,
+      "precision": "venue",
+      "derived_from": "Staunton State Park, Colorado"
+    },
+    "location": {
+      "town": "Pine (Staunton State Park)",
+      "county": [
+        "Park",
+        "Jefferson"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "24-hr",
+        "hours": 24
+      },
+      {
+        "label": "12-hr Night Owls",
+        "hours": 12
+      },
+      {
+        "label": "12-hr Early Riser",
+        "hours": 12
+      },
+      {
+        "label": "6-hr Early Riser",
+        "hours": 6
+      },
+      {
+        "label": "6-hr Mid Morning",
+        "hours": 6
+      },
+      {
+        "label": "3-hr",
+        "hours": 3
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": null,
+    "distance_category": "timed",
+    "format": "timed",
+    "date_start": "2026-02-06",
+    "date_end": "2026-02-07",
+    "date_confirmed": true,
+    "date_display": "Feb 6–7, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": 2017,
+    "year_started_confirmed": true,
+    "status": "active",
+    "marquee": false,
+    "notes": "Colorado edition of the national Up For Air Series, run as a fundraiser for Front Range air quality. A 7.1-mile lollipop loop with ~1,500 ft of gain, repeated as many times as the time limit allows, typically over snow and ice. The date is not a fixed calendar slot — it tracks winter inversion season and shifts year to year (2025 ran Feb 14–15), so treat the Feb 6–7 date as specific to this edition. Note: the organizer dates the event to 2017 but also describes 2026 as its \"8th year\", which is one short — their inconsistency, recorded rather than resolved."
+  },
+  {
+    "slug": "runs-with-scissors-co",
+    "name": "Runs With Scissors Races – CO",
+    "organizer": "In The Long Run LLC",
+    "organizer_confirmed": false,
+    "source": [
+      "runswithscissorsraces.weebly.com",
+      "runsignup.com"
+    ],
+    "coordinates": {
+      "lat": 39.9837,
+      "lng": -104.8111,
+      "precision": "town",
+      "derived_from": "Brighton, Colorado"
+    },
+    "location": {
+      "town": "Brighton",
+      "county": [
+        "Adams"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "Half Marathon",
+      "Marathon"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-04-25",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "Apr 25, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "Riverdale Regional Park. The 50K is 24 laps of a 1.31-mile loop around Mann-Nyholt Lake, roughly 70% scree and gravel, 30% paved. Virtual variants of each distance are offered. The beneficiary charity changes year to year. Organizer inferred from a contact email domain rather than an explicit attribution, so it is recorded unconfirmed. Earliest reference found is 2023; no start year established."
+  },
+  {
+    "slug": "denver-beer-co-50k",
+    "name": "CO Brewery Running Series – Denver Beer Co 50K",
+    "organizer": "Colorado Brewery Running Series® (Brady Archer), with Denver Beer Co.",
+    "organizer_confirmed": true,
+    "source": [
+      "breweryrunningseries.com",
+      "denverbeerco.com"
+    ],
+    "coordinates": {
+      "lat": 39.8006,
+      "lng": -105.0812,
+      "precision": "town",
+      "derived_from": "Arvada, Colorado"
+    },
+    "location": {
+      "town": "Arvada to Littleton",
+      "county": [
+        "Jefferson",
+        "Denver",
+        "Arapahoe",
+        "Douglas"
+      ],
+      "region": "denver-metro"
+    },
+    "ultra_distances": [
+      {
+        "label": "50K",
+        "miles": 31.1
+      }
+    ],
+    "companion_distances": [
+      "4-person relay"
+    ],
+    "longest_ultra_miles": 31.1,
+    "distance_category": "50k",
+    "format": "standard",
+    "date_start": "2026-05-02",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "May 2, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "An \"urban odyssey\" point-to-point linking five Denver Beer Co. taprooms in four legs — Olde Town Arvada, Platte St, Lowry, South Downing, Littleton — with the intermediate taprooms doubling as relay hand-offs. Not chip-timed: staff verify runners at each transition, supplemented by tracking apps. Crosses four counties; filed under the start-point region, the same simplification applied to TransRockies. The parent series dates to 2012, but that is not a start year for this route."
+  },
+  {
+    "slug": "ragnar-trail-colorado-individual",
+    "name": "Ragnar Trail Colorado (individual)",
+    "organizer": "Ragnar Events",
+    "organizer_confirmed": true,
+    "source": [
+      "runragnar.com"
+    ],
+    "coordinates": {
+      "lat": 39.213,
+      "lng": -106.9378,
+      "precision": "town",
+      "derived_from": "Snowmass Village, Colorado"
+    },
+    "location": {
+      "town": "Snowmass Village",
+      "county": [
+        "Pitkin"
+      ],
+      "region": "mountains-western-slope"
+    },
+    "ultra_distances": [
+      {
+        "label": "24-hr",
+        "hours": 24
+      },
+      {
+        "label": "6-hr",
+        "hours": 6
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": null,
+    "distance_category": "timed",
+    "format": "timed",
+    "date_start": "2026-06-05",
+    "date_end": "2026-06-06",
+    "date_confirmed": true,
+    "date_display": "June 5–6, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": null,
+    "year_started_confirmed": false,
+    "status": "active",
+    "marquee": false,
+    "notes": "FINAL YEAR AT THIS VENUE — 2026 is confirmed as the last Snowmass edition. The organizer states the event moves to \"a new spot in the Rockies\" for 2027, with no guarantee it stays in Colorado. Treat this as a one-year-remaining listing and revisit before next season rather than rolling the date forward. Individual ultra options run the Red Loop: 6.6 miles, 1,121 ft of gain per loop, along a 9,000 ft ridge."
+  },
+  {
+    "slug": "endure-trail-runs",
+    "name": "Endure Trail Runs",
+    "organizer": "Human Potential Running Series",
+    "organizer_confirmed": true,
+    "source": [
+      "humanpotentialrunning.com"
+    ],
+    "coordinates": {
+      "lat": 38.9419,
+      "lng": -105.1572,
+      "precision": "town",
+      "derived_from": "Divide, Colorado"
+    },
+    "location": {
+      "town": "Divide",
+      "county": [
+        "Teller"
+      ],
+      "region": "front-range-cs"
+    },
+    "ultra_distances": [
+      {
+        "label": "12-hr (colored-balls lottery loop format)",
+        "hours": 12
+      }
+    ],
+    "companion_distances": [
+      "Marathon",
+      "Half Marathon",
+      "10K"
+    ],
+    "longest_ultra_miles": null,
+    "distance_category": "timed",
+    "format": "timed",
+    "date_start": "2027-05-15",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "May 15, 2027",
+    "date_approx_month": null,
+    "date_approx_year": 2027,
+    "year_started": 2021,
+    "year_started_confirmed": true,
+    "status": "active",
+    "marquee": false,
+    "notes": "Mueller State Park. Distinctive format: a coloured-ball lottery decides which loop each runner draws next, round by round. Formerly \"The Tommyknocker 12-Hour & Mine Shaft Half\". The 2026 edition ran May 16, 2026; this is the next scheduled running. Whether a 24-hr / last-runner-standing division returns in 2027 is genuinely unclear — it has appeared in past editions but is absent from the current 2027 page, and neither presence nor absence should be assumed."
+  },
+  {
+    "slug": "durango-trails-backyard-ultra",
+    "name": "Durango Trails Backyard Ultra",
+    "organizer": "Durango Trails (nonprofit)",
+    "organizer_confirmed": true,
+    "source": [
+      "durangotrails.org",
+      "ultrasignup.com"
+    ],
+    "coordinates": {
+      "lat": 37.2769,
+      "lng": -107.8766,
+      "precision": "town",
+      "derived_from": "Durango, Colorado"
+    },
+    "location": {
+      "town": "Durango",
+      "county": [
+        "La Plata"
+      ],
+      "region": "san-juans"
+    },
+    "ultra_distances": [
+      {
+        "label": "Backyard (4.17 mi/loop)",
+        "loop_miles": 4.17
+      }
+    ],
+    "companion_distances": [],
+    "longest_ultra_miles": null,
+    "distance_category": "backyard",
+    "format": "backyard",
+    "date_start": "2026-05-30",
+    "date_end": null,
+    "date_confirmed": true,
+    "date_display": "May 30, 2026",
+    "date_approx_month": null,
+    "date_approx_year": 2026,
+    "year_started": 2026,
+    "year_started_confirmed": true,
+    "status": "active",
+    "marquee": false,
+    "notes": "Inaugural running was May 30, 2026, on the Railspike trail in the Spurline system at Three Springs — a mix of dirt road and singletrack, 4.17 miles every hour. All proceeds support Durango Trails' trail-maintenance work. 2027 recurrence is NOT yet confirmed: no second edition has been announced. The nonprofit-fundraiser structure makes a return likely but not certain, so do not treat this as an established annual until a second edition exists."
   }
 ]

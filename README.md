@@ -7,7 +7,7 @@ It grows out of two hand-researched static posters (a "Colorado Ultra Season" ca
 "Colorado Ultra Map") built from a verified dataset of ~75 events. This site generalizes those two
 fixed views into an interactive, filterable, shareable tool.
 
-**Current status: Phase 3 complete (list view + filters).** All 90 events render as a filterable,
+**Current status: Phase 3 complete (list view + filters).** All 102 events render as a filterable,
 seasonally-sorted list — by format, distance, region and month — with filter state in the URL so any
 view can be shared or bookmarked. Calendar and map views come in Phases 4–5.
 
@@ -30,7 +30,7 @@ the phased build plan, and what's deliberately out of scope. Read it before maki
 ARCHITECTURE.md              Architectural decisions & phased plan — read first
 SCHEMA.md                    Data model documentation
 Colorado_Ultramarathons.xlsx Hand-verified source spreadsheet (provenance)
-data/races.json              Canonical dataset (90 events) — hand-maintained; see note below
+data/races.json              Canonical dataset (102 events) — hand-maintained; see note below
 scripts/generate_races.py    Phase 1 conversion — historical, do NOT re-run (see header)
 scripts/geocode.py           Coordinate lookup helper
 src/pages/                   Astro pages

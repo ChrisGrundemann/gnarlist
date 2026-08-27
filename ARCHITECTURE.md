@@ -104,22 +104,22 @@ The original seven regions were carried straight over from the posters, which gr
 
 | Slug | Chip label | Full label | Covers | Listed / counted |
 |---|---|---|---|---|
-| `san-juans` | San Juans | San Juans | San Juan, Ouray, San Miguel, Hinsdale, Mineral, La Plata, **Rio Grande** | 13 / 13 |
-| `front-range-cs` | Colo. Springs | Colorado Springs / Pikes Peak | El Paso, Teller, south Douglas | 16 / 16 |
-| `denver-metro` | Denver Metro | Denver Metro & Foothills | Jefferson, Boulder, Gilpin, Clear Creek, Adams, north Douglas, edge of Park¹ | 19 / 17 |
-| `northern-front-range` | N. Front Range | Northern Front Range | Larimer, Weld — Fort Collins, Greeley, Loveland, Red Feather | 6 / 6 |
-| `estes-park` | Estes Park | Estes Park / RMNP | Estes Park | 4 / 4 |
-| `mountains-western-slope` | Western Slope | Mountains / Western Slope | Routt, Grand, Jackson, Gunnison, Pitkin, Mesa, Delta, **Summit** | 18 / 18 |
+| `san-juans` | San Juans | San Juans | San Juan, Ouray, San Miguel, Hinsdale, Mineral, La Plata, Rio Grande | 14 / 14 |
+| `front-range-cs` | Colo. Springs | Colorado Springs / Pikes Peak | El Paso, Teller, south Douglas | 17 / 17 |
+| `denver-metro` | Denver Metro | Denver Metro & Foothills | Jefferson, Boulder, Gilpin, Clear Creek, Adams, Denver, Arapahoe, north Douglas, edge of Park¹ | 23 / 21 |
+| `northern-front-range` | N. Front Range | Northern Front Range | Larimer, Weld — Fort Collins, Greeley, Loveland, Red Feather | 7 / 7 |
+| `estes-park` | Estes Park | Estes Park / RMNP | Larimer (Estes Park town and RMNP approaches only — the rest of Larimer is `northern-front-range`) | 6 / 6 |
+| `mountains-western-slope` | Western Slope | Mountains / Western Slope | Routt, Grand, Jackson, Gunnison, Pitkin, Mesa, Delta, Summit | 20 / 20 |
 | `central-mountains` | Central Mtns | Central Mountains / Sawatch | Lake, Chaffee, Eagle² — Upper Arkansas valley and the Sawatch | 7 / 7 |
 | `fairplay-south-park` | South Park | Fairplay / South Park | Park (Fairplay, Como) | 2 / 2 |
-| `southern-colorado` | Southern CO | Southern Colorado | Pueblo, Fremont, Huerfano, Custer | 5 / 5 |
-| | | | **Total** | **90 / 88** |
+| `southern-colorado` | Southern CO | Southern Colorado | Pueblo, Fremont, Huerfano, Custer | 6 / 6 |
+| | | | **Total** | **102 / 100** |
 
-*(Listed = rows rendered. Counted = rows contributing to displayed numbers — see the counting rule below. Counts updated by the completeness pass that took the dataset from 75 to 90 events; the "Covers" column now names counties rather than towns, since the town lists stopped being representative once regions held 15+ events.)*
+*(Listed = rows rendered. Counted = rows contributing to displayed numbers — see the counting rule below. Counts current as of the Tier B verification pass (102 events); the "Covers" column names counties rather than towns, since the town lists stopped being representative once regions held 15+ events.)*
 
 ¹ Sawmill Trail Runs straddles the Jefferson/Park line at Pine; it is a Denver-foothills race that happens to clip Park County, **not** a South Park event. ² TransRockies finishes in Eagle County after starting in Lake — see the cross-boundary note below. Both are artifacts of `location.county` being an array; neither implies the region owns the whole county.
 
-**Two county extensions, added by the completeness pass — reasoned, not arbitrary.** Both regions absorbed a county that wasn't previously in their definition. Recording why here so neither reads later as an unexplained exception:
+**County extensions, reasoned rather than arbitrary.** Denver and Arapahoe joined `denver-metro` with the Denver Beer Co 50K, which runs Arvada→Littleton across four counties — unremarkable, they are the metro's core. The two that needed a real argument, recorded here so neither reads later as an unexplained exception:
 
 - **Summit County → `mountains-western-slope`** (The Summit 200). Summit is west of the Continental Divide and is the same high-mountain-resort character as Grand, Pitkin and Routt, all already in this region. The alternative was `central-mountains`, but that region is specifically the Upper Arkansas valley *east* of the Divide — putting Summit there would repeat exactly the Divide-crossing error the audit had just finished fixing.
 - **Rio Grande County → `san-juans`** (La Garita 200). The La Garita Mountains are part of the broader San Juan volcanic field, and South Fork sits immediately adjacent to Creede in Mineral County, already in this region. This one is a genuine judgment call rather than a clean geographic fact — the La Garitas are a distinct sub-range, and if the dataset ever grows a real San Luis Valley cluster, Rio Grande County is the first thing that should be reconsidered.
@@ -141,9 +141,9 @@ The original seven regions were carried straight over from the posters, which gr
 
 Implemented as `countsTowardTotals` in `src/lib/races.ts` (the single definition), surfaced per row as `data-counted` so the browser script never needs to know the status vocabulary. Two consequences worth knowing before they look like bugs: **Denver Metro shows 12 above 14 rows**, because both non-counting events happen to live there; and a filter combination can legitimately produce **a count of 0 with rows still on screen** (Region → Denver Metro plus the Sub-50K toggle leaves only the unverified Sourdough Snowshoe). The list view handles the second by tracking rows-shown separately from events-counted, so the "nothing matches" copy never appears above a visible row, and by showing a "+n shown, not counted" note in the results bar whenever the two diverge. Phases 4 and 5 need the same split.
 
-**Dataset coverage — where the 90 events came from, and what is deliberately absent.** A completeness pass after the region audit took the dataset from 75 to 90. The 15 additions were all confirmed-active with organizer-level or equivalent sourcing. Three categories were held back on purpose, and a future session should not treat any of them as an oversight to fix:
+**Dataset coverage — where the 102 events came from, and what is deliberately absent.** Two passes after the region audit grew the dataset: a completeness pass took it 75 → 90, then a Tier B verification pass took it 90 → 102. All additions were confirmed-active with organizer-level or equivalent sourcing. What remains deliberately absent, and should not be treated as an oversight to fix:
 
-- **Tier B — ~13 calendar-listed-only events.** Real listings, but zero organizer or course verification done yet. Held for a separate pass with its own verification budget rather than folded in on aggregator listings alone (§5.1). These are *pending*, not rejected.
+- **Tier B — resolved.** The ~13 calendar-listed-only events have now been through their verification pass: 12 were confirmed against organizer sources and added; the 13th, the **John Cappis 50K Fat Ass**, was excluded as invite-only under §5.5. Tier B is closed, not outstanding.
 - **Tier C — ~10 dormant events.** No 2026 or 2027 listing anywhere. This is a weaker state than `status: unverified`, which means "reported but unconfirmed" — Tier C is closer to "no evidence this still runs." Adding them as `unverified` would overstate what we know; the status vocabulary has no honest slot for them, and inventing one is not worth it for events nobody can enter.
 - **Babbitt's Backyard Ultra — rejected outright,** not deferred. Arizona event, mis-geocoded into Colorado. See §5.3.
 
@@ -174,6 +174,10 @@ These are hard-won and should inform both the data schema and the eventual maint
 
    **Same family, different mechanism — aggregator geocoding drift.** The completeness pass rejected **Babbitt's Backyard Ultra**, which aggregators list as Colorado. It is a Flagstaff, *Arizona* event, mis-geocoded onto Colorado's Flagstaff Mountain (above Boulder) by a name collision. **Do not add it.** The lesson generalizes past this one race: an aggregator's *location* field is derived data, not sourced data, and a plausible-looking Colorado coordinate is not evidence the race is in Colorado. Verify the venue against the organizer, the same way format gets verified.
 4. **Prefer PR-based review over silent overwrites** for any data update, automated or manual, at least until the process has a long track record.
+
+5. **An event needs open registration to be listed.** GnarList exists so a runner can find a race they could actually enter. An event that cannot be entered — invite-only, application-only, or otherwise closed to the public — fails that purpose no matter how real or well-established it is, and listing it wastes the reader's time in a way a missing entry does not. Established by excluding the **John Cappis 50K Fat Ass**, which is genuine and long-running but invite-only.
+
+   This is a scope boundary, not a quality judgement, and it is deliberately narrower than the other exclusion tests: a free, informal, or barely-publicised race still qualifies as long as anyone may sign up. It also differs from `status: unverified` — that means "we are not sure this runs", whereas this means "we are sure it runs and equally sure you cannot enter it". Neither the status vocabulary nor a filter chip is the right home for the distinction; the event simply stays out of the dataset.
 
 ---
 
@@ -215,4 +219,5 @@ Each phase becomes one or more Claude Code prompts, built and reviewed iterative
 - **Licensing — resolved.** No license file, default all-rights-reserved, for both code and data. Applies to the repo's code and to `races.json` alike unless split later. The MIT license file added during Phase 2 scaffold has been removed and confirmed gone. Note: facts (race names, dates, locations, distances) aren't copyrightable regardless of license choice — only the specific compilation and original writing (notes/descriptions) are protectable. Not legal advice; consult a lawyer if this ever matters commercially.
 - Redirect setup for `gnarlist.run` / `gnarlist.racing` / `thegnarlist.com` → `gnarlist.co` — see §2.4, deferred until there's a live deploy worth pointing a domain at.
 - Whether/when to build the Phase 7 data-maintenance tooling and Phase 8 stretch items — revisit once the core site (Phases 1–6) is live and real usage patterns exist.
+- **Ragnar Trail Colorado — revisit before the 2027 season.** 2026 is confirmed as its final year at Snowmass; the organizer says it moves to "a new spot in the Rockies" for 2027 and has not said the new spot is in Colorado. This is the dataset's only event with a known expiry, so it will not simply roll forward like the rest. Either it relocates within Colorado (update venue, coordinates, region — it is currently `mountains-western-slope` on Pitkin County) or it leaves the state and the record should go. Do not let a forward-dated aggregator listing decide this: RunGuides already carries a "2027 Ragnar Trail Colorado | Snowmass Village" page, which contradicts the organizer and is exactly the §5.3 pattern.
 - Sanity-check "GnarList" naming against Gnar Runners (a race organizer already in the dataset) before public launch — low-confidence concern, probably fine, worth a glance rather than a deep dive.
