@@ -14,7 +14,7 @@ A public, free website that visualizes active Colorado ultramarathons — filter
 
 **Verification convention, relevant from Phase 3 onward:** a successful build is necessary but not sufficient. Claude Code should verify the build succeeds and (where practical) that the data layer is correctly wired, but the actual visual/interactive result — does it look right, does it behave right — is verified by the user directly, not claimed by Claude Code from the build output alone.
 
-**Documentation convention, formalized after Phase 3:** Claude Code is welcome — encouraged, even — to add implementation-detail notes directly to this doc for work from its own session, appended cleanly rather than restructuring existing content (Phase 3's "How these were actually implemented" addition under §4 is the model to follow). The session that just built something has the freshest, most accurate account of how it actually works. Higher-level decisions and cross-session status reconciliation remain the user's/Claude's job between sessions.
+**Documentation convention, formalized after Phase 3, broadened after Phase 6 (region correction):** Claude Code is welcome — encouraged, even — to add implementation-detail notes directly to project docs (this file, `SCHEMA.md`, and similar) for work from its own session, appended cleanly rather than restructuring existing content (Phase 3's "How these were actually implemented" addition under §4 is the model to follow; the Phase 6 region-correction session's `SCHEMA.md` update, marking a stale open question resolved-with-answer rather than deleting it, is another good example). The session that just built something has the freshest, most accurate account of how it actually works. Higher-level decisions and cross-session status reconciliation remain the user's/Claude's job between sessions.
 
 ---
 
@@ -165,6 +165,7 @@ Naming these now so future sessions don't quietly scope-creep or, conversely, fe
 - **User accounts, submissions, comments.** See §2.3.
 - **Automated/unattended scraping that writes directly to the dataset.** See §5.3 — any collector tooling should propose changes for review, not auto-commit.
 - **Expanding scope beyond ultramarathons to all Colorado trail races.** Not a v1 goal, but flagged as a real possible future direction, not a hard boundary — the dataset currently includes borderline-sub-ultra events (30K, 32mi) that run alongside true ultras, which was a deliberate inclusive choice made with this possible expansion in mind. If pursued, this would be a significant scope change (naming, schema, data volume) and deserves its own planning pass, not a quiet scope-creep into one session.
+- **The `sub-50K` bucket conflates two genuinely different things, flagged during the Tier A completeness pass.** It currently holds events under the 50K/31.1mi threshold regardless of whether they clear marathon distance (42.2km/26.2mi) — the actual standard definition of "ultramarathon." Box Canyon and Sourdough Snowshoe (both 30K/18.6mi) don't clear that bar at all; Desert RATS' 48K/29.8mi does. Pragmatic call for now: keep the single `sub-50k` bucket. Real fix, deferred: a numeric marathon-distance floor deciding what counts as an ultra at all, rather than the round-number "50K" label doing that job.
 
 ---
 
