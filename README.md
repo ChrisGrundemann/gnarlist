@@ -15,9 +15,13 @@ filterable by format, distance, region and month (plus a separate sub-50K toggle
 in the URL so any view can be shared, bookmarked, and carried across to the other two. Every event
 also has a permalink page at `/races/<slug>/`.
 
-**Next up:** a design/colour sweep across the whole site, deliberately held back until the map
-existed — basemap tiles are the hardest surface for the palette to work against, and that's hard to
-judge in the abstract. Then Phase 6: mobile polish and basic search.
+**Done, most recently:** the design/colour sweep that was held back until the map existed. Every
+colour pairing on all four surfaces is now WCAG 2.1 AA compliant against measured ratios rather than
+eyeballed ones (`node scripts/contrast-audit.mjs`), the condensed display face is self-hosted Oswald
+instead of whatever was installed locally, and the filter pane collapses on desktop as well as on a
+phone. Full ratio tables and the reasoning are in ARCHITECTURE.md §7 item 6.
+
+**Next up:** the rest of Phase 6 — mobile polish and basic search.
 
 📐 **[ARCHITECTURE.md](./ARCHITECTURE.md) is the source of truth** for architectural decisions,
 the phased build plan, and what's deliberately out of scope. Read it before making changes.
@@ -32,6 +36,8 @@ the phased build plan, and what's deliberately out of scope. Read it before maki
 | Data | Static JSON in the repo (`data/races.json`), read at build time |
 | Map | [Leaflet](https://leafletjs.com) + `leaflet.markercluster`, over free OpenStreetMap tiles darkened in CSS — no API key (ARCHITECTURE.md §2.2) |
 | Discoverability | `@astrojs/sitemap`, JSON-LD `SportsEvent` on every permalink, `public/robots.txt` |
+| Type | Oswald, self-hosted (SIL OFL 1.1) — one 21 KB variable woff2, latin subset, no third-party font request |
+| Accessibility | WCAG 2.1 AA contrast, verified from rendered pixels by `scripts/contrast-audit.mjs` |
 
 ## Pages
 
@@ -56,9 +62,10 @@ Colorado_Ultramarathons.xlsx Hand-verified source spreadsheet (provenance)
 data/races.json              Canonical dataset (102 events) — hand-maintained; see note below
 scripts/generate_races.py    Phase 1 conversion — historical, do NOT re-run (see header)
 scripts/geocode.py           Nominatim lookup helper — an operator tool; never writes to the dataset
+scripts/contrast-audit.mjs   WCAG AA audit of the built site — serves dist/, drives headless Chrome
 astro.config.mjs             Static output, canonical site URL, sitemap integration
 wrangler.jsonc               Cloudflare Workers deploy config (assets-only — no `main` entry)
-public/                      Favicons and robots.txt
+public/                      Favicons, robots.txt, and fonts/ (Oswald woff2 + its OFL licence)
 src/pages/                   index (list), calendar, map, races/[slug]
 src/layouts/Base.astro       <head>, canonical/OG tags, named `head` slot for JSON-LD
 src/components/              FilterBar, ViewSwitch, and one row/cell component per view

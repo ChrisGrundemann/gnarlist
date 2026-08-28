@@ -80,7 +80,8 @@ const day = (() => {
     background: var(--ink-850);
   }
   .ev.is-cued {
-    outline: 1px solid var(--teal-edge);
+    /* A cue is a state indicator, so it owes 3:1; --teal-edge was 1.76:1. */
+    outline: 1px solid var(--teal-deep);
     outline-offset: -1px;
   }
 
@@ -202,8 +203,9 @@ const day = (() => {
   .is-discontinued .d {
     color: var(--fg-mute);
   }
+  /* Same 3:1-floor problem and same fix as the list view's badge. */
   .is-discontinued .bd {
-    opacity: 0.55;
+    opacity: 0.8;
   }
 
   .is-unverified {

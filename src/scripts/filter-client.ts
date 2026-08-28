@@ -23,6 +23,7 @@
 // every pass, for anything that has to react without being wired in here.
 
 import {
+  DISCLOSURE_STORE,
   FILTER_STORE,
   MONTHS,
   countActive,
@@ -131,18 +132,63 @@ function init(panel: HTMLElement) {
 
   /**
    * The panel is server-rendered open so it still works with JavaScript off.
-   * On a phone that is a wall of chips above the results, so collapse it here —
-   * the summary line carries the active-filter state while it's shut. Above the
-   * breakpoint the summary is display:none, so the panel must be forced back
-   * open on the way up or a narrow-then-widened window loses its filters.
+   *
+   * It collapses at every width now, not just on a phone. Previously the
+   * <summary> was `display: none` above 60rem and this function force-opened
+   * the panel on the way up, because with the control hidden a shut panel
+   * would have been unreachable. The control is visible at all widths, so
+   * that rescue is gone and the rule it enforced becomes a mere default:
+   *
+   *   - no stored preference -> open where there is room, shut on a phone
+   *     where four facets plus twelve month chips bury the results;
+   *   - an explicit toggle -> remembered for the session, at both widths,
+   *     and it outranks the default including across a breakpoint change.
+   *
+   * The summary line carries the active-filter state while it's shut, which is
+   * what makes a collapsed panel honest rather than just smaller.
    */
   function setUpDisclosure() {
     const details = document.getElementById('filters') as HTMLDetailsElement | null;
     if (!details) return;
     const wide = matchMedia('(min-width: 60rem)');
-    if (!wide.matches) details.open = false;
+
+    const read = () => {
+      try {
+        return sessionStorage.getItem(DISCLOSURE_STORE);
+      } catch {
+        // Private-mode storage refusal. Every visit just gets the default.
+        return null;
+      }
+    };
+
+    /*
+     * `toggle` fires for our own assignments as well as for clicks, and we
+     * only want to record the clicks — otherwise applying the default would
+     * immediately write it back as a preference and the default could never
+     * apply again. Tracking the last value we set ourselves separates the two
+     * without a timer.
+     */
+    let ours = details.open;
+    const setOpen = (v: boolean) => {
+      ours = v;
+      details.open = v;
+    };
+
+    const stored = read();
+    setOpen(stored === null ? wide.matches : stored === '1');
+
+    details.addEventListener('toggle', () => {
+      if (details.open === ours) return;
+      ours = details.open;
+      try {
+        sessionStorage.setItem(DISCLOSURE_STORE, details.open ? '1' : '0');
+      } catch {
+        // Storage refused; the choice just won't survive the next navigation.
+      }
+    });
+
     wide.addEventListener('change', () => {
-      if (wide.matches) details.open = true;
+      if (read() === null) setOpen(wide.matches);
     });
   }
 

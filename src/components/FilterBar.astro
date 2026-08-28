@@ -132,7 +132,15 @@ const groups: { facet: keyof typeof counts; legend: string; choices: Choice[]; c
     display: block;
   }
 
-  /* ---- summary: the mobile disclosure control ---- */
+  /*
+   * ---- summary: the disclosure control, at every width ----
+   *
+   * It used to be `display: none` above 60rem, which left desktop with a
+   * permanently open panel and no way to shut it — the one place the filter
+   * set is at its largest (all four facets plus twelve month chips) and the
+   * results are furthest down the page. The mechanism was already here and
+   * already correct; only the breakpoint that hid it had to go.
+   */
   summary {
     display: flex;
     align-items: center;
@@ -145,9 +153,13 @@ const groups: { facet: keyof typeof counts; legend: string; choices: Choice[]; c
     letter-spacing: 0.16em;
     text-transform: uppercase;
     font-size: 0.78rem;
+    transition: background 0.12s ease;
   }
   summary::-webkit-details-marker {
     display: none;
+  }
+  summary:hover {
+    background: var(--ink-850);
   }
   .sum-state {
     margin-left: auto;
@@ -160,16 +172,43 @@ const groups: { facet: keyof typeof counts; legend: string; choices: Choice[]; c
   .sum-state.is-on {
     color: var(--gold);
   }
+  /*
+   * A bare 8px chevron reads as decoration. Boxed, it reads as the thing you
+   * press — which matters most on desktop, where nobody expects a filter panel
+   * to collapse and there is no other hint that it can. The box takes
+   * --line-ctl so the affordance itself clears 3:1 (WCAG 1.4.11), and the
+   * chevron inside is --fg-mute at 5.69:1 against this surface.
+   */
   .sum-caret {
-    width: 0.5rem;
-    height: 0.5rem;
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 1.4rem;
+    height: 1.4rem;
+    border: 1px solid var(--line-ctl);
+    border-radius: var(--radius);
+    transition:
+      border-color 0.12s ease,
+      background 0.12s ease;
+  }
+  .sum-caret::before {
+    content: '';
+    width: 0.4rem;
+    height: 0.4rem;
     border-right: 2px solid var(--fg-mute);
     border-bottom: 2px solid var(--fg-mute);
-    transform: rotate(45deg) translate(-2px, -2px);
+    transform: rotate(45deg) translate(-1px, -1px);
     transition: transform 0.15s ease;
   }
-  .filters[open] .sum-caret {
-    transform: rotate(-135deg) translate(-2px, -2px);
+  .filters[open] .sum-caret::before {
+    transform: rotate(-135deg) translate(-1px, -1px);
+  }
+  summary:hover .sum-caret {
+    border-color: var(--teal-deep);
+    background: var(--ink-800);
+  }
+  summary:hover .sum-caret::before {
+    border-color: var(--fg);
   }
 
   /*
@@ -225,7 +264,10 @@ const groups: { facet: keyof typeof counts; legend: string; choices: Choice[]; c
     align-items: baseline;
     gap: 0.4rem;
     padding: 0.36rem 0.6rem;
-    border: 1px solid var(--line);
+    /* --line-ctl, not --line: this border is the only thing that says a chip
+       is pressable, so it owes 3:1 (WCAG 1.4.11). The fill is 1.13:1 against
+       the page and carries none of that load. */
+    border: 1px solid var(--line-ctl);
     border-radius: var(--radius);
     background: var(--ink-800);
     color: var(--fg-dim);
@@ -241,7 +283,11 @@ const groups: { facet: keyof typeof counts; legend: string; choices: Choice[]; c
       color 0.12s ease;
   }
   .chip:hover .chip-face {
-    border-color: var(--teal-edge);
+    /* Hover/cue boundaries use --teal-deep, not --teal-edge: a 30%-alpha edge
+     measured 1.7-1.8:1 against every surface here, so hovering a control made
+     its boundary *less* visible than at rest. --teal-deep clears 3:1 (4.1-4.8)
+     and stays distinct from the bright --teal that means selected. */
+    border-color: var(--teal-deep);
     color: var(--fg);
   }
   .chip input:checked + .chip-face {
@@ -263,9 +309,23 @@ const groups: { facet: keyof typeof counts; legend: string; choices: Choice[]; c
   .chip input:checked + .chip-face .n {
     color: var(--teal-deep);
   }
+  /*
+   * A facet with no matches recedes — but it is still a live control (you can
+   * select March and watch the list empty), so it gets no disabled exemption
+   * from contrast. `opacity: 0.4` was the wrong mechanism twice over: it put
+   * the label at 2.31:1 and the count inside it at 1.80:1, and no opacity value
+   * rescues the second — even 0.8 only reaches 3.71:1, because opacity scales
+   * every pairing toward 1:1 and the count started closest to the floor.
+   * Quieter is a quieter ink on a flat ground instead (6.03:1), plus a dashed
+   * edge so the state survives without relying on colour at all.
+   */
   .chip.is-empty .chip-face,
   .sub-toggle.is-empty .sub-text {
-    opacity: 0.4;
+    color: var(--fg-mute);
+    background: transparent;
+  }
+  .chip.is-empty .chip-face {
+    border-style: dashed;
   }
 
   .g-month .chip-face {
@@ -294,7 +354,7 @@ const groups: { facet: keyof typeof counts; legend: string; choices: Choice[]; c
     height: 1.1rem;
     border-radius: 999px;
     background: var(--ink-750);
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-ctl);
     position: relative;
     transition:
       background 0.15s ease,
@@ -381,7 +441,7 @@ const groups: { facet: keyof typeof counts; legend: string; choices: Choice[]; c
   .act {
     appearance: none;
     background: transparent;
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-ctl);
     border-radius: var(--radius);
     color: var(--fg-dim);
     font: 500 0.78rem/1 var(--font-display);
@@ -391,23 +451,19 @@ const groups: { facet: keyof typeof counts; legend: string; choices: Choice[]; c
     cursor: pointer;
   }
   .act:hover {
-    border-color: var(--teal-edge);
+    border-color: var(--teal-deep);
     color: var(--fg);
   }
   .act-clear:hover {
-    border-color: var(--gold-edge);
+    border-color: var(--gold-deep);
     color: var(--gold);
   }
 
-  /* ---- desktop: the panel is always open, the summary disappears ---- */
+  /* ---- desktop: two columns of facets, same disclosure control ---- */
   @media (min-width: 60rem) {
-    summary {
-      display: none;
-    }
     .body {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      border-top: 0;
-      padding-top: 1rem;
+      padding-top: 0.75rem;
     }
     .g-month {
       grid-column: 1 / -1;

@@ -163,8 +163,18 @@ const markClass = (m: { marquee: boolean; status: RaceView['status'] }) => [
     border-right: 1px dashed var(--line);
     padding-right: 0.35rem;
   }
+  /*
+   * An empty gutter still reserves its width — that is what keeps all twelve
+   * axes on one scale — but it should not also spend ink. `opacity: 0.3` did
+   * both jobs at once and put the "~" at 1.28:1. Only the width matters when
+   * there is nothing to label, so the label goes and the divider recedes by
+   * colour, which leaves the reserved space exactly as it was.
+   */
   .gutter.is-quiet {
-    opacity: 0.3;
+    border-right-color: var(--line-soft);
+  }
+  .gutter.is-quiet .tilde {
+    visibility: hidden;
   }
   .tilde {
     font-family: var(--font-mono);
@@ -299,10 +309,18 @@ const markClass = (m: { marquee: boolean; status: RaceView['status'] }) => [
   }
 
   /* A month with nothing in it is a fact about the Colorado season, not a hole
-     to hide — it just doesn't get to take up the space of a busy one. */
+     to hide — it just doesn't get to take up the space of a busy one.
+
+     `opacity: 0.62` used to do the receding and had to go: it put the
+     "No events" line at 3.00:1 and the count beside it at 3.93:1. The box
+     already recedes structurally — no background, no rows, no marks on the
+     axis — so what is left of the job is done with ink. Ink can be made quiet
+     and still legible; opacity drags every pairing toward 1:1 at once. */
   .month.is-empty {
     background: none;
-    opacity: 0.62;
+  }
+  .month.is-empty .mname {
+    color: var(--gold-deep);
   }
 
   /* The one record with no month at all sits below the year, full width. */

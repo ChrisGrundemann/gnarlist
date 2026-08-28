@@ -11,7 +11,45 @@
  *   teal  = distances and the interactive/selected state.
  *   rust  = the one warning colour (discontinued).
  *   everything else is greyscale.
+ *
+ * Contrast discipline, added by the Phase 6 design sweep (ARCHITECTURE.md §7
+ * item 6). Every value below is chosen against a measured worst case, not an
+ * eyeballed one, and the worst case is almost never the plain page ground:
+ *
+ *   - Text inks are checked against the LIGHTEST surface they can land on.
+ *     For the greys that is a hovered marquee row (--gold-wash over --ink-850
+ *     = #282620), not --ink-900. That single background is why --fg-mute moved.
+ *   - Interactive controls get --line-ctl, not --line. A chip's border is the
+ *     only thing that says "this is a control", so it owes 3:1 (WCAG 1.4.11);
+ *     a rule between two paragraphs owes nothing and stays --line.
+ *   - Opacity is not a dimming tool on text. It scales contrast toward 1:1,
+ *     so anything already near the 4.5 floor falls straight through it. Where
+ *     "quieter" is wanted, change the ink, don't fade it.
+ *
+ * The full ratio table — every pairing, before and after — is in
+ * ARCHITECTURE.md §7 item 6. Re-runnable via `node scripts/contrast-audit.mjs`.
  */
+
+/*
+ * Oswald, self-hosted (ARCHITECTURE.md §7 item 6). SIL Open Font License 1.1,
+ * licence text shipped alongside the binary at public/fonts/OFL-Oswald.txt.
+ * One variable file, latin subset, 21 KB — the weight axis covers every weight
+ * the display stack asks for (400/500/600/700) in a single request.
+ */
+@font-face {
+  font-family: 'Oswald';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/oswald-latin-var.woff2') format('woff2');
+  /* Exactly the glyphs the site uses, verified against the built HTML: the
+     only codepoints above U+00FF anywhere in 105 pages are – — ★ →, and the
+     two dashes live in this range. ★ and → are not in Oswald at all and fall
+     through to the stack below, as they already did before self-hosting. */
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
 
 :root {
   color-scheme: dark;
@@ -25,10 +63,27 @@
 
   --line: #232d38;
   --line-soft: #19212a;
+  /*
+   * The boundary of an interactive control — chip, switch, button, view tab,
+   * map zoom. WCAG 1.4.11 wants 3:1 for the visual information that identifies
+   * a component, and --line does not come close on any surface here (1.22:1
+   * against a chip's own --ink-800 fill, 1.38:1 against the page). This value
+   * clears 3:1 against every surface a control sits on, the tightest being the
+   * switch track --ink-750 at 3.11:1. Decorative rules keep --line.
+   */
+  --line-ctl: #5f7183;
 
   --fg: #e8ecef;
   --fg-dim: #a2aeb9;
-  --fg-mute: #6d7c89;
+  /*
+   * Was #6d7c89, which failed 4.5:1 on every surface in the site including the
+   * plain page ground (4.48:1 — close enough to look fine and still be wrong,
+   * which is why this needed measuring rather than judging). Worst case was
+   * 3.53:1, for the year/region/companion-distance text inside a hovered
+   * marquee row. #84929d clears 4.5:1 everywhere with the tightest pairing at
+   * 4.74:1, and stays a clear step below --fg-dim.
+   */
+  --fg-mute: #84929d;
 
   /* Marquee gold — the poster's ★ ink. */
   --gold: #f2b843;
@@ -38,7 +93,15 @@
 
   /* Working secondary. */
   --teal: #46b6a8;
-  --teal-deep: #2b8b80;
+  /*
+   * Was #2b8b80. It does three jobs — the "returning" status stripe and
+   * timeline mark, the hover boundary on controls, and the count inside a
+   * selected chip — and the last of those is text on the chip's own teal wash,
+   * where #2b8b80 measured 3.85:1. #31998d clears 4.5:1 there (4.57) and still
+   * reads as the darker teal next to --teal (1.40:1 between them), which is
+   * what keeps "returning" distinguishable from "distance".
+   */
+  --teal-deep: #31998d;
   --teal-wash: rgb(70 182 168 / 10%);
   --teal-edge: rgb(70 182 168 / 30%);
 
@@ -68,10 +131,10 @@
   --map-halo-gold: rgb(242 184 67 / 22%);
 
   /*
-   * Display face. No webfont this phase — a self-hosted condensed face
-   * (Oswald / Archivo Narrow) would be the real fix and is noted as Phase 6
-   * polish. Until then this stack finds a genuine condensed face on Linux,
-   * macOS and most Windows installs, and degrades to tightened system-ui.
+   * Display face. 'Oswald' now resolves to the self-hosted @font-face above on
+   * every platform rather than to whatever condensed face happened to be
+   * installed. The rest of the stack is no longer the design — it is the
+   * font-display: swap window and the ★ / → fallback.
    */
   --font-display: 'Oswald', 'Archivo Narrow', 'Roboto Condensed', 'Noto Sans Condensed',
     'Liberation Sans Narrow', 'Helvetica Neue Condensed', 'Arial Narrow', system-ui, sans-serif;

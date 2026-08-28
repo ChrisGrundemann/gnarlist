@@ -62,6 +62,12 @@ The rejected alternatives, so nobody re-derives them: **Stadia** (Alidade Smooth
 
 **Decision:** No dedicated Claude Design pass for the site UI. The two static posters ("Colorado Ultra Season" calendar, "Colorado Ultra Map") already established a real visual identity — dark palette, gold/amber accents for marquee/highlighted content, teal as a secondary accent, bold condensed headers, a specific typographic voice ("A Typical Year on the High Ground"). Carry that forward as an explicit constraint in UI-building prompts from Phase 3 onward. **Correction from Phase 3:** the `frontend-design` skill referenced in the original version of this decision is not available in Claude Code sessions — that was an incorrect assumption of tool parity between this chat interface and Claude Code, two different products. Describe the visual direction in plain language in future prompts instead of naming that skill. Phase 3 executed the direction by hand successfully (see §7 item 3) — palette: `#0b0f13` near-black ground, `#f2b843` gold reserved strictly for marquee/highlight elements, `#46b6a8` teal for working UI (distances, selected chips), `#c9755c` rust as the single warning ink (discontinued/unverified status). The discipline that makes it read as the posters rather than a generic dark theme: gold means marquee, nothing else.
 
+**Amended by the Phase 6 design sweep (§7 item 6): the semantic system above is unchanged, and three of its four hexes are unchanged with it.** Gold still means marquee, teal still does the working/selected job, rust is still the single warning ink. What the sweep changed is the *greys* and the *edges* — the parts of the palette that were never carrying meaning, only carrying text. `--fg-mute` moved because it failed WCAG AA against every surface on the site including the plain page ground, and interactive borders got their own token because a chip's outline is the only thing that says a chip is pressable. A second discipline now sits alongside the first, and it is the one that decides values where the first decides meaning:
+
+> **Contrast is measured against the lightest surface an ink can land on, not the page ground.** For the greys that surface is a hovered marquee row — `--gold-wash` over `--ink-850` — which is nearly three shades lighter than `--ink-900` and is where every grey was quietly failing.
+
+The corollary, learned the expensive way and worth stating because it reads as harmless: **`opacity` is not a dimming tool for text.** It scales a pairing toward 1:1 from both ends at once, so an ink already near the 4.5 floor falls straight through it, and no opacity value rescues it. Four separate "this recedes" treatments were built with `opacity` and all four failed. Where something should be quieter, change the ink.
+
 **Why:** Design tools are strongest on static or near-static compositions — which is exactly why they worked well for the posters. A filtering UI is stateful and interactive in a way that's hard to meaningfully mock up outside the real implementation; a static mockup of hypothetical filter states would just need reverse-engineering into working interactivity anyway. Building with zero visual direction risks generic defaults and real rework later; the cheap fix is stating the existing identity explicitly up front, not routing through a separate tool.
 
 ---
@@ -228,7 +234,7 @@ Each phase becomes one or more Claude Code prompts, built and reviewed iterative
 3. **List/table view + core filters** — format, distance, region, month, plus the sub-50K toggle and mixed-format secondary tagging (§4). Now also includes shareable filtered URLs and baseline mobile usability, pulled forward from Phase 6 (§4.5). Visual identity carries forward from the posters (§2.5). The simplest useful version of the site; validates the data layer and filter logic end-to-end for reuse in Phases 4–5. **Status: complete.** All 75 events render as rows grouped under month headings; filter semantics live in `src/lib/filters.ts` (see §4) and are shared verbatim between the build-time render and the browser. Filter state round-trips through query params (`?format=…&dist=…&region=…&month=…&sub=1`), written with `replaceState` so chip-toggling doesn't fill the history stack. Every row is server-rendered and filtering only toggles visibility, so the full list still works with JavaScript off; the shipped bundle is ~5 KB. Verified functionally by driving the built page in headless Chrome (AND-across/OR-within facet logic, URL round-trip, month-heading collapse, empty state, faceted chip counts, no horizontal overflow at 305/375/753 px) — **and now visually confirmed by the user directly**, per the verification convention above.
 
    **Known follow-ups from Phase 3, not blockers, worth remembering:**
-   - No self-hosted webfont yet — the condensed display stack currently falls back to whatever's installed locally (Noto Sans Condensed / Liberation Sans Narrow / Arial Narrow / system-ui depending on OS), degrading gracefully but inconsistently. Self-hosting Oswald or Archivo Narrow is the real fix — deliberately left for Phase 6 rather than adding a font binary/license mid-session.
+   - ~~No self-hosted webfont yet — the condensed display stack currently falls back to whatever's installed locally (Noto Sans Condensed / Liberation Sans Narrow / Arial Narrow / system-ui depending on OS), degrading gracefully but inconsistently. Self-hosting Oswald or Archivo Narrow is the real fix — deliberately left for Phase 6 rather than adding a font binary/license mid-session.~~ **Resolved in Phase 6 — Oswald, self-hosted, see §7 item 6.**
    - `npm run check` (TypeScript enforcement) isn't wired up — Claude Code declined to add `@astrojs/check` + `typescript` as devDependencies without being asked. Types currently function as documentation, not CI enforcement. Worth adding explicitly if desired.
    - TransRockies Pass to Pub surfaces under Format→Stage but deliberately not Distance→50mi, since its distance lives in a `stages` field rather than `miles`. Confirmed as the right call — a multi-day stage race isn't equivalent to a standalone 50-miler for someone filtering by distance.
 4. **Calendar view + event permalink pages** — interactive, filterable calendar generalizing the static poster, plus a real linkable page per event (pulled forward from Phase 6, see §4.6 — both the list and calendar views link to these pages). **Status: built, pending the user's visual confirmation.** `/calendar/` renders all 102 events in twelve month blocks; `/races/<slug>/` renders the full record for each of the 102. `astro.config.mjs`'s `site` now reads `https://gnarlist.co`, so canonical/OG URLs point at the canonical domain rather than the `workers.dev` one.
@@ -379,12 +385,182 @@ Each phase becomes one or more Claude Code prompts, built and reviewed iterative
    **Verified by driving it in Chrome over CDP, not by reading it:** three chips on the list → calendar → map, all three landing on the same URL, the same checked chips and the same single result (`Creede 50/100`), then a chip unchecked *on the map* and the trip back to the list giving an identical three-event set — filter persistence re-checked across all three views rather than assumed from Phase 4. Also checked: 102 points in the payload and none of `races.json` leaking into the JS bundle; markers hiding and reappearing exactly with their rows (San Juans → 14 rows, route gone, 3 clusters; Clear → all 102 and the route back); the Colorado Springs pile opening into an 11-marker fan on one click with 11 of them inside the frame; the popup's full content including its precision line; the route rendering gold, dashed, and labelled at both ends; every status/marquee/precision/route glyph combination emitting the class list it should; back-links from a permalink carrying filter state to all three views; the sitemap picking up `/map/` (105 URLs); the no-JS render giving 102 rows, 102 permalinks, a collapsed map and the fallback sentence; and no horizontal overflow at 305/375/390/600/753/1024/1440 px, with the index at 1/1/1/1/2/2/3 columns.
 
    **Known follow-ups from Phase 5, not blockers:**
-   - **The colour/design sweep itself.** Everything above is the working decision, deliberately not a final palette. The map is now the hardest surface to satisfy and should lead that pass.
+   - ~~**The colour/design sweep itself.** Everything above is the working decision, deliberately not a final palette. The map is now the hardest surface to satisfy and should lead that pass.~~ **Run as §7 item 6.** The promise made here held: every map colour was already a custom property, no component carried a hex literal, and the sweep was a values-only edit to `global.css` plus one specificity fix. The map did lead the pass, and it earned the billing — the single worst defect on the site was on this view.
    - The map page ships ~188 KB of JavaScript (Leaflet + markercluster + the filter client). That is the cost of a real map and it loads on `/map/` only, but it is by far the heaviest page on the site and worth remembering if a budget is ever set.
    - Cooperative gestures are a one-tap veil rather than the two-finger-pan idiom Google Maps uses. Genuinely usable, not polished — Phase 6 territory.
    - The four `venue` records are parks, not start lines, so "venue-level" is doing modest work. Upgrading marquee 100-milers to real venue coordinates is still the SCHEMA.md §3 follow-up it was, now with a view that would show the difference.
-   - The Phase 3 items still stand: no self-hosted webfont, and `npm run check` still isn't wired up.
-6. **Polish** — mobile *polish* (baseline usability already lands in Phase 3, per §4.5), basic search. Permalinks no longer belong here — see §4.6.
+   - ~~The Phase 3 items still stand: no self-hosted webfont~~ (**resolved, §7 item 6**), and `npm run check` still isn't wired up.
+6. **Polish** — mobile *polish* (baseline usability already lands in Phase 3, per §4.5), basic search. Permalinks no longer belong here — see §4.6. **Status: partly done.** The design sweep below is the first piece of it; mobile polish and search are still open.
+
+   ---
+
+   ## Design sweep: WCAG AA contrast, self-hosted webfont, collapsible filters
+
+   Run once all three views and the permalinks existed together, which is what the pass was waiting for — colour choices needed a real basemap and real rendered pages to judge against. Three deliverables that share the same components, so they shared a session.
+
+   ### The starting position was as good as Phase 5 claimed
+
+   Checked before touching anything, because the plan depended on it: **every colour on the site was already a CSS custom property in `global.css`**, and no component carried a hex literal that mattered. The grep turns up `#fff` in seven places (all hover/marquee text going to pure white), `#000` once inside a `mask-image` where it is a mask channel and not a colour, and the `rgb(201 117 92 / 4%)` hatching triple repeated in three components. Nothing else. So this was a values-only edit to one file plus a handful of targeted rules, exactly as promised.
+
+   ### Method: sampled pixels, not a table of hexes
+
+   **The audit reads rendered pixels, and it has to.** Almost nothing here is one flat colour on another: the marquee wash is a gradient, discontinued rows are hatched, chip fills are alpha over alpha, and the map is live OpenStreetMap raster tiles under a five-function CSS filter. A hand-maintained list of pairings would have been a list of guesses about what composites to. So `scripts/contrast-audit.mjs` (committed, self-contained — it serves `dist/`, spawns its own headless Chrome, and exits non-zero on failure) does this per page and width:
+
+   1. record every text run with its computed colour, size, weight and the rectangles it occupies;
+   2. repaint with **all text transparent** and screenshot — every background survives exactly as it renders, no glyphs;
+   3. sample eighteen points behind each run and keep the **worst** ratio;
+   4. composite the foreground's alpha, including opacity inherited from ancestors, over the sampled background before taking the ratio.
+
+   Thresholds are 4.5:1 normal, 3:1 large (≥24px, or ≥18.66px bold). **1,948 text runs at 1440px alone**, and 791 unique pairings across 1440 / 753 / 390px.
+
+   Three instrumentation bugs were found and fixed in the auditor itself before its output could be trusted, and each maps to a real rendering behaviour worth knowing:
+
+   - **Ancestor opacity is multiplicative and is usually set on a parent.** Reading only the element's own `opacity` under-reported the dimming and hid three of the four defects below.
+   - **`-webkit-line-clamp` leaves `getClientRects()` reporting the whole unclamped run.** A two-line clamped hook was sampling pixels 90px below its visible box, over a gold divider rule, and reporting a failure that no reader could see. Rects are now clipped to the element's own box *and* to every `overflow: hidden` ancestor.
+   - **A Leaflet marker scrolled outside the map frame still has a rect.** Same clipping fix covers it.
+
+   The lesson generalises past this script: **a contrast checker that reasons about CSS instead of pixels will confidently report numbers for text that isn't where it thinks it is.**
+
+   ### What changed, and why each value moved
+
+   Four token changes and one specificity fix account for essentially all of it.
+
+   **`--fg-mute`: `#6d7c89` → `#84929d`.** This one grey was ~100 of the 103 failing text runs. It failed **on every surface on the site, including the plain page ground at 4.48:1** — close enough to look fine and still be non-compliant, which is precisely why this needed measuring rather than judging. Worst case was **3.53:1**, for the year, region and "also offers" text inside a hovered marquee row. The new value clears 4.5:1 everywhere with its tightest pairing at **4.74:1**, and stays a clear step below `--fg-dim`.
+
+   **`--teal-deep`: `#2b8b80` → `#31998d`.** It does three jobs, and the one that failed was the count inside a *selected* filter chip — teal ink on the chip's own teal wash, **3.85:1**. Now 4.57:1 there, and still 1.40:1 apart from `--teal`, which is what keeps "returning" distinguishable from "distance" on the calendar timeline. The other two jobs (the returning status stripe, and hover boundaries) only improved.
+
+   **New token `--line-ctl: #5f7183`, for interactive boundaries only.** `--line` is 1.22:1 against a chip's own fill and 1.38:1 against the page; a chip's fill is 1.13:1 against the page. So neither the border nor the fill identified the control at anything close to WCAG 1.4.11's 3:1 — a filter chip was, in contrast terms, an invisible box with a label in it. `--line-ctl` clears 3:1 against every surface a control sits on, the tightest being the switch track at 3.11:1. **Decorative rules keep `--line`**, and that distinction is the whole point: a rule between two paragraphs owes nothing, a card edge owes nothing, a chip owes 3:1. Applied to chips, the sub-50K switch, the Copy-link/Clear/Fit-results buttons, the view switch, the map's zoom control and gesture veil, the month jump strip, and the permalink prev/next cards.
+
+   **Hover and cue boundaries: `--teal-edge`/`--gold-edge` → `--teal-deep`/`--gold-deep`.** The alpha "edge" tokens measure **1.69–2.07:1** against every surface here, so *hovering a control made its boundary less visible than at rest*, and the calendar's and map's "this is the row your mark points at" cue outline was effectively invisible at 1.76:1. The edge tokens are still right where they are decoration on a badge whose own text carries the meaning; they are wrong as the only mark of a state.
+
+   **The Leaflet attribution — the worst single defect, and it was shipping.** Leaflet's own stylesheet sets the attribution background from `.leaflet-container .leaflet-control-attribution` (specificity 0,2,0). `map.css` overrode it from `.leaflet-control-attribution` (0,1,0), which **loses on specificity no matter how late it loads** — and it did load last, which is exactly why nobody caught it by reading the file. The control was rendering as Leaflet's `rgba(255,255,255,0.8)` **white box** with this project's dark greys painted on top: **1.42:1** for the "Leaflet" link and **2.67:1** for the OpenStreetMap line. A white rectangle on a deliberately dark map, in production. Neither the build nor the DOM looked wrong; only sampled pixels caught it. §2.2 also takes OSM attribution as an *obligation* of using the tiles, so this was the one control on the site with a non-negotiable reason to be legible. Fixed by matching Leaflet's specificity.
+
+   **Four `opacity`-as-dimming treatments replaced with ink**, per §2.5's new corollary. Each was a control or live text, so none qualified for the disabled exemption:
+
+   | treatment | was | measured | now |
+   |---|---|---|---|
+   | `.chip.is-empty` (a facet with no matches — still selectable) | `opacity: .4` | 2.31:1 label, **1.80:1** count | quieter ink on a flat ground + dashed edge, 6.03:1 |
+   | `.strip a.is-empty` (month jump link to an empty month) | `opacity: .35` | 2.06:1 label, 1.75:1 count | `--fg-mute`, 5.69:1 |
+   | `.month.is-empty` (March, empty in the dataset) | `opacity: .62` | 3.00:1 "No events" | `--gold-deep` heading, no opacity; the box already recedes structurally |
+   | `.gutter.is-quiet` (reserved "~" gutter with nothing in it) | `opacity: .3` | **1.28:1** | label hidden (it labels nothing), width still reserved, divider recedes by colour |
+   | `.is-discontinued .badge` / `.bd` | `opacity: .55` | 2.99:1 | `opacity: .8`, 4.80:1 |
+
+   The `.chip.is-empty` row is the clearest illustration of why opacity is the wrong mechanism: **no opacity value fixes it.** Even at 0.8 the count inside the chip only reaches 3.71:1, because opacity drags every pairing toward 1:1 and the count started closest to the floor.
+
+   ### The ratio tables
+
+   Generating set: every unique pairing the auditor found is an instance of one of these. Re-runnable with `node scripts/contrast-audit.mjs --verbose`.
+
+   **A. Text inks against every surface they land on** (bold = the binding case)
+
+   | ink | `--ink-950` | `--ink-900` | `--ink-850` | `--ink-800` | marquee row | marquee, hovered | min |
+   |---|---|---|---|---|---|---|---|
+   | `--fg` `#e8ecef` | 16.60 | 16.19 | 15.30 | 14.29 | 13.73 | 12.73 | **12.73** |
+   | `--fg-dim` `#a2aeb9` | 8.73 | 8.51 | 8.04 | 7.51 | 7.21 | 6.69 | **6.69** |
+   | ~~`--fg-mute` `#6d7c89`~~ | 4.60 | 4.48 | 4.24 | 3.96 | 3.80 | 3.53 | **3.53 ✗** |
+   | `--fg-mute` `#84929d` | 6.18 | 6.03 | 5.69 | 5.32 | 5.11 | 4.74 | **4.74** |
+   | `--teal` `#46b6a8` | 8.00 | 7.80 | 7.37 | 6.89 | 6.61 | 6.13 | **6.13** |
+   | ~~`--teal-deep` `#2b8b80`~~ | 4.80 | 4.68 | 4.42 | 4.13 | 3.97 | 3.68 | **3.68** |
+   | `--teal-deep` `#31998d` | 5.70 | 5.56 | 5.26 | 4.91 | 4.71 | 4.37 | **4.37** |
+   | `--gold` `#f2b843` | 11.00 | 10.73 | 10.14 | 9.47 | 9.10 | 8.44 | **8.44** |
+   | `--gold-deep` `#c8912b` | 7.08 | 6.91 | 6.53 | 6.10 | 5.86 | 5.43 | **5.43** |
+   | `--rust` `#c9755c` | 5.81 | 5.66 | 5.35 | 5.00 | 4.80 | 4.45 | **4.45 †** |
+
+   † `--rust` clears 4.5:1 on every surface it actually occupies (measured minimum **4.70:1**, on a hovered discontinued row). The 4.45 column is a *hypothetical*: it needs a race that is marquee **and** discontinued, and the dataset has none. See "flagged, not built" below — this is deliberately left rather than fixed.
+
+   `--teal-deep` at 4.37 on a hovered marquee row is likewise not a live pairing: it appears as text only inside a selected chip (4.57:1, table B); its other uses are 3:1 non-text.
+
+   **B. Ink on its own tinted fill**
+
+   | pairing | background | ratio |
+   |---|---|---|
+   | `--teal` on `--teal-wash` — distance badge | `#112022` | 6.79 |
+   | `--rust` on `--rust-wash` — discontinued pill | `#1e191a` | 5.11 |
+   | `--gold` on `--gold-wash` — unverified pill, active view tab | `#222018` | 9.10 |
+   | ~~`--teal-deep` `#2b8b80` on a selected chip~~ | `#152528` | 3.85 ✗ |
+   | `--teal-deep` `#31998d` on a selected chip | `#152528` | 4.57 |
+
+   **C. Non-text and UI components** (WCAG 1.4.11, 3:1)
+
+   | object | against | ratio |
+   |---|---|---|
+   | ~~`--line` as a chip border~~ | chip fill `#161d25` | 1.22 ✗ |
+   | ~~`--line` as a chip border~~ | page `#0b0f13` | 1.38 ✗ |
+   | ~~chip fill as the affordance~~ | page `#0b0f13` | 1.13 ✗ |
+   | `--line-ctl` chip border | chip fill `#161d25` | 3.38 |
+   | `--line-ctl` | page `#0b0f13` | 3.82 |
+   | `--line-ctl` | switch track `#1c242e` | 3.11 |
+   | ~~`--teal-edge` hover border~~ | page `#0b0f13` | 1.72 ✗ |
+   | `--teal-deep` hover border | chip fill `#161d25` | 4.91 |
+   | focus ring `--gold` | page / chip / selected chip | 10.73 / 9.47 / 8.83 |
+   | switch knob `--fg-mute` (off) | track `#1c242e` | 4.91 |
+   | switch knob `--teal` (on) | track `#112022` | 6.79 |
+   | pin fill `--map-pin` | its own 1px `--map-pin-ink` border | 8.02 |
+   | marquee pin `--gold` | the same border | 11.13 |
+   | `--map-pin` | basemap, typical | 7.00 |
+   | `--map-pin` | basemap, 99th percentile | 3.92 |
+   | status ring `--teal` / `--rust` / `--gold-deep` | pin border `#06090c` | 8.10 / 5.88 / 7.17 |
+   | timeline mark `--teal` / `--teal-deep` / `--rust` / `--gold` | month box `#11161c` | 7.37 / 5.26 / 5.35 / 10.14 |
+   | town-level halo (22% over basemap) | basemap | 1.49 ‡ |
+
+   **The basemap numbers are measured, not assumed.** The tile pane was sampled across 742,968 rendered pixels: it is overwhelmingly dark (90th percentile luminance 0.011, 99th 0.071) with sparse bright specks up to `#afafaf` where OSM draws place labels and major road casings. Against the brightest of those a pin's *fill* would be 1.13:1 — which is why **every pin carries a 1px near-black border**, giving the fill a guaranteed adjacent edge at 8.02:1 regardless of what is underneath. The status ring is likewise bounded by that border on the inside and the dark map on the outside, so the ring-versus-pin-fill comparison (which would look alarming: teal on `--map-pin` is 1.01:1) is not the adjacency that exists.
+
+   ‡ The town-level halo is genuinely low-contrast and is **left that way deliberately**. It is not the sole carrier of the fact it signals: §7 item 5 put coordinate precision in words in the popup of every single marker, and in the index row's glyph. Raising the halo to 3:1 would turn it into a second ring competing with the status channel, which is the one thing the four-channel scheme was designed to avoid.
+
+   **D. Reported but not failed** — 16 pairings across the three widths, in two groups:
+
+   - **Gradient-clipped display text** (5). The three mastheads use `background-clip: text` with a `#fff`→`--gold` gradient, so the glyphs are painted by their background and neither the computed colour nor a hidden-text screenshot describes them. Computed by hand against the gradient's own stops: **18.49:1 at the white end, 10.31:1 at the gold end**, against a large-text threshold of 3:1. Passing comfortably; the auditor flags rather than guesses.
+   - **Inactive controls** (1). Leaflet's zoom-out button at minimum zoom, 2.34:1. WCAG 1.4.3 and 1.4.11 both exempt inactive components; this is the exemption being used correctly, not a defect being waved through.
+
+   ### Self-hosted webfont: Oswald
+
+   **Chosen over Archivo Narrow**, on three grounds. It is the more genuinely *condensed* of the two — measured, not eyeballed: at 100px, "HANDGLOVES 0123456789" sets 987px in Oswald against 1279px in the platform sans, a 23% saving that the calendar's compact rows and the month chips actually spend. It is the more poster-like face, which is the §2.5 constraint. And it ships as a **variable font with a 200–700 weight axis**, so the four weights the display stack asks for (400/500/600/700) arrive in one request instead of four static files.
+
+   **Licence confirmed rather than assumed**, per the brief. Oswald is **SIL Open Font License 1.1** — verified against `google/fonts`' own `METADATA.pb` (`license: "OFL"`) and the upstream `OFL.txt` from `googlefonts/OswaldFont`, not from the general reputation of Google Fonts. The licence text ships with the binary at `public/fonts/OFL-Oswald.txt`, which matters here because §8 makes this repo all-rights-reserved by default: the font is the one thing in it under someone else's terms, and those terms require the notice travel with it.
+
+   **What ships:** one file, `public/fonts/oswald-latin-var.woff2`, **21,472 bytes**, latin subset, `font-display: swap`, `<link rel=preload>` in `Base.astro` because the face is above the fold on every page. Verified in the browser: exactly one font request, no request to any Google origin, `document.fonts.check("700 1rem Oswald")` true, and the rendered `h1` measuring identical to an explicit Oswald probe — i.e. the face is the one actually painting, not merely a file that downloaded.
+
+   **The subset is exact, derived from the built HTML rather than picked from a menu.** The only codepoints above U+00FF anywhere in the 105 built pages are `–` (286), `—` (252), `★` (159) and `→` (1). Both dashes are inside the latin range. **`★` and `→` are not in Oswald at all** and fall through to the rest of the stack — which is what they already did before self-hosting, so it is not a regression, but it is the reason the fallback stack stays in `--font-display` rather than being deleted. The stack's job changed from "this is the design on Linux" to "this is the swap window and the ★ fallback".
+
+   ### Collapsible filter pane
+
+   **The before-state, checked rather than assumed** — the brief was right to ask. The mechanism already existed and was already correct: a server-rendered `<details open>` (so it works with JavaScript off), with `filter-client.ts` collapsing it below 60rem, and the specific `display: grid` fix Phase 3 recorded still in place and still needed. **What was missing was only desktop.** At ≥60rem the `<summary>` was `display: none`, so the panel was permanently expanded with no control to shut it, and the client force-opened it on the way up across the breakpoint precisely because a shut panel would otherwise have been unreachable.
+
+   That is backwards from where collapsing helps most: **desktop is where the filter set is largest** — four facets plus twelve month chips, two columns — and where the results therefore sit furthest down the page.
+
+   So the summary is now visible at every width, and the rescue that existed only to compensate for hiding it is gone. What was a hard rule becomes a default:
+
+   - no stored preference → open where there is room, shut on a phone;
+   - an explicit toggle → remembered for the session in `DISCLOSURE_STORE` (`gnarlist:filters-open`), at both widths, and it outranks the default including across a breakpoint change.
+
+   Kept separate from `FILTER_STORE` because the two answer different questions — that one remembers *what* you filtered by and travels to permalinks, this one remembers whether you wanted the chips on screen and travels between views. **Absence means "no opinion", which is not the same as "shut"**, and that distinction is what lets the per-breakpoint default keep applying.
+
+   One subtlety worth knowing before it looks like a bug: `toggle` fires for programmatic assignments as well as clicks, so applying the default would immediately write it back as a preference and the default could never apply again. The last programmatically-set value is tracked to tell the two apart, which avoids needing a timer.
+
+   **The affordance was rebuilt, not just un-hidden.** A bare 8px chevron reads as decoration; on desktop, where nobody expects a filter panel to collapse, there was no other hint. It is now a boxed control at `--line-ctl` (so the affordance itself clears 3:1), with a hover state on both the box and the summary row. The results bar stays outside `<details>` as it always did, so a collapsed panel still shows the count, and the summary line carries the active-filter state — which is what makes a shut panel honest rather than merely smaller.
+
+   ### Re-verification, driven rather than assumed
+
+   The brief asked specifically that filter persistence be re-tested after a CSS-wide pass rather than assumed to still hold. Driven in Chrome over CDP:
+
+   - **Filter state across all three views**, `?dist=50m&region=san-juans&month=7` → list → calendar → map → list: identical URL, identical checked chips, identical single result (`Creede 50/100`) at every hop. Then a chip **un-checked on the map** and the trip back to the list: identical three-event set, and the `month` param correctly dropped from the URL.
+   - **Disclosure** at 1440 / 1024 / 390px: the toggle is present and visible at all three, defaults open/open/shut, actually collapses and expands when clicked, the chip body follows the open state, and the choice survives the trip to the calendar.
+   - **The webfont**, as described above.
+   - **No horizontal overflow** at 305 / 375 / 390 / 600 / 753 / 1024 / 1440px across all four surfaces — 28 width/page combinations, re-checked because a new display face changes every text metric on the site.
+
+   43 assertions, all passing, plus the 791-pairing contrast run.
+
+   ### Flagged, not built
+
+   Surfaced by this pass, deliberately left for a separate decision rather than folded in:
+
+   - **The route's "S" cap is drawn underneath a cluster marker.** The only outstanding contrast failure, and it is real: at phone widths and statewide zoom, TransRockies' start cap renders *beneath* the 13-race Front Range cluster, leaving the "S" glyph at **1.17:1** (the "F" cap, 4.48:1, is grazed by the same collision). Confirmed by magnified screenshot, not inferred. Left alone because **it is a z-order and collision problem, not a palette one** — and simply raising the caps' z-index just moves the occlusion onto the cluster's count. The honest fixes are collision avoidance or hiding the caps below a zoom threshold, both of which are map-behaviour decisions. `scripts/contrast-audit.mjs` exits non-zero on this; that is the known failure, and it should stay visible rather than be suppressed.
+   - **`--rust` on a marquee + discontinued row would be 3.90:1** (the pill's ink on its own wash over the gold-washed row). No such race exists today. Both available fixes cost something real — lifting `--rust` far enough (`#d18a70`) visibly changes the warning ink for zero present benefit, or the marquee wash stops stacking under a discontinued row, which is a precedence decision about what the two treatments mean together. Recorded here rather than guessed at, in the same spirit as §4's rule about writing rules against statuses rather than current members.
+   - **The gesture veil's label sits over live map content.** "TAP TO EXPLORE THE MAP" covers the route caps at phone widths. Cosmetic, and adjacent to the veil's already-noted "usable, not polished" status from Phase 5.
+   - **Month names, region headings and the rail heading are gold**, which is a heading treatment rather than a marquee mark. Almost certainly fine — it is the poster's section-heading idiom and §2.5's rule is about marking *events* — but it is the one place gold appears where an event is not, and someone should decide that on purpose rather than inherit it.
+   - **Cluster discs are ~1.2:1 against the basemap.** Their white count text is 16:1 and carries the information, so this is not a failure; it is noted because a cluster is currently legible by its number rather than by its shape.
+   - **A discontinued race's distance badges could drop teal entirely** rather than being dimmed to 80% opacity — teal means live/working, and a dead race arguably shouldn't hold it. That is a semantic change, not a contrast fix, so it was not made.
+   - `npm run check` is *still* not wired up. Untouched again this session.
 7. **Data maintenance workflow** — a semi-automated research-assistant tool that checks known sources per event on a schedule and proposes a PR for human review (§5.4). Deferred until after the site itself is live — no point maintaining a site that doesn't exist yet.
 8. **Stretch phases** — elevation profiles/difficulty scoring (pending new data sourcing, §6); community submissions (pending D1 build-out, §2.3).
 

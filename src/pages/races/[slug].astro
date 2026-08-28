@@ -745,13 +745,14 @@ const jsonLd = jsonLdScript(
     flex-direction: column;
     gap: 0.2rem;
     padding: 0.85rem 1rem;
-    border: 1px solid var(--line);
+    /* Prev/next are controls; their edge is the affordance. */
+    border: 1px solid var(--line-ctl);
     border-radius: var(--radius);
     background: var(--ink-850);
     text-decoration: none;
   }
   .near a:hover {
-    border-color: var(--teal-edge);
+    border-color: var(--teal-deep);
     background: var(--ink-800);
   }
   .n-next {

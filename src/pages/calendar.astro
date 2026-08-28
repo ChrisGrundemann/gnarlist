@@ -222,7 +222,8 @@ const description = `A twelve-month calendar of ${counted} Colorado ultramaratho
     gap: 2px;
     margin: 0 0 1.1rem;
     padding: 0.3rem;
-    border: 1px solid var(--line);
+    /* Navigation control group, so --line-ctl (3:1) rather than --line. */
+    border: 1px solid var(--line-ctl);
     border-radius: var(--radius);
     background: var(--ink-850);
   }
@@ -255,9 +256,15 @@ const description = `A twelve-month calendar of ${counted} Colorado ultramaratho
     color: var(--fg);
   }
   /* A month the current filter has emptied keeps its slot — the year keeps its
-     shape — it just stops advertising itself as somewhere to go. */
-  .strip a.is-empty {
-    opacity: 0.35;
+     shape — it just stops advertising itself as somewhere to go.
+
+     Quieter ink rather than `opacity: 0.35`, which put the label at 2.06:1 and
+     the count at 1.75:1. These are still live links — you can jump to an empty
+     month and read "No events" there — so they get no disabled exemption. Same
+     substitution, same reason, as the filter chips. */
+  .strip a.is-empty,
+  .strip a.is-empty b {
+    color: var(--fg-mute);
   }
 
   /*

@@ -30,6 +30,18 @@ export type Facet = 'format' | 'dist' | 'region' | 'month';
  */
 export const FILTER_STORE = 'gnarlist:filters';
 
+/**
+ * sessionStorage key holding whether the filter panel is expanded.
+ *
+ * Separate from FILTER_STORE because it answers a different question: that one
+ * remembers *what* you filtered by and travels to permalinks, this one
+ * remembers whether you wanted the chips on screen and travels between views.
+ * Absent means "no opinion", which is not the same as "shut" — see
+ * setUpDisclosure in ../scripts/filter-client.ts, where absence falls through
+ * to the per-breakpoint default and an explicit choice overrides it.
+ */
+export const DISCLOSURE_STORE = 'gnarlist:filters-open';
+
 export interface Choice {
   /** Token used in data attributes and URL params. URL-safe, lowercase. */
   value: string;

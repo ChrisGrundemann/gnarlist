@@ -20,6 +20,19 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <meta name="theme-color" content="#0b0f13" />
+    {/*
+      The display face is above the fold on every page (masthead, view switch,
+      filter chips), so it is discovered by the preload rather than by the CSS
+      parser two round-trips later. One file, latin subset, 21 KB — see the
+      @font-face in global.css and ARCHITECTURE.md §7 item 6.
+    */}
+    <link
+      rel="preload"
+      href="/fonts/oswald-latin-var.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <meta property="og:type" content="website" />

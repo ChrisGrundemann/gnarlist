@@ -226,9 +226,15 @@ const formatTags = race.tokens.formats
   .is-discontinued .d {
     color: var(--fg-mute);
   }
+  /*
+   * 0.55 put the distance badge at 3.04:1. Opacity drags a pairing toward 1:1
+   * from both ends, so a badge whose ink and fill are both teal loses contrast
+   * fast; 0.8 is the point where it clears 4.5:1 (4.80:1) while still reading
+   * as dimmed next to a live row.
+   */
   .is-discontinued .badge,
   .is-discontinued .tag {
-    opacity: 0.55;
+    opacity: 0.8;
   }
 
   .is-unverified {

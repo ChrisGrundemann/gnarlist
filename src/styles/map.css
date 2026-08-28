@@ -289,9 +289,10 @@
     grayscale(0.3);
 }
 
+/* Zoom in/out are real controls, so their edge is --line-ctl (3:1). */
 .leaflet-bar,
 .leaflet-touch .leaflet-bar {
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-ctl);
   border-radius: var(--radius);
   box-shadow: none;
   overflow: hidden;
@@ -315,13 +316,26 @@
   opacity: 0.5;
 }
 
-.leaflet-control-attribution {
+/*
+ * `.leaflet-container .leaflet-control-attribution`, and the extra class is
+ * load-bearing rather than defensive. Leaflet's own sheet sets this exact
+ * background from a two-class selector, so a single-class override loses on
+ * specificity no matter how late it loads — which it did: the attribution was
+ * shipping as Leaflet's rgba(255,255,255,0.8) white box with this file's dark
+ * greys on top of it, measuring 1.42:1 for the "Leaflet" link and 2.67:1 for
+ * the OSM line. Nothing in the build or the DOM looked wrong; only sampled
+ * pixels caught it.
+ *
+ * This is also the one control on the site with a non-negotiable reason to be
+ * legible: §2.2 takes OSM attribution as an obligation of using the tiles.
+ */
+.leaflet-container .leaflet-control-attribution {
   background: var(--map-panel);
   color: var(--fg-mute);
   font-size: 0.64rem;
   padding: 1px 6px;
 }
-.leaflet-control-attribution a {
+.leaflet-container .leaflet-control-attribution a {
   color: var(--fg-dim);
 }
 
