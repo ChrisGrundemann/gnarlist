@@ -81,16 +81,18 @@ Requires Node ≥ 22.12 (pinned in `.nvmrc`).
 ```sh
 npm install
 npm run dev      # local dev server at http://localhost:4321
-npm run build    # static build → dist/ (105 pages: 3 views + 102 permalinks)
+npm run check    # astro check — TypeScript/Astro diagnostics
+npm run build    # astro check && astro build → dist/ (105 pages: 3 views + 102 permalinks)
 npm run preview  # serve the built dist/ locally
 ```
 
 Deploys run automatically on push to `main` via Cloudflare Workers Builds. To deploy by hand:
 `npx wrangler deploy`.
 
-`npm run check` is declared in `package.json` but **is not wired up** — `@astrojs/check` and
-`typescript` aren't installed, so the command stops and offers to install them. Types here are
-documentation, not CI enforcement. Adding them is a standing follow-up (ARCHITECTURE.md §7).
+`npm run check` is wired up and **`npm run build` gates on it** — a type error fails the build and
+emits no `dist/`, so Workers Builds fails and the previous deploy stays live. `build:no-check` is the
+escape hatch for an urgent content fix. Note this only enforces anything if the Cloudflare dashboard's
+build command is `npm run build`; pointing it at `astro build` bypasses the gate silently.
 
 **Verifying a change:** a green build is necessary but not sufficient. This project has repeatedly
 shipped bugs a passing build was perfectly happy with — a collapsed CSS content box, silently wrong
