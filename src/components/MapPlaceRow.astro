@@ -186,15 +186,44 @@ const route = hasRoute(race);
 
   .is-discontinued {
     border-left-color: var(--rust);
-    background: repeating-linear-gradient(
-      -45deg,
-      transparent 0 9px,
-      rgb(201 117 92 / 4%) 9px 18px
-    );
+    background: var(--hatch-rust);
   }
   .is-discontinued .pill {
     color: var(--rust);
     background: var(--rust-wash);
+  }
+
+  /*
+   * A discontinued row keeps its own ground even when the race is also
+   * marquee — in every state, including hover and cue.
+   *
+   * This is not a new precedence decision, it is the existing one made to hold.
+   * At rest `.is-discontinued` already wins, being declared after `.is-marquee`
+   * at equal specificity. But `.is-marquee:hover` is (0,2,0) and outranks it,
+   * so hovering a marquee + discontinued row swapped the rust hatching for the
+   * gold wash and lightened the ground under the rust pill — measured at
+   * 4.27:1 in the list view, below the 4.5 it needs. No race holds both flags
+   * today; one `marquee: true` on a discontinued record would have shipped it,
+   * and nobody would have thought to re-audit for that.
+   *
+   * Fixed here rather than by lifting `--rust`, which would have changed the
+   * warning ink on every row on the site to satisfy a state none of them are
+   * in. Gold marks a race you can enter; a discontinued race is history, so the
+   * status ground wins. The ★ and the gold left border still say it was
+   * marquee — only the wash yields.
+   *
+   * The hovered/cued ground is bare `--ink-850`, with no hatch, because that is
+   * already what a plain discontinued row shows when hovered — `:hover` is
+   * (0,2,0) and drops the hatching there too. Restating the hatch here instead
+   * would have made the marquee row the lighter of the two and put the teal
+   * distance badge at 4.49:1, trading one failure for another.
+   */
+  .is-marquee.is-discontinued {
+    background: var(--hatch-rust);
+  }
+  .is-marquee.is-discontinued:hover,
+  .is-marquee.is-discontinued.is-cued {
+    background: var(--ink-850);
   }
   .is-discontinued .nm {
     color: var(--fg-mute);

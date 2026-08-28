@@ -8,7 +8,9 @@
  *
  * Colour discipline that the rest of the CSS relies on:
  *   gold  = marquee, and only marquee. It is the scarcest ink on the page.
- *   teal  = distances and the interactive/selected state.
+ *   teal  = distances and the interactive/selected state. Working *UI*, not
+ *           "working race" — teal never means live. Status is carried by the
+ *           stripe, hatch and pill, never by the distance channel (§7 item 7).
  *   rust  = the one warning colour (discontinued).
  *   everything else is greyscale.
  *
@@ -109,6 +111,16 @@
   --rust: #c9755c;
   --rust-wash: rgb(201 117 92 / 10%);
   --rust-edge: rgb(201 117 92 / 32%);
+  /*
+   * The discontinued row's ground. Defined once because all three row
+   * components draw it, and because the rule that keeps it winning over the
+   * marquee wash has to restate it — six usages that must not drift apart.
+   */
+  --hatch-rust: repeating-linear-gradient(
+    -45deg,
+    transparent 0 9px,
+    rgb(201 117 92 / 4%) 9px 18px
+  );
 
   /*
    * Map view (Phase 5). Every colour the map uses is either one of the four
