@@ -6,6 +6,8 @@
 
 ## 1. What this project is
 
+**v1 status (as of this note): the core vision below is fully realized.** List, calendar, and map views are complete, filter-consistent, and cross-linked; permalinks exist for all events; the site is WCAG 2.1 AA compliant with a self-hosted webfont; the dataset (102+ events) has been through multiple verification passes and a full region-scheme audit. Honestly still outside this scope, deliberately not overlooked: search, mobile *polish* beyond the established baseline, and everything in Phase 7/8 (§7) — data-maintenance tooling, elevation data, community features. Pending as of this note: two small items from the last cleanup session (see §7 item 7's follow-ups) and confirmation the Cloudflare Workers Builds config actually runs `npm run build` rather than bypassing the type-check gate.
+
 A public, free website that visualizes active Colorado ultramarathons — filterable by format, distance, region, and date — with calendar and map views as the primary ways to browse. It grows out of two static posters (a "Colorado Ultra Season" calendar and a "Colorado Ultra Map") built from a hand-verified research dataset of ~70 events. The website generalizes those two fixed views into an interactive, filterable, shareable tool, and opens the door to more (elevation profiles, community contributions) as later phases.
 
 **Audience:** Colorado ultrarunners planning a season, race-curious trail runners browsing options, and (secondarily) race directors checking how their event is represented.
