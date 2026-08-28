@@ -513,9 +513,21 @@ const description = `An interactive map of ${counted} Colorado ultramarathons �
     background: linear-gradient(180deg, var(--ink-850), var(--ink-900) 7rem);
     overflow: hidden;
   }
+  /* A region the filter has emptied keeps its slot — the index keeps its
+     shape — the same way the calendar's months do, and it recedes the same
+     way they do, for the same reason.
+
+     `opacity: 0.62` used to do the receding and had to go: it put "No events"
+     at 3.00:1 and the count above it at 3.93:1. The box already recedes
+     structurally — no gradient ground, no rows — so what is left of the job is
+     done with ink. Ink can be made quiet and still legible; opacity drags
+     every pairing toward 1:1 at once. Same substitution, same reason, as
+     CalendarMonth's `.month.is-empty`. */
   .rgroup.is-empty {
     background: none;
-    opacity: 0.62;
+  }
+  .rgroup.is-empty .rname {
+    color: var(--gold-deep);
   }
   .rhead {
     display: flex;

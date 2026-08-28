@@ -11,7 +11,11 @@
  *   teal  = distances and the interactive/selected state. Working *UI*, not
  *           "working race" — teal never means live. Status is carried by the
  *           stripe, hatch and pill, never by the distance channel (§7 item 7).
- *   rust  = the one warning colour (discontinued).
+ *   rust  = the one warning colour, and the thing it warns about is
+ *           discontinued. Nothing else is rust.
+ *   dashed --gold-deep = unverified. Uncertainty, not a warning, so it is not
+ *           rust; and it is the *stroke* that keeps it clear of marquee, which
+ *           is always solid and washed and never dashed (§2.5).
  *   everything else is greyscale.
  *
  * Contrast discipline, added by the Phase 6 design sweep (ARCHITECTURE.md §7

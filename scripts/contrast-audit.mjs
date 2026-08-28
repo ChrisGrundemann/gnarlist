@@ -12,7 +12,8 @@
  * CSS filter. The only honest way to know what a reader sees is to look at the
  * pixels, so that is what this does:
  *
- *   1. render each page in headless Chrome at a given width;
+ *   1. render each page in headless Chrome at a given width, in both its
+ *      default state and with a filter applied (see PAGES);
  *   2. record every text run, its computed colour, size and weight, and the
  *      rectangles it actually occupies — clipped to the element's own box and
  *      to every overflow-hidden ancestor, because -webkit-line-clamp and
@@ -46,7 +47,22 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', 'dist');
-const PAGES = ['/', '/calendar/', '/map/', '/races/hardrock-100/'];
+/*
+ * Every page, in both of its states.
+ *
+ * Half the treatments on this site only exist once a filter has bitten: an
+ * emptied calendar month, an emptied map region, a zero-count chip. Auditing
+ * only the default render is how `.rgroup.is-empty` on the map kept an
+ * `opacity: 0.62` failure through a full contrast sweep -- at build time every
+ * region has races, so the state the bug lived in was never on screen.
+ *
+ * `?month=1` is the sharpest cut the data allows: exactly one January event,
+ * so on every filterable view one group survives and all the rest go to their
+ * empty treatment in the same screenshot. The filter reads its state from the
+ * URL on load (see stateFromSearch in src/lib/filters.ts), so no clicking.
+ */
+const PAGES = ['/', '/calendar/', '/map/', '/races/hardrock-100/',
+  '/?month=1', '/calendar/?month=1', '/map/?month=1'];
 const argv = process.argv.slice(2);
 const arg = (n, d) => { const i = argv.indexOf(n); return i === -1 ? d : argv[i + 1]; };
 const WIDTHS = arg('--widths', '1440,753,390').split(',').map(Number);
@@ -209,6 +225,14 @@ for (const W of WIDTHS) {
     // would skew every background sampled through it.
     await evalIn(`() => { document.querySelector('.map-veil')?.click(); return 1; }`);
     await new Promise((r) => setTimeout(r, 500));
+
+    // A filtered page whose filter never ran would pass this audit by not
+    // looking at anything. Fail loudly instead of quietly auditing the
+    // default state twice.
+    if (page.includes('?')) {
+      const empties = await evalIn(`() => document.querySelectorAll('.is-empty').length`);
+      if (!empties) { console.log(`  FAIL  ${page} rendered no .is-empty treatment — filter never applied?`); failures++; }
+    }
 
     const items = await evalIn(COLLECT);
     await evalIn(`() => { const s = document.createElement('style'); s.id = '__nt';
