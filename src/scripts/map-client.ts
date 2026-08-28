@@ -235,18 +235,65 @@ function init(shell: HTMLElement, host: HTMLElement, points: MapPoint[]) {
   function buildRoute(p: MapPoint) {
     const r = p.route!;
     const line = L.polyline(r.path, { className: 'rt-line', interactive: true });
+
+    /*
+     * The caps are pushed OFF their own endpoint coordinates, outward along the
+     * route's bearing, and this is the whole fix for a collision that a z-index
+     * could never have solved.
+     *
+     * The start cap's latlng is Leadville. So is the latlng of every Leadville
+     * race in the dataset — they are town-centroid geocodes, so they are not
+     * merely near the cap, they are *the same point*. Leaflet derives a
+     * marker's z-index from its projected y, so two markers on one coordinate
+     * get the identical z-index and DOM order decides which one disappears.
+     * Measured: the "S" cap sits under the Leadville cluster at z9-z11 with
+     * both at the same z-index, 100% covered. Raising the cap's z-index only
+     * swaps which of the two is hidden, which is why ARCHITECTURE.md refused
+     * that fix.
+     *
+     * Two things at one point need SPACE, not stacking order. Each cap moves a
+     * fixed pixel distance along the line the route already travels — the start
+     * backwards, the finish onwards — so it reads as "the route begins here and
+     * runs that way" and lands clear of the pins on the town itself. A fixed
+     * pixel offset (not a geographic one) keeps that clearance identical at
+     * every zoom, because the thing it has to clear — a cluster disc — is also
+     * a fixed pixel size.
+     *
+     * The LABEL is deliberately not displaced with its cap. It stays anchored on
+     * the endpoint, which is where it has always sat and where it still reads as
+     * naming that town — and it puts the label on the opposite side of the
+     * coordinate from the cap, so the two can never cover each other. Moving it
+     * with the cap did exactly that: it landed on the disc's lower half and took
+     * the "S" from 11:1 down to 1.42:1.
+     */
+    const CAP_NUDGE = 30;
+    const a = map.project(L.latLng(r.path[0]), 12);
+    const b = map.project(L.latLng(r.path[r.path.length - 1]), 12);
+    // Web Mercator is conformal and its scale is uniform at a given latitude,
+    // so this screen-space bearing is the same at every zoom. Computed once.
+    const len = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+    const ux = ((b.x - a.x) / len) * CAP_NUDGE;
+    const uy = ((b.y - a.y) / len) * CAP_NUDGE;
+
     const cap = (
       at: [number, number],
       label: string,
       letter: string,
       finish: boolean,
-    ): L.Marker =>
-      L.marker(at, {
+    ): L.Marker => {
+      const dx = finish ? ux : -ux;
+      const dy = finish ? uy : -uy;
+      return L.marker(at, {
         icon: L.divIcon({
-          className: '',
+          // The class goes on the marker element, not just the glyph, so the
+          // zoom rule below can take the whole thing — including its hit area —
+          // out of the map rather than leaving an invisible 18px click target.
+          className: 'rt-cap-mk',
           html: `<span class="rt-cap${finish ? ' is-finish' : ''}">${letter}</span>`,
           iconSize: [18, 18],
-          iconAnchor: [9, 9],
+          // Leaflet puts the icon's top-left at (point - iconAnchor), so
+          // subtracting the displacement from the anchor moves the cap by +d.
+          iconAnchor: [9 - dx, 9 - dy],
         }),
         keyboard: false,
         title: `${p.name} — ${label}`,
@@ -257,6 +304,7 @@ function init(shell: HTMLElement, host: HTMLElement, points: MapPoint[]) {
         className: 'rt-tip',
         offset: [finish ? 10 : -10, 0],
       });
+    };
 
     const start = cap(r.path[0], r.startLabel, 'S', false);
     const finish = cap(r.path[r.path.length - 1], r.finishLabel, 'F', true);
@@ -530,14 +578,39 @@ function init(shell: HTMLElement, host: HTMLElement, points: MapPoint[]) {
     }
     // maxZoom so a single surviving race frames its region rather than slamming
     // to street level on a town-centre coordinate it can't justify.
-    if (b.isValid()) map.fitBounds(b, { padding: [50, 50], maxZoom: 12 });
+    /*
+     * Asymmetric padding, and the top figure is not decoration.
+     *
+     * Two things sit outside a fitted bound. The route's caps are displaced 30px
+     * outward from their endpoints (see buildRoute), so with their radius and
+     * halo the route draws 43px beyond the bounds this fit is given. And the
+     * gesture veil's label occupies the top ~42px of the map until it is
+     * dismissed — a fit that lands a pin or a cap up there puts it under an
+     * opaque chip, which is the thing that fix was for. Filtering to Stage and
+     * arriving on the fitted route did exactly that to the finish cap.
+     *
+     * So the top clears the label band plus the cap's reach, and the bottom
+     * clears the cap's reach alone.
+     */
+    if (b.isValid()) {
+      map.fitBounds(b, {
+        paddingTopLeft: [50, 92],
+        paddingBottomRight: [50, 52],
+        maxZoom: 12,
+      });
+    }
     else map.fitBounds(COLORADO_BOUNDS);
   }
 
   document.querySelector<HTMLButtonElement>('[data-fit]')?.addEventListener('click', fitResults);
 
   // The route's two endpoint labels are ~20 miles apart, which is about ten
-  // pixels at statewide zoom. They appear once there's room for them.
+  // pixels at statewide zoom. They appear once there's room for them — and so
+  // do the caps they belong to, which is the other half of the collision fix:
+  // measured at 390px and statewide zoom the two 18px caps are 16px apart, so
+  // they overlap *each other* before any cluster gets involved. Below this
+  // threshold the route is the corridor alone, which is still a route and not
+  // a point; endpoint detail arrives when there is room to read it.
   const syncZoomClass = () => shell.classList.toggle('is-close', map.getZoom() >= LABEL_ZOOM);
   map.on('zoomend', syncZoomClass);
   syncZoomClass();

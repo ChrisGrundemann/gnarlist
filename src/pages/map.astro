@@ -237,8 +237,13 @@ const description = `An interactive map of ${counted} Colorado ultramarathons â€
   </main>
 
   {/* The map's whole payload, escaped so a race note containing an HTML tag
-      can't close this element early (same rule as the JSON-LD serializer). */}
-  <script type="application/json" id="map-points" set:html={serializePoints(points)} />
+      can't close this element early (same rule as the JSON-LD serializer).
+
+      `is:inline` is explicit rather than implied. Astro already treats this as
+      inline because of the `type` attribute, so the directive changes nothing
+      at build time â€” it just states the intent, since this is a JSON data
+      island and not a script Astro should ever try to bundle. */}
+  <script is:inline type="application/json" id="map-points" set:html={serializePoints(points)} />
 
   <script>
     import '../scripts/filter-client';
@@ -414,13 +419,24 @@ const description = `An interactive map of ${counted} Colorado ultramarathons â€
   /*
    * The veil is rendered `hidden` and unhidden by the script, so it never
    * appears over a map that can't be engaged anyway (JavaScript off).
+   *
+   * The label rides the top edge, not the middle. `fitBounds` centres whatever
+   * it frames, so the middle of this map is always the densest part of it â€” a
+   * centred chip landed on the Front Range clusters and the route's start cap
+   * at every phone width (measured: the "13" cluster 71% covered, the "22"
+   * cluster 64%, the "S" cap 60%). The top strip is empty by the same
+   * arithmetic, and it clears both Leaflet controls â€” zoom top-left,
+   * attribution bottom-right. The scrim still covers the whole surface, so the
+   * "not live yet" signal never depended on where the chip sat, and `inset: 0`
+   * keeps the entire map as the tap target.
    */
   .map-veil {
     position: absolute;
     inset: 0;
     z-index: 500;
     display: grid;
-    place-items: center;
+    place-items: start center;
+    padding-top: 0.75rem;
     appearance: none;
     border: 0;
     background: rgb(8 11 14 / 30%);

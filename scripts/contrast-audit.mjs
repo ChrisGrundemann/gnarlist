@@ -204,7 +204,9 @@ for (const W of WIDTHS) {
     const h = await evalIn(`() => Math.min(document.documentElement.scrollHeight, 15000)`);
     await cdp.send('Emulation.setDeviceMetricsOverride', { width: W, height: h, deviceScaleFactor: 1, mobile: W < 700 });
     await new Promise((r) => setTimeout(r, 600));
-    // The map hides behind a one-tap veil whose label covers live map content.
+    // Dismiss the map's one-tap gesture veil. Its label no longer covers map
+    // content, but the veil is still a 30% scrim over the whole surface, which
+    // would skew every background sampled through it.
     await evalIn(`() => { document.querySelector('.map-veil')?.click(); return 1; }`);
     await new Promise((r) => setTimeout(r, 500));
 

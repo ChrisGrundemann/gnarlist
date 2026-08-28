@@ -160,7 +160,26 @@
   opacity: 1;
 }
 
-/* Start and finish caps, so the direction of travel is readable. */
+/*
+ * Start and finish caps, so the direction of travel is readable.
+ *
+ * They ride with the labels rather than being drawn at every zoom. At
+ * statewide zoom the route is about fifteen pixels long, which puts two 18px
+ * caps sixteen pixels apart — they occlude each other, and the surrounding
+ * cluster discs (34-42px) are larger than the whole route. "Direction of
+ * travel" is not information that survives that, so it waits for room, exactly
+ * as `.rt-tip` below already did. The corridor itself keeps drawing, so the
+ * route is still a route at every zoom; it is the endpoint *detail* that
+ * arrives on approach. Their displacement off the endpoint coordinates is set
+ * in map-client.ts, where the reasoning lives.
+ */
+.leaflet-marker-icon.rt-cap-mk {
+  display: none;
+}
+.map-shell.is-close .leaflet-marker-icon.rt-cap-mk {
+  display: block;
+}
+
 .rt-cap {
   box-sizing: border-box;
   display: grid;
